@@ -143,7 +143,69 @@ void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 2 */
+GPIO_TypeDef* getGPIO_TypeDef(GPIO_PORT_NAME_t portName)
+{
+	uint16_t portGroup = (uint16_t)portName / 16;
 
+	GPIO_TypeDef* result;
+
+	switch(portGroup){
+	case 0:
+		result = GPIOA;
+		break;
+	case 1:
+		result = GPIOB;
+		break;
+	case 2:
+		result = GPIOC;
+		break;
+	case 3:
+		result = GPIOD;
+		break;
+	default:
+		result = GPIOA;
+		break;
+	}
+
+	return result;
+}
+uint16_t getGPIO_Pin(GPIO_PORT_NAME_t portName)
+{
+	return 0x0001 << ((uint16_t)portName % 16);
+}
+void setGPIOOutput(GPIO_PORT_NAME_t portName)
+{
+	GPIO_TypeDef* pinGroup;
+	uint16_t pinNumber;
+
+	pinGroup = getGPIO_TypeDef(portName);
+	pinNumber = getGPIO_Pin(portName);
+
+	switch ((uint32_t)pinGroup) {
+		case (uint32_t)GPIOA:
+			__HAL_RCC_GPIOA_CLK_ENABLE();
+			break;
+		case (uint32_t)GPIOB:
+			__HAL_RCC_GPIOB_CLK_ENABLE();
+			break;
+		case (uint32_t)GPIOC:
+			__HAL_RCC_GPIOC_CLK_ENABLE();
+			break;
+		case (uint32_t)GPIOD:
+			__HAL_RCC_GPIOD_CLK_ENABLE();
+			break;
+		default:
+			break;
+	}
+
+	GPIO_InitTypeDef GPIO_InitStruct;
+	/*Configure GPIO pins : PB10 PB4 PB5 PB6 */
+	GPIO_InitStruct.Pin = pinNumber;
+	GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+	HAL_GPIO_Init(pinGroup, &GPIO_InitStruct);
+}
 /* USER CODE END 2 */
 
 /**
