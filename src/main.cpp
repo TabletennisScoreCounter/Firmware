@@ -32,11 +32,11 @@
   */
 /* Includes ------------------------------------------------------------------*/
 #include "stm32l4xx_hal.h"
-#include "gpio.h"
-#include "tim.h"
-#include "BusOut.hpp"
+
 
 /* USER CODE BEGIN Includes */
+#include "tim.h"
+#include "BusOut.hpp"
 #include "SegmentControl.hpp"
 /* USER CODE END Includes */
 
@@ -81,33 +81,21 @@ int main(void)
 
   /* USER CODE BEGIN 2 */
   SegmentControl seg(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
-
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,GPIO_PIN_SET);
+  BusOut channelSel(PA5, PA6, PA7, PB6, PC7, PA9);
 
   seg.write(0);
   seg.write(1);
   seg.write(2);
 
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,GPIO_PIN_RESET);
+  channelSel = 0x01;
+  channelSel = 0x02;
+  channelSel = 0x04;
+  channelSel = 0x08;
+  channelSel = 0x10;
+  channelSel = 0x20;
+  channelSel = 0x00;
 
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_6,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_6,GPIO_PIN_RESET);
-
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_7,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_7,GPIO_PIN_RESET);
-
-  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_6,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_6,GPIO_PIN_RESET);
-
-  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_RESET);
-
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_RESET);
-
-
-  startTIM2();
-
+  channelSel = 0x01 | 0x02;
   /* USER CODE END 2 */
 
   /* Infinite loop */
