@@ -9,12 +9,20 @@
 #include "SegmentControl.hpp"
 
 
-SegmentControl::SegmentControl(GPIO_PORT_NAME_t bottomLeft, GPIO_PORT_NAME_t bottom, GPIO_PORT_NAME_t bottomRight, GPIO_PORT_NAME_t middle, GPIO_PORT_NAME_t topLeft, GPIO_PORT_NAME_t top, GPIO_PORT_NAME_t topRight)
+SegmentControl::SegmentControl(GPIO_PORT_NAME_t bottomLeft, GPIO_PORT_NAME_t bottom,
+								GPIO_PORT_NAME_t bottomRight, GPIO_PORT_NAME_t middle,
+								GPIO_PORT_NAME_t topLeft, GPIO_PORT_NAME_t top,
+								GPIO_PORT_NAME_t topRight)
+								: BusOut(bottomLeft, bottom, bottomRight, middle, topLeft, top, topRight)
 {
 
 }
 void SegmentControl::write(uint8_t value)
 {
+	if(value < 10){
+		BusOut::write(SEGMENT[value]);
+	}
+	/*
 	switch (value) {
 		case 0:
 			BusOut::write(SEGMENT_0);
@@ -49,6 +57,7 @@ void SegmentControl::write(uint8_t value)
 		default:
 			break;
 	}
+	*/
 }
 SegmentControl& SegmentControl::operator=(uint8_t value)
 {

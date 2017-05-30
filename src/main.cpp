@@ -34,9 +34,10 @@
 #include "stm32l4xx_hal.h"
 #include "gpio.h"
 #include "tim.h"
+#include "BusOut.hpp"
 
 /* USER CODE BEGIN Includes */
-
+#include "SegmentControl.hpp"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -79,15 +80,13 @@ int main(void)
   MX_TIM2_Init();
 
   /* USER CODE BEGIN 2 */
+  SegmentControl seg(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
+
   HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,GPIO_PIN_SET);
 
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_8,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_10,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_4,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOB,GPIO_PIN_5,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_0,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_1,GPIO_PIN_SET);
-  HAL_GPIO_WritePin(GPIOA,GPIO_PIN_4,GPIO_PIN_SET);
+  seg.write(0);
+  seg.write(1);
+  seg.write(2);
 
   HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,GPIO_PIN_RESET);
 
@@ -108,6 +107,7 @@ int main(void)
 
 
   startTIM2();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */

@@ -21,8 +21,20 @@ public:
 
 private:
 	std::vector<DigitalOut> portList;
-
+	//int memberNum = 0;
+	template <typename First, typename... Rest>void dummy(const First& first, const Rest&... rest);
+	void dummy(){};
 };
-
+template <typename First, typename... Rest>BusOut::BusOut(const First& first, const Rest&... rest)
+{
+	dummy(first,rest...);
+}
+template <typename First, typename... Rest>void BusOut::dummy(const First& first, const Rest&... rest)
+{
+	/*DigitalOut member(first);*/
+	portList.push_back(/*&member*/DigitalOut(first));
+	//memberNum++;
+	dummy(rest...);
+}
 
 #endif /* BUSOUT_HPP_ */
