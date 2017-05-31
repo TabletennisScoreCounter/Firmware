@@ -77,6 +77,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
+  SystemClock_Config();
 
   /* USER CODE BEGIN 2 */
 
