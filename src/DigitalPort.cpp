@@ -25,23 +25,33 @@ void DigitalPort::updatePinOccupation(GPIO_TypeDef* port, uint16_t pin, bool add
 
 DigitalPort::DigitalPort(GPIO_TypeDef* port, uint16_t pin)
 {
-	//É|Å[ÉgÇ™ñ¢égópÇ©Ç«Ç§Ç©É`ÉFÉbÉN
+	//ÔøΩ|ÔøΩ[ÔøΩgÔøΩÔøΩÔøΩÔøΩÔøΩgÔøΩpÔøΩÔøΩÔøΩ«ÇÔøΩÔøΩÔøΩÔøΩ`ÔøΩFÔøΩbÔøΩN
 	assert_param(checkPinUsable(port, pin)==true);
 
 	Port = port;
-	Pin = pin;
-	Mode = GPIO_MODE_ANALOG;
-	PullResister = GPIO_NOPULL;
+	//Pin = pin;
+	//Mode = GPIO_MODE_ANALOG;
+	//PullResister = GPIO_NOPULL;
+	peripheralClockEnable(port);
+
+	GPIO_InitStruct.Pin = pin;
+	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
 
 	updatePinOccupation(port, pin, true);
 }
 DigitalPort::~DigitalPort()
 {
-	updatePinOccupation(Port, Pin, false);
+	GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+
+	HAL_GPIO_Init(Port,&GPIO_InitStruct);
+
+	updatePinOccupation(Port, GPIO_InitStruct.Pin, false);
 }
 bool DigitalPort::read()
 {
-	return HAL_GPIO_ReadPin(Port, Pin);
+	return HAL_GPIO_ReadPin(Port, GPIO_InitStruct.Pin);
 }
 DigitalPort::operator bool()
 {
@@ -53,7 +63,7 @@ GPIO_TypeDef* DigitalPort::getPort()
 }
 uint16_t DigitalPort::getPin()
 {
-	return Pin;
+	return GPIO_InitStruct.Pin;
 }
 int DigitalPort::getPortIndex(GPIO_TypeDef* port)
 {
@@ -77,4 +87,42 @@ int DigitalPort::getPortIndex(GPIO_TypeDef* port)
 	}
 
 	return index;
+}
+void DigitalPort::peripheralClockEnable(GPIO_TypeDef* port)
+{
+	switch ((uint32_t)port) {
+		case (uint32_t)GPIOA:
+			__HAL_RCC_GPIOA_CLK_ENABLE();
+			break;
+		case (uint32_t)GPIOB:
+			__HAL_RCC_GPIOB_CLK_ENABLE();
+			break;
+		case (uint32_t)GPIOC:
+			__HAL_RCC_GPIOC_CLK_ENABLE();
+			break;
+		case (uint32_t)GPIOD:
+			__HAL_RCC_GPIOD_CLK_ENABLE();
+			break;
+		default:
+			break;
+	}
+}
+void DigitalPort::peripheralClockDisable(GPIO_TypeDef* port)
+{
+	switch ((uint32_t)port) {
+		case (uint32_t)GPIOA:
+			__HAL_RCC_GPIOA_CLK_DISABLE();
+			break;
+		case (uint32_t)GPIOB:
+			__HAL_RCC_GPIOB_CLK_DISABLE();
+			break;
+		case (uint32_t)GPIOC:
+			__HAL_RCC_GPIOC_CLK_DISABLE();
+			break;
+		case (uint32_t)GPIOD:
+			__HAL_RCC_GPIOD_CLK_DISABLE();
+			break;
+		default:
+			break;
+	}
 }

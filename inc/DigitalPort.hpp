@@ -16,11 +16,13 @@ public:
 	static const uint16_t NUM_OF_PINS = 16;
 private:
 	GPIO_TypeDef* Port;
-	uint16_t Pin;
+	//uint16_t Pin;
 	static bool PinUsedStatus[NUM_OF_PORTS][NUM_OF_PINS];
+
 protected:
-	uint32_t PullResister;
-	uint32_t Mode;
+	GPIO_InitTypeDef GPIO_InitStruct;
+	//uint32_t PullResister;
+	//uint32_t Mode;
 
 public:
 	DigitalPort(GPIO_TypeDef* port, uint16_t pin);
@@ -34,6 +36,8 @@ protected:
 private:
 	static void updatePinOccupation(GPIO_TypeDef* port, uint16_t pin, bool add);
 	static int getPortIndex(GPIO_TypeDef* port);
+	static void peripheralClockEnable(GPIO_TypeDef* port);
+	static void peripheralClockDisable(GPIO_TypeDef* port);
 };
 
 
