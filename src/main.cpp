@@ -57,7 +57,9 @@ void Error_Handler(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+void callBack();
+SegmentControl seg(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
+BusOut channelSel(PA5, PA6, PA7, PB6, PC7, PA9);
 /* USER CODE END 0 */
 
 int main(void)
@@ -80,22 +82,27 @@ int main(void)
   MX_TIM2_Init();
 
   /* USER CODE BEGIN 2 */
-  SegmentControl seg(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
-  BusOut channelSel(PA5, PA6, PA7, PB6, PC7, PA9);
+//  SegmentControl seg(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
+//  BusOut channelSel(PA5, PA6, PA7, PB6, PC7, PA9);
 
-  seg.write(0);
-  seg.write(1);
-  seg.write(2);
+//  seg.write(0);
+//  seg.write(1);
+//  seg.write(2);
+//
+//  channelSel = 0x01;
+//  channelSel = 0x02;
+//  channelSel = 0x04;
+//  channelSel = 0x08;
+//  channelSel = 0x10;
+//  channelSel = 0x20;
+//  channelSel = 0x00;
+//
+//  channelSel = 0x01 | 0x02;
 
-  channelSel = 0x01;
-  channelSel = 0x02;
-  channelSel = 0x04;
-  channelSel = 0x08;
-  channelSel = 0x10;
-  channelSel = 0x20;
-  channelSel = 0x00;
+  IRQAttachTIM2(callBack);
 
-  channelSel = 0x01 | 0x02;
+  startTIM2();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -161,7 +168,28 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void callBack()
+{
+	static uint8_t count = 0;
 
+	switch (count % 3) {
+		case 0:
+			channelSel = 0x01 | 0x02;
+			break;
+		case 1:
+			channelSel = 0x04 | 0x08;
+			break;
+		case 2:
+			channelSel = 0x10 | 0x20;
+			break;
+		default:
+			break;
+	}
+	count++;
+	if (count >= 3) {
+		count = 0;
+	}
+}
 /* USER CODE END 4 */
 
 /**

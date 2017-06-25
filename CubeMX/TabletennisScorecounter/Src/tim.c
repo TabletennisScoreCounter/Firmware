@@ -36,7 +36,7 @@
 #include "tim.h"
 
 /* USER CODE BEGIN 0 */
-
+static void (*callBack)() = NULL;
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
@@ -119,41 +119,13 @@ void startTIM2()
 }
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
-//  HAL_IncTick();
-	static int count = 0;
-	if (htim->Instance == htim2.Instance) {
-
-		if(count == 0){
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,GPIO_PIN_SET);
-		}
-		else if(count == 1){
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_5,GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_6,GPIO_PIN_SET);
-		}
-		else if(count == 2){
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_6,GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_7,GPIO_PIN_SET);
-		}
-		else if(count == 3){
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_7,GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(GPIOB,GPIO_PIN_6,GPIO_PIN_SET);
-		}
-		else if(count == 4){
-			HAL_GPIO_WritePin(GPIOB,GPIO_PIN_6,GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_SET);
-		}
-		else if(count == 5){
-			HAL_GPIO_WritePin(GPIOC,GPIO_PIN_7,GPIO_PIN_RESET);
-			HAL_GPIO_WritePin(GPIOA,GPIO_PIN_9,GPIO_PIN_SET);
-		}
-		if(count < 5){
-			count++;
-		}
-		else{
-			count = 0;
-		}
+	if(callBack != NULL){
+		callBack();
 	}
+}
+void IRQAttachTIM2(void* funcPtr)
+{
+	callBack = funcPtr;
 }
 /* USER CODE END 1 */
 

@@ -57,6 +57,7 @@ void MX_TIM2_Init(void);
 
 /* USER CODE BEGIN Prototypes */
 void startTIM2();
+void IRQAttachTIM2(void* funcPtr);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
