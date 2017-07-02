@@ -123,7 +123,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 		callBack();
 	}
 }
-void IRQAttachTIM2(void* funcPtr)
+void IRQAttachTIM2(void (*funcPtr)())
 {
 	callBack = funcPtr;
 }

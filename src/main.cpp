@@ -60,6 +60,7 @@ void Error_Handler(void);
 void callBack();
 SegmentControl seg(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
 BusOut channelSel(PA5, PA6, PA7, PB6, PC7, PA9);
+uint8_t segmentValue[6]{0};
 /* USER CODE END 0 */
 
 int main(void)
@@ -105,6 +106,10 @@ int main(void)
 
   /* USER CODE END 2 */
 
+
+  for (int i = 0; i < 6; ++i) {
+	segmentValue[i] = i;
+  }
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -171,7 +176,7 @@ void SystemClock_Config(void)
 void callBack()
 {
 	static uint8_t count = 0;
-
+	/*
 	switch (count % 3) {
 		case 0:
 			channelSel = 0x01 | 0x02;
@@ -185,8 +190,14 @@ void callBack()
 		default:
 			break;
 	}
+	*/
+
+	seg = segmentValue[count];
+	channelSel = (0x01 << count);
+
+
 	count++;
-	if (count >= 3) {
+	if (count >= 6) {
 		count = 0;
 	}
 }
