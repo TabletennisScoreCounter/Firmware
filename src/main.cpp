@@ -58,6 +58,7 @@ void Error_Handler(void);
 
 /* USER CODE BEGIN 0 */
 void callBack();
+void callBackButton();
 SegmentControl seg(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
 BusOut channelSel(PA5, PA6, PA7, PB6, PC7, PA9);
 uint8_t segmentValue[6]{0};
@@ -104,12 +105,16 @@ int main(void)
 
   startTIM2();
 
-  /* USER CODE END 2 */
-
-
   for (int i = 0; i < 6; ++i) {
 	segmentValue[i] = i;
   }
+
+  GPIOIRQAttach(PC13,callBackButton);
+
+  /* USER CODE END 2 */
+
+
+
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
@@ -200,6 +205,10 @@ void callBack()
 	if (count >= 6) {
 		count = 0;
 	}
+}
+void callBackButton()
+{
+	segmentValue[0]++;
 }
 /* USER CODE END 4 */
 

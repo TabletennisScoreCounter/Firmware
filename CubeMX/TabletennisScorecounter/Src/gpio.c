@@ -42,7 +42,8 @@
 /* Configure GPIO                                                             */
 /*----------------------------------------------------------------------------*/
 /* USER CODE BEGIN 1 */
-
+static void (*callBackPtr[16])() = {NULL};
+static uint16_t GPIO_Pin2pinIndex(uint16_t GPIO_Pin);
 /* USER CODE END 1 */
 
 /** Configure pins as 
@@ -68,7 +69,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin : PtPin */
   GPIO_InitStruct.Pin = B1_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_EVT_RISING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(B1_GPIO_Port, &GPIO_InitStruct);
 
@@ -150,6 +151,9 @@ void MX_GPIO_Init(void)
   HAL_NVIC_SetPriority(EXTI9_5_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(EXTI9_5_IRQn);
 
+  HAL_NVIC_SetPriority(EXTI15_10_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(EXTI15_10_IRQn);
+
 }
 
 /* USER CODE BEGIN 2 */
@@ -215,6 +219,28 @@ void setGPIOOutput(GPIO_PORT_NAME_t portName)
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
 	HAL_GPIO_Init(pinGroup, &GPIO_InitStruct);
+}
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
+{
+	uint16_t pinIndex = GPIO_Pin2pinIndex(GPIO_Pin);
+
+	if(callBackPtr[pinIndex] != NULL){
+		callBackPtr[pinIndex]();
+	}
+}
+void GPIOIRQAttach(GPIO_PORT_NAME_t portName, void (*funcPtr)())
+{
+	uint16_t pin = portName % 16;
+
+	callBackPtr[pin] = funcPtr;
+}
+uint16_t GPIO_Pin2pinIndex(uint16_t GPIO_Pin)
+{
+	uint16_t result = 0;
+
+	while(GPIO_Pin >> ++result);
+
+	return (result - 1);
 }
 /* USER CODE END 2 */
 

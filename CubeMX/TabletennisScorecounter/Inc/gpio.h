@@ -63,6 +63,7 @@ void MX_GPIO_Init(void);
 GPIO_TypeDef* getGPIO_TypeDef(GPIO_PORT_NAME_t portName);
 uint16_t getGPIO_Pin(GPIO_PORT_NAME_t portName);
 void setGPIOOutput(GPIO_PORT_NAME_t portName);
+void GPIOIRQAttach(GPIO_PORT_NAME_t portName, void (*funcPtr)());
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
