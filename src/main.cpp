@@ -38,6 +38,7 @@
 #include "tim.h"
 #include "BusOut.hpp"
 #include "SegmentControl.hpp"
+#include "ScoreManager.hpp"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -59,9 +60,16 @@ void Error_Handler(void);
 /* USER CODE BEGIN 0 */
 void callBack();
 void callBackButton();
-SegmentControl seg(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
-BusOut channelSel(PA5, PA6, PA7, PB6, PC7, PA9);
+void callBackButton2();
+void callBackChattering();
+void callBackChattering2();
+void refleshSegmentValue();
+static bool chatteringTimerFlag = false;
+static bool chatteringTimerFlag2 = false;
+SegmentControl* seg/*(PB4,PB10,PA8,PA4,PA1,PA0,PB5)*/;
+BusOut* channelSel/*(PA5, PA6, PA7, PB6, PC7, PA9)*/;
 uint8_t segmentValue[6]{0};
+ScoreManager scoreManager;
 /* USER CODE END 0 */
 
 int main(void)
@@ -82,35 +90,33 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_TIM2_Init();
+  MX_TIM3_Init();
+  MX_TIM4_Init();
 
   /* USER CODE BEGIN 2 */
-//  SegmentControl seg(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
-//  BusOut channelSel(PA5, PA6, PA7, PB6, PC7, PA9);
+  seg = new SegmentControl(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
+  channelSel = new BusOut(PA5, PA6, PA7, PB6, PC7, PA9);
 
-//  seg.write(0);
-//  seg.write(1);
-//  seg.write(2);
+//  seg->write(0);
+//  seg->write(1);
+//  seg->write(2);
 //
-//  channelSel = 0x01;
-//  channelSel = 0x02;
-//  channelSel = 0x04;
-//  channelSel = 0x08;
-//  channelSel = 0x10;
-//  channelSel = 0x20;
-//  channelSel = 0x00;
-//
-//  channelSel = 0x01 | 0x02;
+//  *channelSel = 0x01;
+//  *channelSel = 0x02;
+//  *channelSel = 0x04;
+//  *channelSel = 0x08;
+//  *channelSel = 0x10;
+//  *channelSel = 0x20;
+//  *channelSel = 0x00;
 
   IRQAttachTIM2(callBack);
+  IRQAttachTIM3(callBackChattering);
+  IRQAttachTIM4(callBackChattering2);
 
   startTIM2();
 
-  for (int i = 0; i < 6; ++i) {
-	segmentValue[i] = i;
-  }
-
-  GPIOIRQAttach(PC13,callBackButton);
-
+  GPIOIRQAttach(PB8,callBackButton);
+  GPIOIRQAttach(PB9,callBackButton2);
   /* USER CODE END 2 */
 
 
@@ -197,9 +203,9 @@ void callBack()
 	}
 	*/
 
-	seg = segmentValue[count];
-	channelSel = (0x01 << count);
 
+	*channelSel = (0x01 << count);
+	*seg = segmentValue[count];
 
 	count++;
 	if (count >= 6) {
@@ -208,7 +214,53 @@ void callBack()
 }
 void callBackButton()
 {
-	segmentValue[0]++;
+	if(!chatteringTimerFlag){
+		scoreManager.addMyPoint();
+
+//		segmentValue[0] = scoreManager.getMyPoint() / 10;
+//		segmentValue[1] = scoreManager.getMyPoint() % 10;
+//
+//		segmentValue[2] = scoreManager.getMyGame();
+//		segmentValue[3] = scoreManager.getEnemyGame();
+//
+//		segmentValue[4] = scoreManager.getEnemyPoint() / 10;
+//		segmentValue[5] = scoreManager.getEnemyPoint() % 10;
+		refleshSegmentValue();
+		startTIM3();
+		chatteringTimerFlag = true;
+	}
+
+}
+void callBackButton2()
+{
+	if(!chatteringTimerFlag2){
+		scoreManager.addEnemyPoint();
+		refleshSegmentValue();
+		startTIM4();
+		chatteringTimerFlag2 = true;
+	}
+}
+
+void callBackChattering()
+{
+	chatteringTimerFlag = false;
+	stopTIM3();
+}
+void callBackChattering2()
+{
+	chatteringTimerFlag2 = false;
+	stopTIM4();
+}
+void refleshSegmentValue()
+{
+	segmentValue[0] = scoreManager.getMyPoint() / 10;
+	segmentValue[1] = scoreManager.getMyPoint() % 10;
+
+	segmentValue[2] = scoreManager.getMyGame();
+	segmentValue[3] = scoreManager.getEnemyGame();
+
+	segmentValue[4] = scoreManager.getEnemyPoint() / 10;
+	segmentValue[5] = scoreManager.getEnemyPoint() % 10;
 }
 /* USER CODE END 4 */
 
