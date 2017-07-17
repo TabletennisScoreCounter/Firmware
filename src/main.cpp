@@ -94,8 +94,10 @@ int main(void)
   MX_TIM4_Init();
 
   /* USER CODE BEGIN 2 */
-  seg = new SegmentControl(PB4,PB10,PA8,PA4,PA1,PA0,PB5);
-  channelSel = new BusOut(PA5, PA6, PA7, PB6, PC7, PA9);
+  //seg = new SegmentControl(PC8,PC6,PC5,PA12,PA11,PB12,PB11);
+  //seg = new SegmentControl(bl,b,br,m,tl,t,tr)
+  seg = new SegmentControl(PC5, PC6, PC8, PB11, PB12, PA11, PA12);
+  channelSel = new BusOut(PB1, PB2, PB15, PB14, PC4, PB13);
 
 //  seg->write(0);
 //  seg->write(1);
@@ -115,8 +117,8 @@ int main(void)
 
   startTIM2();
 
-  GPIOIRQAttach(PB8,callBackButton);
-  GPIOIRQAttach(PB9,callBackButton2);
+  GPIOIRQAttach(PA0,callBackButton);
+  GPIOIRQAttach(PA1,callBackButton2);
   /* USER CODE END 2 */
 
 
