@@ -1,7 +1,7 @@
 [PreviousGenFiles]
-HeaderPath=/Users/admin/Documents/workspace/TableTennis/FW/CubeMX/TabletennisScorecounter/Inc
+HeaderPath=/Users/user/workspace/TableTennisScoreCounter/Firmware/CubeMX/TabletennisScorecounter/Inc
 HeaderFiles=gpio.h;stm32l4xx_it.h;stm32l4xx_hal_conf.h;mxconstants.h;tim.h;
-SourcePath=/Users/admin/Documents/workspace/TableTennis/FW/CubeMX/TabletennisScorecounter/Src
+SourcePath=/Users/user/workspace/TableTennisScoreCounter/Firmware/CubeMX/TabletennisScorecounter/Src
 SourceFiles=gpio.h;stm32l4xx_it.h;stm32l4xx_hal_conf.h;mxconstants.h;gpio.c;stm32l4xx_it.c;stm32l4xx_hal_msp.c;main.c;tim.h;tim.c;
 
 [PreviousLibFiles]

@@ -61,11 +61,15 @@ void Error_Handler(void);
 void callBack();
 void callBackButton();
 void callBackButton2();
+void callBackBlueButton();
 void callBackChattering();
 void callBackChattering2();
+void callBackChattering3();
 void refleshSegmentValue();
+static bool changeSideFlag = false;
 static bool chatteringTimerFlag = false;
 static bool chatteringTimerFlag2 = false;
+static bool chatteringTimerFlag3 = false;
 SegmentControl* seg/*(PB4,PB10,PA8,PA4,PA1,PA0,PB5)*/;
 BusOut* channelSel/*(PA5, PA6, PA7, PB6, PC7, PA9)*/;
 uint8_t segmentValue[6]{0};
@@ -92,6 +96,7 @@ int main(void)
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
+  MX_TIM5_Init();
 
   /* USER CODE BEGIN 2 */
   //seg = new SegmentControl(PC8,PC6,PC5,PA12,PA11,PB12,PB11);
@@ -114,11 +119,13 @@ int main(void)
   IRQAttachTIM2(callBack);
   IRQAttachTIM3(callBackChattering);
   IRQAttachTIM4(callBackChattering2);
+  IRQAttachTIM5(callBackChattering3);
 
   startTIM2();
 
   GPIOIRQAttach(PA0,callBackButton);
   GPIOIRQAttach(PA1,callBackButton2);
+  GPIOIRQAttach(PC13,callBackBlueButton);
   /* USER CODE END 2 */
 
 
@@ -253,16 +260,41 @@ void callBackChattering2()
 	chatteringTimerFlag2 = false;
 	stopTIM4();
 }
+void callBackChattering3()
+{
+	chatteringTimerFlag3 = false;
+	stopTIM5();
+}
 void refleshSegmentValue()
 {
-	segmentValue[0] = scoreManager.getMyPoint() / 10;
-	segmentValue[1] = scoreManager.getMyPoint() % 10;
+	if(changeSideFlag){
+		segmentValue[0] = scoreManager.getMyPoint() / 10;
+		segmentValue[1] = scoreManager.getMyPoint() % 10;
 
-	segmentValue[2] = scoreManager.getMyGame();
-	segmentValue[3] = scoreManager.getEnemyGame();
+		segmentValue[2] = scoreManager.getMyGame();
+		segmentValue[3] = scoreManager.getEnemyGame();
 
-	segmentValue[4] = scoreManager.getEnemyPoint() / 10;
-	segmentValue[5] = scoreManager.getEnemyPoint() % 10;
+		segmentValue[4] = scoreManager.getEnemyPoint() / 10;
+		segmentValue[5] = scoreManager.getEnemyPoint() % 10;
+	}
+	else{
+		segmentValue[4] = scoreManager.getMyPoint() / 10;
+		segmentValue[5] = scoreManager.getMyPoint() % 10;
+
+		segmentValue[3] = scoreManager.getMyGame();
+		segmentValue[2] = scoreManager.getEnemyGame();
+
+		segmentValue[0] = scoreManager.getEnemyPoint() / 10;
+		segmentValue[1] = scoreManager.getEnemyPoint() % 10;
+	}
+}
+void callBackBlueButton()
+{
+	if(!chatteringTimerFlag3){
+		changeSideFlag = ~changeSideFlag;//MyとEnemyを入れ替え
+		startTIM5();
+		chatteringTimerFlag3 = true;
+	}
 }
 /* USER CODE END 4 */
 
