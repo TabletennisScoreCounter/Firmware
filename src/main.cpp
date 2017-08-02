@@ -196,22 +196,6 @@ void SystemClock_Config(void)
 void callBack()
 {
 	static uint8_t count = 0;
-	/*
-	switch (count % 3) {
-		case 0:
-			channelSel = 0x01 | 0x02;
-			break;
-		case 1:
-			channelSel = 0x04 | 0x08;
-			break;
-		case 2:
-			channelSel = 0x10 | 0x20;
-			break;
-		default:
-			break;
-	}
-	*/
-
 
 	*channelSel = (0x01 << count);
 	*seg = segmentValue[count];
@@ -225,15 +209,6 @@ void callBackButton()
 {
 	if(!chatteringTimerFlag){
 		scoreManager.addMyPoint();
-
-//		segmentValue[0] = scoreManager.getMyPoint() / 10;
-//		segmentValue[1] = scoreManager.getMyPoint() % 10;
-//
-//		segmentValue[2] = scoreManager.getMyGame();
-//		segmentValue[3] = scoreManager.getEnemyGame();
-//
-//		segmentValue[4] = scoreManager.getEnemyPoint() / 10;
-//		segmentValue[5] = scoreManager.getEnemyPoint() % 10;
 		refleshSegmentValue();
 		startTIM3();
 		chatteringTimerFlag = true;
@@ -267,31 +242,22 @@ void callBackChattering3()
 }
 void refleshSegmentValue()
 {
-	if(changeSideFlag){
-		segmentValue[0] = scoreManager.getMyPoint() / 10;
-		segmentValue[1] = scoreManager.getMyPoint() % 10;
+	segmentValue[0] = scoreManager.getMyPoint() / 10;
+	segmentValue[1] = scoreManager.getMyPoint() % 10;
 
-		segmentValue[2] = scoreManager.getMyGame();
-		segmentValue[3] = scoreManager.getEnemyGame();
+	segmentValue[2] = scoreManager.getMyGame();
+	segmentValue[3] = scoreManager.getEnemyGame();
 
-		segmentValue[4] = scoreManager.getEnemyPoint() / 10;
-		segmentValue[5] = scoreManager.getEnemyPoint() % 10;
-	}
-	else{
-		segmentValue[4] = scoreManager.getMyPoint() / 10;
-		segmentValue[5] = scoreManager.getMyPoint() % 10;
-
-		segmentValue[3] = scoreManager.getMyGame();
-		segmentValue[2] = scoreManager.getEnemyGame();
-
-		segmentValue[0] = scoreManager.getEnemyPoint() / 10;
-		segmentValue[1] = scoreManager.getEnemyPoint() % 10;
-	}
+	segmentValue[4] = scoreManager.getEnemyPoint() / 10;
+	segmentValue[5] = scoreManager.getEnemyPoint() % 10;
 }
 void callBackBlueButton()
 {
 	if(!chatteringTimerFlag3){
-		changeSideFlag = ~changeSideFlag;//MyとEnemyを入れ替え
+		changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
+
+		scoreManager.swapPoint();
+		refleshSegmentValue();
 		startTIM5();
 		chatteringTimerFlag3 = true;
 	}

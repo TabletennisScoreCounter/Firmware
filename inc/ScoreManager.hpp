@@ -28,6 +28,7 @@ public:
 	void addMyPoint();
 	void addEnemyPoint();
 	void resetPoint();
+	void swapPoint();
 	uint8_t getMyPoint(){return myPoint;}
 	uint8_t getEnemyPoint(){return enemyPoint;}
 	uint8_t getMyGame(){return myGame;}

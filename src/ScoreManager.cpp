@@ -45,3 +45,14 @@ void ScoreManager::resetPoint()
 	enemyPoint = 0;
 	enemyGame = 0;
 }
+void ScoreManager::swapPoint()
+{
+	uint8_t tempPoint = myPoint;
+	uint8_t tempGame = myGame;
+
+	myPoint = enemyPoint;
+	myGame = enemyGame;
+
+	enemyPoint = tempPoint;
+	enemyGame = tempGame;
+}
