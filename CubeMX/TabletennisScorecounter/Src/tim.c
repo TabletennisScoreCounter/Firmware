@@ -40,12 +40,14 @@ static void (*callBack)() = NULL;
 static void (*callBackTIM3)() = NULL;
 static void (*callBackTIM4)() = NULL;
 static void (*callBackTIM5)() = NULL;
+static void (*callBackTIM15)() = NULL;
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 TIM_HandleTypeDef htim4;
 TIM_HandleTypeDef htim5;
+TIM_HandleTypeDef htim15;
 
 /* TIM2 init function */
 void MX_TIM2_Init(void)
@@ -167,6 +169,37 @@ void MX_TIM5_Init(void)
   }
 
 }
+/* TIM15 init function */
+void MX_TIM15_Init(void)
+{
+  TIM_ClockConfigTypeDef sClockSourceConfig;
+  TIM_MasterConfigTypeDef sMasterConfig;
+
+  htim15.Instance = TIM15;
+  htim15.Init.Prescaler = 10;
+  htim15.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim15.Init.Period = 100;
+  htim15.Init.ClockDivision = TIM_CLOCKDIVISION_DIV4;
+  htim15.Init.RepetitionCounter = 0;
+  if (HAL_TIM_Base_Init(&htim15) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
+  if (HAL_TIM_ConfigClockSource(&htim15, &sClockSourceConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim15, &sMasterConfig) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+}
 
 void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
 {
@@ -230,6 +263,21 @@ void HAL_TIM_Base_MspInit(TIM_HandleTypeDef* tim_baseHandle)
   /* USER CODE BEGIN TIM5_MspInit 1 */
 
   /* USER CODE END TIM5_MspInit 1 */
+  }
+  else if(tim_baseHandle->Instance==TIM15)
+  {
+  /* USER CODE BEGIN TIM15_MspInit 0 */
+
+  /* USER CODE END TIM15_MspInit 0 */
+    /* Peripheral clock enable */
+    __HAL_RCC_TIM15_CLK_ENABLE();
+
+    /* Peripheral interrupt init */
+    HAL_NVIC_SetPriority(TIM1_BRK_TIM15_IRQn, 0, 0);
+    HAL_NVIC_EnableIRQ(TIM1_BRK_TIM15_IRQn);
+  /* USER CODE BEGIN TIM15_MspInit 1 */
+
+  /* USER CODE END TIM15_MspInit 1 */
   }
 }
 
@@ -296,6 +344,21 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 
   /* USER CODE END TIM5_MspDeInit 1 */
   }
+  else if(tim_baseHandle->Instance==TIM15)
+  {
+  /* USER CODE BEGIN TIM15_MspDeInit 0 */
+
+  /* USER CODE END TIM15_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_TIM15_CLK_DISABLE();
+
+    /* Peripheral interrupt Deinit*/
+    HAL_NVIC_DisableIRQ(TIM1_BRK_TIM15_IRQn);
+
+  /* USER CODE BEGIN TIM15_MspDeInit 1 */
+
+  /* USER CODE END TIM15_MspDeInit 1 */
+  }
 } 
 
 /* USER CODE BEGIN 1 */
@@ -327,6 +390,14 @@ void stopTIM5()
 {
 	HAL_TIM_Base_Stop_IT(&htim5);
 }
+void startTIM15()
+{
+	HAL_TIM_Base_Start_IT(&htim15);
+}
+void stopTIM15()
+{
+	HAL_TIM_Base_Stop_IT(&htim15);
+}
 void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 {
 	if(htim == &htim2){
@@ -349,6 +420,11 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
 			callBackTIM5();
 		}
 	}
+	else if(htim == &htim15){
+		if(callBackTIM15 != NULL){
+			callBackTIM15();
+		}
+	}
 }
 void IRQAttachTIM2(void (*funcPtr)())
 {
@@ -365,6 +441,10 @@ void IRQAttachTIM4(void (*funcPtr)())
 void IRQAttachTIM5(void (*funcPtr)())
 {
 	callBackTIM5 = funcPtr;
+}
+void IRQAttachTIM15(void (*funcPtr)())
+{
+	callBackTIM15 = funcPtr;
 }
 /* USER CODE END 1 */
 

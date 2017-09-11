@@ -39,6 +39,7 @@
 #include "BusOut.hpp"
 #include "SegmentControl.hpp"
 #include "ScoreManager.hpp"
+#include "DigitalOut.hpp"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -58,6 +59,19 @@ void Error_Handler(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
+enum COLOR_t{
+	RED,
+	GREEN,
+	BLUE,
+	YELLOW
+};
+static uint8_t count = 0;
+static uint8_t dutyRed = 0;
+static uint8_t dutyGreen = 0;
+static uint8_t dutyBlue = 0;
+
+void selectColor(COLOR_t);
+
 void callBack();
 void callBackButton();
 void callBackButton2();
@@ -65,6 +79,7 @@ void callBackBlueButton();
 void callBackChattering();
 void callBackChattering2();
 void callBackChattering3();
+void callBackLEDPWM();
 void refleshSegmentValue();
 static bool changeSideFlag = false;
 static bool chatteringTimerFlag = false;
@@ -97,29 +112,28 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_TIM5_Init();
+  MX_TIM15_Init();
 
   /* USER CODE BEGIN 2 */
-  //seg = new SegmentControl(PC8,PC6,PC5,PA12,PA11,PB12,PB11);
-  //seg = new SegmentControl(bl,b,br,m,tl,t,tr)
+
+
+
   seg = new SegmentControl(PC5, PC6, PC8, PB11, PB12, PA11, PA12);
   channelSel = new BusOut(PB1, PB2, PB15, PB14, PC4, PB13);
-
-//  seg->write(0);
-//  seg->write(1);
-//  seg->write(2);
-//
-//  *channelSel = 0x01;
-//  *channelSel = 0x02;
-//  *channelSel = 0x04;
-//  *channelSel = 0x08;
-//  *channelSel = 0x10;
-//  *channelSel = 0x20;
-//  *channelSel = 0x00;
 
   IRQAttachTIM2(callBack);
   IRQAttachTIM3(callBackChattering);
   IRQAttachTIM4(callBackChattering2);
   IRQAttachTIM5(callBackChattering3);
+
+  IRQAttachTIM15(callBackLEDPWM);
+
+  startTIM15();
+  selectColor(BLUE);
+  selectColor(RED);
+  selectColor(GREEN);
+  selectColor(YELLOW);
+
 
   startTIM2();
 
@@ -260,6 +274,59 @@ void callBackBlueButton()
 		refleshSegmentValue();
 		startTIM5();
 		chatteringTimerFlag3 = true;
+	}
+}
+void callBackLEDPWM()
+{
+	count++;
+
+	if(count >= 255){
+		count = 0;
+	}
+	if(count < dutyGreen){
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+	}
+	else{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
+	}
+	if(count < dutyBlue){
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
+	}
+	else{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
+	}
+	if(count < dutyRed){
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);
+	}
+	else{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
+	}
+}
+void selectColor(COLOR_t color)
+{
+	switch (color) {
+		case RED:
+			dutyRed = 200;
+			dutyGreen = 0;
+			dutyBlue = 0;
+			break;
+		case GREEN:
+			dutyRed = 0;
+			dutyGreen = 200;
+			dutyBlue = 0;
+			break;
+		case BLUE:
+			dutyRed = 0;
+			dutyGreen = 0;
+			dutyBlue = 200;
+			break;
+		case YELLOW:
+			dutyRed = 100;
+			dutyGreen = 100;
+			dutyBlue = 0;
+			break;
+		default:
+			break;
 	}
 }
 /* USER CODE END 4 */
