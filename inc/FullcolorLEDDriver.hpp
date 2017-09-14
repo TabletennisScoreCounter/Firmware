@@ -35,6 +35,9 @@ private:
 	static GPIO_PORT_NAME_t BluePort[10];
 	uint8_t ClassInstanceIndex;
 	uint8_t Duty;
+	uint8_t RedRate;
+	uint8_t GreenRate;
+	uint8_t BlueRate;
 public:
 	FullcolorLEDDriver(GPIO_PORT_NAME_t redPort, GPIO_PORT_NAME_t greenPort, GPIO_PORT_NAME_t bluePort);
 	void setColor(LED_COLOR_t color);
