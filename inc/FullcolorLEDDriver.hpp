@@ -40,6 +40,7 @@ private:
 	uint8_t BlueRate;
 public:
 	FullcolorLEDDriver(GPIO_PORT_NAME_t redPort, GPIO_PORT_NAME_t greenPort, GPIO_PORT_NAME_t bluePort);
+	~FullcolorLEDDriver();
 	void setColor(LED_COLOR_t color);
 	void setDuty(uint8_t duty);
 private:

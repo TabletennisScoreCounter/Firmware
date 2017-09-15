@@ -6,6 +6,7 @@
  */
 
 #include "FullcolorLEDDriver.hpp"
+#include "tim.h"
 
 uint8_t FullcolorLEDDriver::DutyCount[10][3]{{0}};
 uint8_t FullcolorLEDDriver::ClassInsatanceCount = 0;
@@ -21,6 +22,12 @@ FullcolorLEDDriver::FullcolorLEDDriver(GPIO_PORT_NAME_t redPort, GPIO_PORT_NAME_
 	GreenRate = 0;
 	BlueRate = 0;
 
+	if(ClassInsatanceCount == 0){
+		IRQAttachTIM15(callBack);
+
+		startTIM15();
+	}
+
 	if(ClassInsatanceCount < 10){
 		RedPort[ClassInsatanceCount] = redPort;
 		GreenPort[ClassInsatanceCount] = greenPort;
@@ -30,6 +37,10 @@ FullcolorLEDDriver::FullcolorLEDDriver(GPIO_PORT_NAME_t redPort, GPIO_PORT_NAME_
 
 		ClassInstanceIndex = ClassInsatanceCount - 1;
 	}
+}
+FullcolorLEDDriver::~FullcolorLEDDriver()
+{
+
 }
 void FullcolorLEDDriver::setColor(LED_COLOR_t color)
 {

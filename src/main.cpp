@@ -40,6 +40,7 @@
 #include "SegmentControl.hpp"
 #include "ScoreManager.hpp"
 #include "DigitalOut.hpp"
+#include "FullcolorLEDDriver.hpp"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -69,8 +70,12 @@ static uint8_t count = 0;
 static uint8_t dutyRed = 0;
 static uint8_t dutyGreen = 0;
 static uint8_t dutyBlue = 0;
+static uint8_t dutyRed2 = 0;
+static uint8_t dutyGreen2 = 0;
+static uint8_t dutyBlue2 = 0;
 
 void selectColor(COLOR_t);
+void selectColor2(COLOR_t);
 
 void callBack();
 void callBackButton();
@@ -115,8 +120,19 @@ int main(void)
   MX_TIM15_Init();
 
   /* USER CODE BEGIN 2 */
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //上青
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET); //上赤
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET); //下緑
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); //下赤
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); //下青
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET); //上緑
 
-
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
 
   seg = new SegmentControl(PC5, PC6, PC8, PB11, PB12, PA11, PA12);
   channelSel = new BusOut(PB1, PB2, PB15, PB14, PC4, PB13);
@@ -129,11 +145,11 @@ int main(void)
   IRQAttachTIM15(callBackLEDPWM);
 
   startTIM15();
-  selectColor(BLUE);
-  selectColor(RED);
-  selectColor(GREEN);
+  //selectColor(BLUE);
+  //selectColor(RED);
+  //selectColor(GREEN);
   selectColor(YELLOW);
-
+  selectColor2(BLUE);
 
   startTIM2();
 
@@ -283,47 +299,97 @@ void callBackLEDPWM()
 	if(count >= 255){
 		count = 0;
 	}
-	if(count < dutyGreen){
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-	}
-	else{
+	if(count < dutyBlue){
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
 	}
-	if(count < dutyBlue){
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
+	else{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
+	}
+
+	if(count < dutyBlue2){
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
 	}
 	else{
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
+	}
+
+	if(count < dutyRed){
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
 	}
-	if(count < dutyRed){
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);
+	else{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
+	}
+
+	if(count < dutyRed2){
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
 	}
 	else{
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
+	}
+
+	if(count < dutyGreen){
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+	}
+	else{
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+	}
+
+	if(count < dutyGreen2){
 		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
+	}
+	else{
+		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);
 	}
 }
 void selectColor(COLOR_t color)
 {
 	switch (color) {
 		case RED:
-			dutyRed = 200;
+			dutyRed = 50;
 			dutyGreen = 0;
 			dutyBlue = 0;
 			break;
 		case GREEN:
 			dutyRed = 0;
-			dutyGreen = 200;
+			dutyGreen = 50;
 			dutyBlue = 0;
 			break;
 		case BLUE:
 			dutyRed = 0;
 			dutyGreen = 0;
-			dutyBlue = 200;
+			dutyBlue = 50;
 			break;
 		case YELLOW:
-			dutyRed = 100;
-			dutyGreen = 100;
+			dutyRed = 25;
+			dutyGreen = 25;
 			dutyBlue = 0;
+			break;
+		default:
+			break;
+	}
+}
+void selectColor2(COLOR_t color)
+{
+	switch (color) {
+		case RED:
+			dutyRed2 = 50;
+			dutyGreen2 = 0;
+			dutyBlue2 = 0;
+			break;
+		case GREEN:
+			dutyRed2 = 0;
+			dutyGreen2 = 50;
+			dutyBlue2 = 0;
+			break;
+		case BLUE:
+			dutyRed2 = 0;
+			dutyGreen2 = 0;
+			dutyBlue2 = 50;
+			break;
+		case YELLOW:
+			dutyRed2 = 25;
+			dutyGreen2 = 25;
+			dutyBlue2 = 0;
 			break;
 		default:
 			break;
