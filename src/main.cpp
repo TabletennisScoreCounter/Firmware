@@ -41,11 +41,13 @@
 #include "ScoreManager.hpp"
 #include "DigitalOut.hpp"
 #include "FullcolorLEDDriver.hpp"
+#include "DoublesPositionManager.hpp"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
+
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE END PV */
@@ -65,6 +67,10 @@ enum COLOR_t{
 	GREEN,
 	BLUE,
 	YELLOW
+};
+enum GAME_MODE_t{
+	SINGLES,
+	DOUBLES
 };
 static uint8_t count = 0;
 static uint8_t dutyRed = 0;
@@ -87,6 +93,7 @@ void callBackChattering3();
 void callBackLEDPWM();
 void refleshSegmentValue();
 void swapServerReceiverLED();
+void doublesSwapServerReceiverLED();
 static bool changeSideFlag = false;
 static bool chatteringTimerFlag = false;
 static bool chatteringTimerFlag2 = false;
@@ -95,13 +102,18 @@ SegmentControl* seg/*(PB4,PB10,PA8,PA4,PA1,PA0,PB5)*/;
 BusOut* channelSel/*(PA5, PA6, PA7, PB6, PC7, PA9)*/;
 uint8_t segmentValue[6]{0};
 ScoreManager scoreManager;
+
+DoublesPositionManger player1(DoublesPositionManger::SERVER);
+DoublesPositionManger player2(DoublesPositionManger::SERVER_ASISTANT);
+DoublesPositionManger player3(DoublesPositionManger::RECEIVER);
+DoublesPositionManger player4(DoublesPositionManger::RECEIVER_ASISTANT);
 /* USER CODE END 0 */
 
 int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
+  static GAME_MODE_t gameMode = DOUBLES;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -121,19 +133,6 @@ int main(void)
   MX_TIM15_Init();
 
   /* USER CODE BEGIN 2 */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET); //上青
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET); //上赤
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET); //下緑
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET); //下赤
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET); //下青
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET); //上緑
-
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
 
   seg = new SegmentControl(PC5, PC6, PC8, PB11, PB12, PA11, PA12);
   channelSel = new BusOut(PB1, PB2, PB15, PB14, PC4, PB13);
@@ -147,8 +146,7 @@ int main(void)
 
   startTIM15();
 
-  selectColor(RED);
-  selectColor2(BLUE);
+
 
   startTIM2();
 
@@ -157,9 +155,17 @@ int main(void)
   GPIOIRQAttach(PC13,callBackBlueButton);
   /* USER CODE END 2 */
 
-
+  if(gameMode == SINGLES){
+	  selectColor(RED);
+	  selectColor2(BLUE);
+  }
+  else if(gameMode == DOUBLES){
+	  selectColor(RED);
+	  selectColor2(BLUE);
+  }
 
   /* Infinite loop */
+
   /* USER CODE BEGIN WHILE */
   while (1)
   {
@@ -171,24 +177,63 @@ int main(void)
 		  enemyScore = 0;
 	  }
 
-	  if(scoreManager.getMyPoint() >= (ScoreManager::GAME_POINT - 1) &&
-			  scoreManager.getEnemyPoint() >= (ScoreManager::GAME_POINT - 1)){//デュース
-		  if(scoreManager.getMyPoint() - myScore +
-				  scoreManager.getEnemyPoint()  - enemyScore > 0 ){//1本進むごとにサーブ交代
-			  swapServerReceiverLED();
+	  if(gameMode == SINGLES){
+		  if(scoreManager.getMyPoint() >= (ScoreManager::GAME_POINT - 1) &&
+				  scoreManager.getEnemyPoint() >= (ScoreManager::GAME_POINT - 1)){//デュース
+			  if(scoreManager.getMyPoint() - myScore +
+					  scoreManager.getEnemyPoint()  - enemyScore > 0 ){//1本進むごとにサーブ交代
 
-			  myScore = scoreManager.getMyPoint();
-			  enemyScore = scoreManager.getEnemyPoint();
+
+				  swapServerReceiverLED();
+
+				  myScore = scoreManager.getMyPoint();
+				  enemyScore = scoreManager.getEnemyPoint();
+			  }
+		  }
+		  else
+		  {
+			  if(scoreManager.getMyPoint() - myScore +
+					  scoreManager.getEnemyPoint() - enemyScore > 1){//2本進むごとにサーブ交代
+
+
+
+				  swapServerReceiverLED();
+
+				  myScore = scoreManager.getMyPoint();
+				  enemyScore = scoreManager.getEnemyPoint();
+			  }
 		  }
 	  }
-	  else
-	  {
-		  if(scoreManager.getMyPoint() - myScore +
-				  scoreManager.getEnemyPoint() - enemyScore > 1){//2本進むごとにサーブ交代
-			  swapServerReceiverLED();
+	  else if(gameMode == DOUBLES){
+		  if(scoreManager.getMyPoint() >= (ScoreManager::GAME_POINT - 1) &&
+				  scoreManager.getEnemyPoint() >= (ScoreManager::GAME_POINT - 1)){//デュース
+			  if(scoreManager.getMyPoint() - myScore +
+					  scoreManager.getEnemyPoint()  - enemyScore > 0 ){//1本進むごとにサーブ交代
+				  player1.rotatePosition();
+				  player2.rotatePosition();
+				  player3.rotatePosition();
+				  player4.rotatePosition();
+				  doublesSwapServerReceiverLED();
 
-			  myScore = scoreManager.getMyPoint();
-			  enemyScore = scoreManager.getEnemyPoint();
+				  myScore = scoreManager.getMyPoint();
+				  enemyScore = scoreManager.getEnemyPoint();
+			  }
+		  }
+		  else
+		  {
+			  if(scoreManager.getMyPoint() - myScore +
+					  scoreManager.getEnemyPoint() - enemyScore > 1){//2本進むごとにサーブ交代
+
+				  player1.rotatePosition();
+				  player2.rotatePosition();
+				  player3.rotatePosition();
+				  player4.rotatePosition();
+
+				  doublesSwapServerReceiverLED();
+
+				  myScore = scoreManager.getMyPoint();
+				  enemyScore = scoreManager.getEnemyPoint();
+			  }
 		  }
 	  }
 
@@ -434,6 +479,34 @@ void swapServerReceiverLED()
 	dutyRed2 = dutyRedTemp;
 	dutyGreen2 = dutyGreenTemp;
 	dutyBlue2 = dutyBlueTemp;
+}
+void doublesSwapServerReceiverLED()
+{
+	if(player1.getCurrentPosition() == DoublesPositionManger::SERVER){
+		selectColor(RED);
+	}
+	else if(player2.getCurrentPosition() == DoublesPositionManger::SERVER){
+		selectColor(GREEN);
+	}
+	else if(player3.getCurrentPosition() == DoublesPositionManger::SERVER){
+		selectColor(BLUE);
+	}
+	else if(player4.getCurrentPosition() == DoublesPositionManger::SERVER){
+		selectColor(YELLOW);
+	}
+
+	if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER){
+		selectColor2(RED);
+	}
+	else if(player2.getCurrentPosition() == DoublesPositionManger::RECEIVER){
+		selectColor2(GREEN);
+	}
+	else if(player3.getCurrentPosition() == DoublesPositionManger::RECEIVER){
+		selectColor2(BLUE);
+	}
+	else if(player4.getCurrentPosition() == DoublesPositionManger::RECEIVER){
+		selectColor2(YELLOW);
+	}
 }
 /* USER CODE END 4 */
 
