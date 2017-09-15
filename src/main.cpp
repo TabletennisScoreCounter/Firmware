@@ -86,6 +86,7 @@ void callBackChattering2();
 void callBackChattering3();
 void callBackLEDPWM();
 void refleshSegmentValue();
+void swapServerReceiverLED();
 static bool changeSideFlag = false;
 static bool chatteringTimerFlag = false;
 static bool chatteringTimerFlag2 = false;
@@ -145,10 +146,8 @@ int main(void)
   IRQAttachTIM15(callBackLEDPWM);
 
   startTIM15();
-  //selectColor(BLUE);
-  //selectColor(RED);
-  //selectColor(GREEN);
-  selectColor(YELLOW);
+
+  selectColor(RED);
   selectColor2(BLUE);
 
   startTIM2();
@@ -164,6 +163,35 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  static uint8_t myScore = 0;
+	  static uint8_t enemyScore = 0;
+
+	  if(scoreManager.getMyPoint() == 0 && scoreManager.getEnemyPoint() == 0){//ゲームセットの場合リセット
+		  myScore = 0;
+		  enemyScore = 0;
+	  }
+
+	  if(scoreManager.getMyPoint() >= (ScoreManager::GAME_POINT - 1) &&
+			  scoreManager.getEnemyPoint() >= (ScoreManager::GAME_POINT - 1)){//デュース
+		  if(scoreManager.getMyPoint() - myScore +
+				  scoreManager.getEnemyPoint()  - enemyScore > 0 ){//1本進むごとにサーブ交代
+			  swapServerReceiverLED();
+
+			  myScore = scoreManager.getMyPoint();
+			  enemyScore = scoreManager.getEnemyPoint();
+		  }
+	  }
+	  else
+	  {
+		  if(scoreManager.getMyPoint() - myScore +
+				  scoreManager.getEnemyPoint() - enemyScore > 1){//2本進むごとにサーブ交代
+			  swapServerReceiverLED();
+
+			  myScore = scoreManager.getMyPoint();
+			  enemyScore = scoreManager.getEnemyPoint();
+		  }
+	  }
+
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
@@ -243,7 +271,6 @@ void callBackButton()
 		startTIM3();
 		chatteringTimerFlag = true;
 	}
-
 }
 void callBackButton2()
 {
@@ -254,7 +281,6 @@ void callBackButton2()
 		chatteringTimerFlag2 = true;
 	}
 }
-
 void callBackChattering()
 {
 	chatteringTimerFlag = false;
@@ -394,6 +420,20 @@ void selectColor2(COLOR_t color)
 		default:
 			break;
 	}
+}
+void swapServerReceiverLED()
+{
+	uint8_t dutyRedTemp = dutyRed;
+	uint8_t dutyGreenTemp = dutyGreen;
+	uint8_t dutyBlueTemp = dutyBlue;
+
+	dutyRed = dutyRed2;
+	dutyGreen = dutyGreen2;
+	dutyBlue = dutyBlue2;
+
+	dutyRed2 = dutyRedTemp;
+	dutyGreen2 = dutyGreenTemp;
+	dutyBlue2 = dutyBlueTemp;
 }
 /* USER CODE END 4 */
 
