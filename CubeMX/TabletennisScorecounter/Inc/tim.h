@@ -42,14 +42,14 @@
 #include "stm32l4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "gpio.h"
 /* USER CODE END Includes */
 
+extern TIM_HandleTypeDef htim1;
 extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim5;
-extern TIM_HandleTypeDef htim15;
 
 /* USER CODE BEGIN Private defines */
 
@@ -57,13 +57,18 @@ extern TIM_HandleTypeDef htim15;
 
 extern void Error_Handler(void);
 
+void MX_TIM1_Init(void);
 void MX_TIM2_Init(void);
 void MX_TIM3_Init(void);
 void MX_TIM4_Init(void);
 void MX_TIM5_Init(void);
-void MX_TIM15_Init(void);
+                    
+void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
+                                                
 
 /* USER CODE BEGIN Prototypes */
+void startTIM1();
+void stopTIM2();
 void startTIM2();
 void IRQAttachTIM2(void (*funcPtr)());
 void startTIM3();
@@ -75,9 +80,7 @@ void stopTIM4();
 void startTIM5();
 void IRQAttachTIM5(void (*funPtr)());
 void stopTIM5();
-void startTIM15();
-void IRQAttachTIM15(void (*funPtr)());
-void stopTIM15();
+void setDutyTIM(TIM_HandleTypeDef* htim, uint8_t Duty, uint32_t channel);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

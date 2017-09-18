@@ -31,6 +31,7 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
+#include <FullcolorLEDDriver.hpp>
 #include "stm32l4xx_hal.h"
 
 
@@ -42,12 +43,12 @@
 #include "DigitalOut.hpp"
 #include "FullcolorLEDDriver.hpp"
 #include "DoublesPositionManager.hpp"
+#include "SinglesPositionManager.hpp"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE END PV */
@@ -72,32 +73,17 @@ enum GAME_MODE_t{
 	SINGLES,
 	DOUBLES
 };
-static uint8_t count = 0;
-static uint8_t dutyRed = 0;
-static uint8_t dutyGreen = 0;
-static uint8_t dutyBlue = 0;
-static uint8_t dutyRed2 = 0;
-static uint8_t dutyGreen2 = 0;
-static uint8_t dutyBlue2 = 0;
-
-void selectColor(COLOR_t);
-void selectColor2(COLOR_t);
 
 void callBack();
 void callBackButton();
 void callBackButton2();
 void callBackBlueButton();
 void callBackChattering();
-void callBackChattering2();
-void callBackChattering3();
-void callBackLEDPWM();
 void refleshSegmentValue();
 void swapServerReceiverLED();
 void doublesSwapServerReceiverLED();
 static bool changeSideFlag = false;
-static bool chatteringTimerFlag = false;
-static bool chatteringTimerFlag2 = false;
-static bool chatteringTimerFlag3 = false;
+
 SegmentControl* seg/*(PB4,PB10,PA8,PA4,PA1,PA0,PB5)*/;
 BusOut* channelSel/*(PA5, PA6, PA7, PB6, PC7, PA9)*/;
 uint8_t segmentValue[6]{0};
@@ -107,13 +93,22 @@ DoublesPositionManger player1(DoublesPositionManger::SERVER);
 DoublesPositionManger player2(DoublesPositionManger::SERVER_ASISTANT);
 DoublesPositionManger player3(DoublesPositionManger::RECEIVER);
 DoublesPositionManger player4(DoublesPositionManger::RECEIVER_ASISTANT);
+
+SinglesPositionManger singlesPlayer1(SinglesPositionManger::SERVER);
+SinglesPositionManger singlesPlayer2(SinglesPositionManger::RECEIVER);
+
+FullcolorLEDDriver* led1;
+FullcolorLEDDriver* led2;
+void initializeServerReceiverLED();
+
+bool antiChatteringFlag[10]{false};
 /* USER CODE END 0 */
 
 int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-  static GAME_MODE_t gameMode = DOUBLES;
+  static GAME_MODE_t gameMode = SINGLES;
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -126,29 +121,24 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_TIM1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_TIM5_Init();
-  MX_TIM15_Init();
 
   /* USER CODE BEGIN 2 */
+  initializeServerReceiverLED();
 
   seg = new SegmentControl(PC5, PC6, PC8, PB11, PB12, PA11, PA12);
   channelSel = new BusOut(PB1, PB2, PB15, PB14, PC4, PB13);
 
-  IRQAttachTIM2(callBack);
-  IRQAttachTIM3(callBackChattering);
-  IRQAttachTIM4(callBackChattering2);
-  IRQAttachTIM5(callBackChattering3);
+  IRQAttachTIM4(callBackChattering);
 
-  IRQAttachTIM15(callBackLEDPWM);
+  IRQAttachTIM5(callBack);
 
-  startTIM15();
-
-
-
-  startTIM2();
+  startTIM4();
+  startTIM5();
 
   GPIOIRQAttach(PA0,callBackButton);
   GPIOIRQAttach(PA1,callBackButton2);
@@ -156,16 +146,15 @@ int main(void)
   /* USER CODE END 2 */
 
   if(gameMode == SINGLES){
-	  selectColor(RED);
-	  selectColor2(BLUE);
+	  led1->setColor(FullcolorLEDDriver::RED);
+	  led2->setColor(FullcolorLEDDriver::BLUE);
   }
   else if(gameMode == DOUBLES){
-	  selectColor(RED);
-	  selectColor2(BLUE);
+	  led1->setColor(FullcolorLEDDriver::RED);
+	  led2->setColor(FullcolorLEDDriver::BLUE);
   }
 
   /* Infinite loop */
-
   /* USER CODE BEGIN WHILE */
   while (1)
   {
@@ -182,10 +171,9 @@ int main(void)
 				  scoreManager.getEnemyPoint() >= (ScoreManager::GAME_POINT - 1)){//デュース
 			  if(scoreManager.getMyPoint() - myScore +
 					  scoreManager.getEnemyPoint()  - enemyScore > 0 ){//1本進むごとにサーブ交代
-
-
+				  singlesPlayer1.rotatePosition();
+				  singlesPlayer2.rotatePosition();
 				  swapServerReceiverLED();
-
 				  myScore = scoreManager.getMyPoint();
 				  enemyScore = scoreManager.getEnemyPoint();
 			  }
@@ -194,9 +182,8 @@ int main(void)
 		  {
 			  if(scoreManager.getMyPoint() - myScore +
 					  scoreManager.getEnemyPoint() - enemyScore > 1){//2本進むごとにサーブ交代
-
-
-
+				  singlesPlayer1.rotatePosition();
+				  singlesPlayer2.rotatePosition();
 				  swapServerReceiverLED();
 
 				  myScore = scoreManager.getMyPoint();
@@ -310,36 +297,35 @@ void callBack()
 }
 void callBackButton()
 {
-	if(!chatteringTimerFlag){
+	if(!antiChatteringFlag[0]){
 		scoreManager.addMyPoint();
 		refleshSegmentValue();
-		startTIM3();
-		chatteringTimerFlag = true;
+		antiChatteringFlag[0] = true;
 	}
 }
 void callBackButton2()
 {
-	if(!chatteringTimerFlag2){
+	if(!antiChatteringFlag[1]){
 		scoreManager.addEnemyPoint();
 		refleshSegmentValue();
-		startTIM4();
-		chatteringTimerFlag2 = true;
+		antiChatteringFlag[1] = true;
 	}
 }
 void callBackChattering()
 {
-	chatteringTimerFlag = false;
-	stopTIM3();
-}
-void callBackChattering2()
-{
-	chatteringTimerFlag2 = false;
-	stopTIM4();
-}
-void callBackChattering3()
-{
-	chatteringTimerFlag3 = false;
-	stopTIM5();
+	static uint8_t count[10]{0};
+
+	for(int i = 0; i < 10; i++){
+		if(antiChatteringFlag[i]){
+			count[i]++;
+
+			if(count[i] >= 100){
+				antiChatteringFlag[i] = false;
+				count[i] = 0;
+			}
+		}
+	}
+
 }
 void refleshSegmentValue()
 {
@@ -354,159 +340,101 @@ void refleshSegmentValue()
 }
 void callBackBlueButton()
 {
-	if(!chatteringTimerFlag3){
+	if(!antiChatteringFlag[2]){
 		changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
 
 		scoreManager.swapPoint();
 		refleshSegmentValue();
-		startTIM5();
-		chatteringTimerFlag3 = true;
-	}
-}
-void callBackLEDPWM()
-{
-	count++;
-
-	if(count >= 255){
-		count = 0;
-	}
-	if(count < dutyBlue){
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_SET);
-	}
-	else{
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_8, GPIO_PIN_RESET);
-	}
-
-	if(count < dutyBlue2){
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_SET);
-	}
-	else{
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_5, GPIO_PIN_RESET);
-	}
-
-	if(count < dutyRed){
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_SET);
-	}
-	else{
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_9, GPIO_PIN_RESET);
-	}
-
-	if(count < dutyRed2){
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_SET);
-	}
-	else{
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_4, GPIO_PIN_RESET);
-	}
-
-	if(count < dutyGreen){
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-	}
-	else{
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-	}
-
-	if(count < dutyGreen2){
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_SET);
-	}
-	else{
-		HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);
-	}
-}
-void selectColor(COLOR_t color)
-{
-	switch (color) {
-		case RED:
-			dutyRed = 50;
-			dutyGreen = 0;
-			dutyBlue = 0;
-			break;
-		case GREEN:
-			dutyRed = 0;
-			dutyGreen = 50;
-			dutyBlue = 0;
-			break;
-		case BLUE:
-			dutyRed = 0;
-			dutyGreen = 0;
-			dutyBlue = 50;
-			break;
-		case YELLOW:
-			dutyRed = 25;
-			dutyGreen = 25;
-			dutyBlue = 0;
-			break;
-		default:
-			break;
-	}
-}
-void selectColor2(COLOR_t color)
-{
-	switch (color) {
-		case RED:
-			dutyRed2 = 50;
-			dutyGreen2 = 0;
-			dutyBlue2 = 0;
-			break;
-		case GREEN:
-			dutyRed2 = 0;
-			dutyGreen2 = 50;
-			dutyBlue2 = 0;
-			break;
-		case BLUE:
-			dutyRed2 = 0;
-			dutyGreen2 = 0;
-			dutyBlue2 = 50;
-			break;
-		case YELLOW:
-			dutyRed2 = 25;
-			dutyGreen2 = 25;
-			dutyBlue2 = 0;
-			break;
-		default:
-			break;
+		antiChatteringFlag[2] = true;
 	}
 }
 void swapServerReceiverLED()
 {
-	uint8_t dutyRedTemp = dutyRed;
-	uint8_t dutyGreenTemp = dutyGreen;
-	uint8_t dutyBlueTemp = dutyBlue;
+	if(singlesPlayer1.getCurrentPosition() == SinglesPositionManger::SERVER){
+			led1->setColor(FullcolorLEDDriver::RED);
+	}
+	else if(singlesPlayer2.getCurrentPosition() == SinglesPositionManger::SERVER){
+		led1->setColor(FullcolorLEDDriver::BLUE);
+	}
 
-	dutyRed = dutyRed2;
-	dutyGreen = dutyGreen2;
-	dutyBlue = dutyBlue2;
-
-	dutyRed2 = dutyRedTemp;
-	dutyGreen2 = dutyGreenTemp;
-	dutyBlue2 = dutyBlueTemp;
+	if(singlesPlayer1.getCurrentPosition() == SinglesPositionManger::RECEIVER){
+			led2->setColor(FullcolorLEDDriver::RED);
+	}
+	else if(singlesPlayer2.getCurrentPosition() == SinglesPositionManger::RECEIVER){
+		led2->setColor(FullcolorLEDDriver::BLUE);
+	}
 }
 void doublesSwapServerReceiverLED()
 {
 	if(player1.getCurrentPosition() == DoublesPositionManger::SERVER){
-		selectColor(RED);
+		led1->setColor(FullcolorLEDDriver::RED);
 	}
 	else if(player2.getCurrentPosition() == DoublesPositionManger::SERVER){
-		selectColor(GREEN);
+		led1->setColor(FullcolorLEDDriver::GREEN);
 	}
 	else if(player3.getCurrentPosition() == DoublesPositionManger::SERVER){
-		selectColor(BLUE);
+		led1->setColor(FullcolorLEDDriver::BLUE);
 	}
 	else if(player4.getCurrentPosition() == DoublesPositionManger::SERVER){
-		selectColor(YELLOW);
+		led1->setColor(FullcolorLEDDriver::YELLOW);
 	}
 
 	if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER){
-		selectColor2(RED);
+		led2->setColor(FullcolorLEDDriver::RED);
 	}
 	else if(player2.getCurrentPosition() == DoublesPositionManger::RECEIVER){
-		selectColor2(GREEN);
+		led2->setColor(FullcolorLEDDriver::GREEN);
 	}
 	else if(player3.getCurrentPosition() == DoublesPositionManger::RECEIVER){
-		selectColor2(BLUE);
+		led2->setColor(FullcolorLEDDriver::BLUE);
 	}
 	else if(player4.getCurrentPosition() == DoublesPositionManger::RECEIVER){
-		selectColor2(YELLOW);
+		led2->setColor(FullcolorLEDDriver::YELLOW);
 	}
+}
+void initializeServerReceiverLED()
+{
+	LEDPWMPort_t led1_Red = {
+			  .PortName = PA9,
+			  .TimerHandle = &htim1,
+			  .TimerChannel = TIM_CHANNEL_2
+
+	  };
+
+	  LEDPWMPort_t led1_Green = {
+			  .PortName = PB10,
+			  .TimerHandle = &htim2,
+			  .TimerChannel = TIM_CHANNEL_3
+	  };
+
+	  LEDPWMPort_t led1_Blue = {
+			  .PortName = PA8,
+			  .TimerHandle = &htim1,
+			  .TimerChannel = TIM_CHANNEL_1
+	  };
+
+	  LEDPWMPort_t led2_Red = {
+	  		  .PortName = PB4,
+	  		  .TimerHandle = &htim3,
+	  		  .TimerChannel = TIM_CHANNEL_1
+	  };
+	  LEDPWMPort_t led2_Green = {
+	  		  .PortName = PA10,
+	  		  .TimerHandle = &htim1,
+	  		  .TimerChannel = TIM_CHANNEL_3
+	  };
+	  LEDPWMPort_t led2_Blue = {
+	  		  .PortName = PB5,
+	  		  .TimerHandle = &htim3,
+	  		  .TimerChannel = TIM_CHANNEL_2
+	  };
+
+
+	  led1 = new FullcolorLEDDriver(led1_Red, led1_Green, led1_Blue);
+	  led2 = new FullcolorLEDDriver(led2_Red, led2_Green, led2_Blue);
+
+	  led1->setDuty(30);
+	  led2->setDuty(30);
 }
 /* USER CODE END 4 */
 

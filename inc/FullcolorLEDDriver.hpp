@@ -1,20 +1,24 @@
 /*
- * FullcolorLEDDriver.hpp
+ * FullcolorLEDDriver2.hpp
  *
- *  Created on: 2017/09/09
+ *  Created on: 2017/09/18
  *      Author: Shuji
  */
 
 #ifndef FULLCOLORLEDDRIVER_HPP_
 #define FULLCOLORLEDDRIVER_HPP_
 
-#include "gpio.h"
+#include "tim.h"
 
-#include "BusOut.hpp"
+struct LEDPWMPort_t{
+	GPIO_PORT_NAME_t PortName;
+	TIM_HandleTypeDef* TimerHandle;
+	uint32_t TimerChannel;
+};
 
 class FullcolorLEDDriver{
 public:
-	enum LED_COLOR_t{
+	enum LEDCOLOR_t{
 		RED,
 		GREEN,
 		BLUE,
@@ -22,34 +26,27 @@ public:
 		PURPLE
 	};
 private:
-	enum LED_INDEX_t{
-		INDEX_RED = 0,
-		INDEX_GREEN = 1,
-		INDEX_BLUE = 2
+	enum LED_ELEMENT_INDEX_t{
+		RED_ELEMENT = 0,
+		GREEN_ELEMENT = 1,
+		BLUE_ELEMENT = 2
 	};
-private:
-	static uint8_t DutyCount[10][3];
-	static uint8_t ClassInsatanceCount;
-	static GPIO_PORT_NAME_t RedPort[10];
-	static GPIO_PORT_NAME_t GreenPort[10];
-	static GPIO_PORT_NAME_t BluePort[10];
-	uint8_t ClassInstanceIndex;
-	uint8_t Duty;
-	uint8_t RedRate;
-	uint8_t GreenRate;
-	uint8_t BlueRate;
 public:
-	FullcolorLEDDriver(GPIO_PORT_NAME_t redPort, GPIO_PORT_NAME_t greenPort, GPIO_PORT_NAME_t bluePort);
+	FullcolorLEDDriver(LEDPWMPort_t redPort, LEDPWMPort_t greenPort, LEDPWMPort_t bluePort);
 	~FullcolorLEDDriver();
-	void setColor(LED_COLOR_t color);
-	void setDuty(uint8_t duty);
+	void setDuty(uint8_t dutyPercent);
+	void setColor(LEDCOLOR_t color);
 private:
-	void setRedRate(uint8_t rate);
-	void setGreenRate(uint8_t rate);
-	void setBlueRate(uint8_t rate);
-	static void callBack();
-
+	TIM_HandleTypeDef* htim[3];
+	uint32_t TimerChannel[3];
+	GPIO_PORT_NAME_t PortName[3];
+	uint8_t Duty;
+	uint8_t Red;
+	uint8_t Green;
+	uint8_t Blue;
+	void setColorParam(uint8_t red, uint8_t green, uint8_t blue);
 };
+
 
 
 #endif /* FULLCOLORLEDDRIVER_HPP_ */
