@@ -63,12 +63,6 @@ void Error_Handler(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-enum COLOR_t{
-	RED,
-	GREEN,
-	BLUE,
-	YELLOW
-};
 enum GAME_MODE_t{
 	SINGLES,
 	DOUBLES
@@ -78,16 +72,19 @@ void callBack();
 void callBackButton();
 void callBackButton2();
 void callBackBlueButton();
+void callBackButton3();
+void callBackButton4();
 void callBackChattering();
 void refleshSegmentValue();
-void swapServerReceiverLED();
-void doublesSwapServerReceiverLED();
+void refleshServerReceiverLED_Singles();
+void refleshServerReceiverLED_Doubles();
 static bool changeSideFlag = false;
 
-SegmentControl* seg/*(PB4,PB10,PA8,PA4,PA1,PA0,PB5)*/;
-BusOut* channelSel/*(PA5, PA6, PA7, PB6, PC7, PA9)*/;
+SegmentControl* seg;
+BusOut* channelSel;
 uint8_t segmentValue[6]{0};
 ScoreManager scoreManager;
+void initializeSegment();
 
 DoublesPositionManger player1(DoublesPositionManger::SERVER);
 DoublesPositionManger player2(DoublesPositionManger::SERVER_ASISTANT);
@@ -99,16 +96,19 @@ SinglesPositionManger singlesPlayer2(SinglesPositionManger::RECEIVER);
 
 FullcolorLEDDriver* led1;
 FullcolorLEDDriver* led2;
-void initializeServerReceiverLED();
 
+void initializeServerReceiverLED();
+void initializeButtons();
 bool antiChatteringFlag[10]{false};
+
+void refleshGameState(GAME_MODE_t mode);
+GAME_MODE_t gameMode = SINGLES;
 /* USER CODE END 0 */
 
 int main(void)
 {
-
   /* USER CODE BEGIN 1 */
-  static GAME_MODE_t gameMode = SINGLES;
+
   /* USER CODE END 1 */
 
   /* MCU Configuration----------------------------------------------------------*/
@@ -130,100 +130,24 @@ int main(void)
   /* USER CODE BEGIN 2 */
   initializeServerReceiverLED();
 
-  seg = new SegmentControl(PC5, PC6, PC8, PB11, PB12, PA11, PA12);
-  channelSel = new BusOut(PB1, PB2, PB15, PB14, PC4, PB13);
+  initializeSegment();
 
-  IRQAttachTIM4(callBackChattering);
+  initializeButtons();
 
-  IRQAttachTIM5(callBack);
+  if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0) == GPIO_PIN_SET){
+	  gameMode = DOUBLES;
+  }
+  else{
+	  gameMode = SINGLES;
+  }
 
-  startTIM4();
-  startTIM5();
-
-  GPIOIRQAttach(PA0,callBackButton);
-  GPIOIRQAttach(PA1,callBackButton2);
-  GPIOIRQAttach(PC13,callBackBlueButton);
   /* USER CODE END 2 */
-
-  if(gameMode == SINGLES){
-	  led1->setColor(FullcolorLEDDriver::RED);
-	  led2->setColor(FullcolorLEDDriver::BLUE);
-  }
-  else if(gameMode == DOUBLES){
-	  led1->setColor(FullcolorLEDDriver::RED);
-	  led2->setColor(FullcolorLEDDriver::BLUE);
-  }
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-	  static uint8_t myScore = 0;
-	  static uint8_t enemyScore = 0;
-
-	  if(scoreManager.getMyPoint() == 0 && scoreManager.getEnemyPoint() == 0){//ゲームセットの場合リセット
-		  myScore = 0;
-		  enemyScore = 0;
-	  }
-
-	  if(gameMode == SINGLES){
-		  if(scoreManager.getMyPoint() >= (ScoreManager::GAME_POINT - 1) &&
-				  scoreManager.getEnemyPoint() >= (ScoreManager::GAME_POINT - 1)){//デュース
-			  if(scoreManager.getMyPoint() - myScore +
-					  scoreManager.getEnemyPoint()  - enemyScore > 0 ){//1本進むごとにサーブ交代
-				  singlesPlayer1.rotatePosition();
-				  singlesPlayer2.rotatePosition();
-				  swapServerReceiverLED();
-				  myScore = scoreManager.getMyPoint();
-				  enemyScore = scoreManager.getEnemyPoint();
-			  }
-		  }
-		  else
-		  {
-			  if(scoreManager.getMyPoint() - myScore +
-					  scoreManager.getEnemyPoint() - enemyScore > 1){//2本進むごとにサーブ交代
-				  singlesPlayer1.rotatePosition();
-				  singlesPlayer2.rotatePosition();
-				  swapServerReceiverLED();
-
-				  myScore = scoreManager.getMyPoint();
-				  enemyScore = scoreManager.getEnemyPoint();
-			  }
-		  }
-	  }
-	  else if(gameMode == DOUBLES){
-		  if(scoreManager.getMyPoint() >= (ScoreManager::GAME_POINT - 1) &&
-				  scoreManager.getEnemyPoint() >= (ScoreManager::GAME_POINT - 1)){//デュース
-			  if(scoreManager.getMyPoint() - myScore +
-					  scoreManager.getEnemyPoint()  - enemyScore > 0 ){//1本進むごとにサーブ交代
-				  player1.rotatePosition();
-				  player2.rotatePosition();
-				  player3.rotatePosition();
-				  player4.rotatePosition();
-				  doublesSwapServerReceiverLED();
-
-				  myScore = scoreManager.getMyPoint();
-				  enemyScore = scoreManager.getEnemyPoint();
-			  }
-		  }
-		  else
-		  {
-			  if(scoreManager.getMyPoint() - myScore +
-					  scoreManager.getEnemyPoint() - enemyScore > 1){//2本進むごとにサーブ交代
-
-				  player1.rotatePosition();
-				  player2.rotatePosition();
-				  player3.rotatePosition();
-				  player4.rotatePosition();
-
-				  doublesSwapServerReceiverLED();
-
-				  myScore = scoreManager.getMyPoint();
-				  enemyScore = scoreManager.getEnemyPoint();
-			  }
-		  }
-	  }
-
+	  refleshGameState(gameMode);
   /* USER CODE END WHILE */
 
   /* USER CODE BEGIN 3 */
@@ -311,6 +235,66 @@ void callBackButton2()
 		antiChatteringFlag[1] = true;
 	}
 }
+void callBackButton3()
+{
+	if(!antiChatteringFlag[2]){
+		if(scoreManager.getSum() == 0){//セットの途中では機能しない
+			if(gameMode == SINGLES){
+				if(scoreManager.getGameSum() == 0){//初期しか動作しない
+					singlesPlayer1.rotatePosition();
+					singlesPlayer2.rotatePosition();
+					refleshServerReceiverLED_Singles();
+				}
+			}
+			else{
+				if(scoreManager.getGameSum() == 0){//初期は, チーム入れ替えも含めて動作する
+					player1.rotatePosition();
+					player2.rotatePosition();
+					player3.rotatePosition();
+					player4.rotatePosition();
+				}
+				else{//ゲームが進んだ状態では, サーバー入れ替えのみ
+					player1.rotatePosition();
+					player2.rotatePosition();
+					player3.rotatePosition();
+					player4.rotatePosition();
+					player1.rotatePosition();
+					player2.rotatePosition();
+					player3.rotatePosition();
+					player4.rotatePosition();
+				}
+				refleshServerReceiverLED_Doubles();
+			}
+		}
+		antiChatteringFlag[2] = true;
+	}
+}
+void callBackButton4()
+{
+	if(!antiChatteringFlag[3]){
+		if(gameMode == DOUBLES){//ダブルスの時しか機能しない
+			if(scoreManager.getGameSum() == 0 && scoreManager.getSum() == 0){//ゲーム未開始時のレシーバ入れ替えでしか使えない
+				//receiver,receiver_assistantの入れ替えは,2回ローテーションと同値
+				if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER ||
+						player2.getCurrentPosition() == DoublesPositionManger::RECEIVER){//1,2ペアがレシーバのときは1,2をスワップ
+					player1.rotatePosition();
+					player1.rotatePosition();
+					player2.rotatePosition();
+					player2.rotatePosition();
+
+				}
+				else{//3,4ペアがレシーバの場合, 3,4をスワップ
+					player3.rotatePosition();
+					player3.rotatePosition();
+					player4.rotatePosition();
+					player4.rotatePosition();
+				}
+				refleshServerReceiverLED_Doubles();
+			}
+		}
+		antiChatteringFlag[3] = true;
+	}
+}
 void callBackChattering()
 {
 	static uint8_t count[10]{0};
@@ -348,7 +332,7 @@ void callBackBlueButton()
 		antiChatteringFlag[2] = true;
 	}
 }
-void swapServerReceiverLED()
+void refleshServerReceiverLED_Singles()
 {
 	if(singlesPlayer1.getCurrentPosition() == SinglesPositionManger::SERVER){
 			led1->setColor(FullcolorLEDDriver::RED);
@@ -364,7 +348,7 @@ void swapServerReceiverLED()
 		led2->setColor(FullcolorLEDDriver::BLUE);
 	}
 }
-void doublesSwapServerReceiverLED()
+void refleshServerReceiverLED_Doubles()
 {
 	if(player1.getCurrentPosition() == DoublesPositionManger::SERVER){
 		led1->setColor(FullcolorLEDDriver::RED);
@@ -433,8 +417,142 @@ void initializeServerReceiverLED()
 	  led1 = new FullcolorLEDDriver(led1_Red, led1_Green, led1_Blue);
 	  led2 = new FullcolorLEDDriver(led2_Red, led2_Green, led2_Blue);
 
-	  led1->setDuty(30);
-	  led2->setDuty(30);
+	  led1->setDuty(5);
+	  led2->setDuty(5);
+
+	  led1->setColor(FullcolorLEDDriver::RED);
+	  led2->setColor(FullcolorLEDDriver::BLUE);
+}
+void initializeSegment()
+{
+	  seg = new SegmentControl(PC5, PC6, PC8, PB11, PB12, PA11, PA12);
+	  channelSel = new BusOut(PB1, PB2, PB15, PB14, PC4, PB13);
+
+	  IRQAttachTIM5(callBack);
+
+	  startTIM5();
+}
+void initializeButtons()
+{
+
+	IRQAttachTIM4(callBackChattering);
+	startTIM4();
+
+	GPIOIRQAttach(PA0,callBackButton);
+	GPIOIRQAttach(PA1,callBackButton2);
+	GPIOIRQAttach(PC13,callBackBlueButton);
+	GPIOIRQAttach(PA4,callBackButton3);
+	GPIOIRQAttach(PC3,callBackButton4);
+}
+void refleshGameState(GAME_MODE_t mode)
+{
+	 static uint8_t myScore = 0;
+     static uint8_t enemyScore = 0;
+
+     static uint8_t setCount = 0;
+
+     static SinglesPositionManger::SINGLES_POSITION_t singlesPositionStatus[2];//singlesPlayer1, singlesPlayer2の状態を把握
+     static DoublesPositionManger::DOUBLES_POSITION_t doublesPositionStatus[4];//player1, player2, player3, player4の状態を把握
+
+     if(scoreManager.getGameSum() == 0 && scoreManager.getSum() == 0){//ゲームスタート時にポジション記憶
+    	 singlesPositionStatus[0] = singlesPlayer1.getCurrentPosition();
+		 singlesPositionStatus[1] = singlesPlayer2.getCurrentPosition();
+
+    	 doublesPositionStatus[0] = player1.getCurrentPosition();
+		 doublesPositionStatus[1] = player2.getCurrentPosition();
+		 doublesPositionStatus[2] = player3.getCurrentPosition();
+		 doublesPositionStatus[3] = player4.getCurrentPosition();
+     }
+
+     if(scoreManager.getGameSum() - setCount > 0){//ゲームセットの場合リセット
+        myScore = 0;
+	    enemyScore = 0;
+
+	    if(mode == SINGLES){//シングルスの場合, 前のゲームセットごとに反転
+			while(singlesPlayer1.getCurrentPosition() != singlesPositionStatus[0]){//初期状態に戻す
+				singlesPlayer1.rotatePosition();
+				singlesPlayer2.rotatePosition();
+			}
+			//反転
+			singlesPlayer1.rotatePosition();
+			singlesPlayer2.rotatePosition();
+			//新しい値を記憶
+			singlesPositionStatus[0] = singlesPlayer1.getCurrentPosition();
+			singlesPositionStatus[1] = singlesPlayer2.getCurrentPosition();
+
+			refleshServerReceiverLED_Singles();
+	    }
+	    else{//ダブルスの場合, 前のゲームセットと, チームを反転し, さらにサーバレシーバ関係をずらす
+	    	while(player1.getCurrentPosition() != doublesPositionStatus[0]){//初期状態に戻す
+	    		player1.rotatePosition();
+			    player2.rotatePosition();
+			    player3.rotatePosition();
+			    player4.rotatePosition();
+	    	}
+	    	//チーム反転
+	    	player1.rotatePosition();
+			player2.rotatePosition();
+			player3.rotatePosition();
+			player4.rotatePosition();
+
+			//サーバレシーバ関係ずらす
+			player1.rotatePosition();
+			player1.rotatePosition();
+			player2.rotatePosition();
+			player2.rotatePosition();
+
+			//新しい値を記憶
+			doublesPositionStatus[0] = player1.getCurrentPosition();
+			doublesPositionStatus[1] = player2.getCurrentPosition();
+			doublesPositionStatus[2] = player3.getCurrentPosition();
+			doublesPositionStatus[3] = player4.getCurrentPosition();
+
+	    	refleshServerReceiverLED_Doubles();
+	    }
+
+	    setCount = scoreManager.getGameSum();
+
+     }
+
+     if(scoreManager.isDeuce()){//デュース
+		  if(scoreManager.getSum() - myScore - enemyScore > 0 ){//1本進むごとにサーブ交代
+			  if(mode == SINGLES){
+				  singlesPlayer1.rotatePosition();
+				  singlesPlayer2.rotatePosition();
+				  refleshServerReceiverLED_Singles();
+			  }
+			  else{
+				  player1.rotatePosition();
+				  player2.rotatePosition();
+				  player3.rotatePosition();
+				  player4.rotatePosition();
+				  refleshServerReceiverLED_Doubles();
+			  }
+
+			  myScore = scoreManager.getMyPoint();
+			  enemyScore = scoreManager.getEnemyPoint();
+		  }
+	 }
+	 else
+	 {
+		  if(scoreManager.getSum() - myScore - enemyScore > 1){//2本進むごとにサーブ交代
+			  if(mode == SINGLES){
+				  singlesPlayer1.rotatePosition();
+				  singlesPlayer2.rotatePosition();
+				  refleshServerReceiverLED_Singles();
+			  }
+			  else{
+				  player1.rotatePosition();
+				  player2.rotatePosition();
+				  player3.rotatePosition();
+				  player4.rotatePosition();
+				  refleshServerReceiverLED_Doubles();
+			  }
+
+			  myScore = scoreManager.getMyPoint();
+			  enemyScore = scoreManager.getEnemyPoint();
+		  }
+	 }
 }
 /* USER CODE END 4 */
 

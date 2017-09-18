@@ -33,6 +33,9 @@ public:
 	uint8_t getEnemyPoint(){return enemyPoint;}
 	uint8_t getMyGame(){return myGame;}
 	uint8_t getEnemyGame(){return enemyGame;}
+	bool isDeuce();
+	uint8_t getSum();
+	uint8_t getGameSum();
 private:
 
 };

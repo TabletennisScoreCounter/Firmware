@@ -56,3 +56,15 @@ void ScoreManager::swapPoint()
 	enemyPoint = tempPoint;
 	enemyGame = tempGame;
 }
+bool ScoreManager::isDeuce()
+{
+	return ((myPoint >= GAME_POINT - 1) && (enemyPoint >= GAME_POINT - 1));
+}
+uint8_t ScoreManager::getSum()
+{
+	return (myPoint + enemyPoint);
+}
+uint8_t ScoreManager::getGameSum()
+{
+	return (myGame + enemyGame);
+}
