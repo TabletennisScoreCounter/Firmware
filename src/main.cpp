@@ -103,6 +103,9 @@ bool antiChatteringFlag[10]{false};
 
 void refleshGameState(GAME_MODE_t mode);
 GAME_MODE_t gameMode = SINGLES;
+
+bool longPushFlag[2]{false};
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -149,7 +152,6 @@ int main(void)
   {
 	  refleshGameState(gameMode);
   /* USER CODE END WHILE */
-
   /* USER CODE BEGIN 3 */
 
   }
@@ -221,18 +223,32 @@ void callBack()
 }
 void callBackButton()
 {
-	if(!antiChatteringFlag[0]){
-		scoreManager.addMyPoint();
+	if(!longPushFlag[0]){//長押し非検知
+		if(!antiChatteringFlag[0]){
+			scoreManager.addMyPoint();
+			refleshSegmentValue();
+			antiChatteringFlag[0] = true;
+		}
+	}
+	else{
+		scoreManager.reduceMyPoint();
 		refleshSegmentValue();
-		antiChatteringFlag[0] = true;
+		longPushFlag[0] = false;
 	}
 }
 void callBackButton2()
 {
-	if(!antiChatteringFlag[1]){
-		scoreManager.addEnemyPoint();
+	if(!longPushFlag[1]){
+		if(!antiChatteringFlag[0]){
+			scoreManager.addEnemyPoint();
+			refleshSegmentValue();
+			antiChatteringFlag[0] = true;
+		}
+	}
+	else{
+		scoreManager.reduceEnemyPoint();
 		refleshSegmentValue();
-		antiChatteringFlag[1] = true;
+		longPushFlag[1] = false;
 	}
 }
 void callBackButton3()
@@ -310,6 +326,31 @@ void callBackChattering()
 		}
 	}
 
+	static uint16_t count2 = 0;
+	if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_0) == GPIO_PIN_RESET){//ボタン押されていたら
+		count2++;
+		if(count2 >= 300){
+			longPushFlag[0] = true;
+			count2 = 0;
+		}
+	}
+	else{
+		count2 = 0;
+		longPushFlag[0] = false;
+	}
+
+	static uint16_t count3 = 0;
+	if(HAL_GPIO_ReadPin(GPIOA,GPIO_PIN_1) == GPIO_PIN_RESET){//ボタン押されていたら
+		count3++;
+		if(count3 >= 300){
+			longPushFlag[1] = true;
+			count3 = 0;
+		}
+	}
+	else{
+		count3 = 0;
+		longPushFlag[1] = false;
+	}
 }
 void refleshSegmentValue()
 {

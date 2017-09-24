@@ -27,6 +27,8 @@ private:
 public:
 	void addMyPoint();
 	void addEnemyPoint();
+	void reduceMyPoint();
+	void reduceEnemyPoint();
 	void resetPoint();
 	void swapPoint();
 	uint8_t getMyPoint(){return myPoint;}

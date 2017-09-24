@@ -68,3 +68,17 @@ uint8_t ScoreManager::getGameSum()
 {
 	return (myGame + enemyGame);
 }
+void ScoreManager::reduceMyPoint()
+{
+	if(myPoint > 0 && enemyPoint < GAME_POINT){
+		myPoint--;
+		enemyPoint++;
+	}
+}
+void ScoreManager::reduceEnemyPoint()
+{
+	if(enemyPoint > 0 && myPoint < GAME_POINT){
+		myPoint++;
+		enemyPoint--;
+	}
+}
