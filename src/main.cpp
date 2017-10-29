@@ -76,8 +76,7 @@ void callBackButton3();
 void callBackButton4();
 void callBackChattering();
 void refleshSegmentValue();
-void refleshServerReceiverLED_Singles();
-void refleshServerReceiverLED_Doubles();
+void refleshServerReceiverLED(GAME_MODE_t mode);
 static bool changeSideFlag = false;
 
 SegmentControl* seg;
@@ -260,7 +259,7 @@ void callBackButton3()
 				if(scoreManager.getGameSum() == 0){//初期しか動作しない
 					singlesPlayer1.rotatePosition();
 					singlesPlayer2.rotatePosition();
-					refleshServerReceiverLED_Singles();
+//					refleshServerReceiverLED_Singles();
 				}
 			}
 			else{
@@ -280,8 +279,9 @@ void callBackButton3()
 					player3.rotatePosition();
 					player4.rotatePosition();
 				}
-				refleshServerReceiverLED_Doubles();
+//				refleshServerReceiverLED_Doubles();
 			}
+			refleshServerReceiverLED(gameMode);
 		}
 		antiChatteringFlag[2] = true;
 	}
@@ -306,8 +306,10 @@ void callBackButton4()
 					player4.rotatePosition();
 					player4.rotatePosition();
 				}
-				refleshServerReceiverLED_Doubles();
+//				refleshServerReceiverLED_Doubles();
+				refleshServerReceiverLED(DOUBLES);
 			}
+
 		}
 		antiChatteringFlag[3] = true;
 	}
@@ -383,48 +385,49 @@ void callBackBlueButton()
 		antiChatteringFlag[2] = true;
 	}
 }
-void refleshServerReceiverLED_Singles()
+void refleshServerReceiverLED(GAME_MODE_t mode)
 {
-	if(singlesPlayer1.getCurrentPosition() == SinglesPositionManger::SERVER){
+	if(mode == SINGLES){
+		if(singlesPlayer1.getCurrentPosition() == SinglesPositionManger::SERVER){
 			led1->setColor(FullcolorLEDDriver::RED);
-	}
-	else if(singlesPlayer2.getCurrentPosition() == SinglesPositionManger::SERVER){
-		led1->setColor(FullcolorLEDDriver::BLUE);
-	}
+		}
+		else if(singlesPlayer2.getCurrentPosition() == SinglesPositionManger::SERVER){
+			led1->setColor(FullcolorLEDDriver::BLUE);
+		}
 
-	if(singlesPlayer1.getCurrentPosition() == SinglesPositionManger::RECEIVER){
+		if(singlesPlayer1.getCurrentPosition() == SinglesPositionManger::RECEIVER){
+				led2->setColor(FullcolorLEDDriver::RED);
+		}
+		else if(singlesPlayer2.getCurrentPosition() == SinglesPositionManger::RECEIVER){
+			led2->setColor(FullcolorLEDDriver::BLUE);
+		}
+	}
+	else{
+		if(player1.getCurrentPosition() == DoublesPositionManger::SERVER){
+			led1->setColor(FullcolorLEDDriver::RED);
+		}
+		else if(player2.getCurrentPosition() == DoublesPositionManger::SERVER){
+			led1->setColor(FullcolorLEDDriver::GREEN);
+		}
+		else if(player3.getCurrentPosition() == DoublesPositionManger::SERVER){
+			led1->setColor(FullcolorLEDDriver::BLUE);
+		}
+		else if(player4.getCurrentPosition() == DoublesPositionManger::SERVER){
+			led1->setColor(FullcolorLEDDriver::YELLOW);
+		}
+
+		if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER){
 			led2->setColor(FullcolorLEDDriver::RED);
-	}
-	else if(singlesPlayer2.getCurrentPosition() == SinglesPositionManger::RECEIVER){
-		led2->setColor(FullcolorLEDDriver::BLUE);
-	}
-}
-void refleshServerReceiverLED_Doubles()
-{
-	if(player1.getCurrentPosition() == DoublesPositionManger::SERVER){
-		led1->setColor(FullcolorLEDDriver::RED);
-	}
-	else if(player2.getCurrentPosition() == DoublesPositionManger::SERVER){
-		led1->setColor(FullcolorLEDDriver::GREEN);
-	}
-	else if(player3.getCurrentPosition() == DoublesPositionManger::SERVER){
-		led1->setColor(FullcolorLEDDriver::BLUE);
-	}
-	else if(player4.getCurrentPosition() == DoublesPositionManger::SERVER){
-		led1->setColor(FullcolorLEDDriver::YELLOW);
-	}
-
-	if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER){
-		led2->setColor(FullcolorLEDDriver::RED);
-	}
-	else if(player2.getCurrentPosition() == DoublesPositionManger::RECEIVER){
-		led2->setColor(FullcolorLEDDriver::GREEN);
-	}
-	else if(player3.getCurrentPosition() == DoublesPositionManger::RECEIVER){
-		led2->setColor(FullcolorLEDDriver::BLUE);
-	}
-	else if(player4.getCurrentPosition() == DoublesPositionManger::RECEIVER){
-		led2->setColor(FullcolorLEDDriver::YELLOW);
+		}
+		else if(player2.getCurrentPosition() == DoublesPositionManger::RECEIVER){
+			led2->setColor(FullcolorLEDDriver::GREEN);
+		}
+		else if(player3.getCurrentPosition() == DoublesPositionManger::RECEIVER){
+			led2->setColor(FullcolorLEDDriver::BLUE);
+		}
+		else if(player4.getCurrentPosition() == DoublesPositionManger::RECEIVER){
+			led2->setColor(FullcolorLEDDriver::YELLOW);
+		}
 	}
 }
 void initializeServerReceiverLED()
@@ -506,10 +509,10 @@ void refleshGameState(GAME_MODE_t mode)
      static DoublesPositionManger::DOUBLES_POSITION_t doublesPositionStatus[4];//player1, player2, player3, player4の状態を把握
 
      if(scoreManager.getGameSum() == 0 && scoreManager.getSum() == 0){//ゲームスタート時にポジション記憶
-    	 singlesPositionStatus[0] = singlesPlayer1.getCurrentPosition();
+    	 	 singlesPositionStatus[0] = singlesPlayer1.getCurrentPosition();
 		 singlesPositionStatus[1] = singlesPlayer2.getCurrentPosition();
 
-    	 doublesPositionStatus[0] = player1.getCurrentPosition();
+    	 	 doublesPositionStatus[0] = player1.getCurrentPosition();
 		 doublesPositionStatus[1] = player2.getCurrentPosition();
 		 doublesPositionStatus[2] = player3.getCurrentPosition();
 		 doublesPositionStatus[3] = player4.getCurrentPosition();
@@ -531,17 +534,17 @@ void refleshGameState(GAME_MODE_t mode)
 			singlesPositionStatus[0] = singlesPlayer1.getCurrentPosition();
 			singlesPositionStatus[1] = singlesPlayer2.getCurrentPosition();
 
-			refleshServerReceiverLED_Singles();
+//			refleshServerReceiverLED_Singles();
 	    }
 	    else{//ダブルスの場合, 前のゲームセットと, チームを反転し, さらにサーバレシーバ関係をずらす
-	    	while(player1.getCurrentPosition() != doublesPositionStatus[0]){//初期状態に戻す
-	    		player1.rotatePosition();
+			while(player1.getCurrentPosition() != doublesPositionStatus[0]){//初期状態に戻す
+				player1.rotatePosition();
 			    player2.rotatePosition();
 			    player3.rotatePosition();
 			    player4.rotatePosition();
-	    	}
-	    	//チーム反転
-	    	player1.rotatePosition();
+			}
+			//チーム反転
+			player1.rotatePosition();
 			player2.rotatePosition();
 			player3.rotatePosition();
 			player4.rotatePosition();
@@ -558,9 +561,9 @@ void refleshGameState(GAME_MODE_t mode)
 			doublesPositionStatus[2] = player3.getCurrentPosition();
 			doublesPositionStatus[3] = player4.getCurrentPosition();
 
-	    	refleshServerReceiverLED_Doubles();
+//			refleshServerReceiverLED_Doubles();
 	    }
-
+	    refleshServerReceiverLED(mode);
 	    setCount = scoreManager.getGameSum();
 
      }
@@ -570,15 +573,16 @@ void refleshGameState(GAME_MODE_t mode)
 			  if(mode == SINGLES){
 				  singlesPlayer1.rotatePosition();
 				  singlesPlayer2.rotatePosition();
-				  refleshServerReceiverLED_Singles();
+//				  refleshServerReceiverLED_Singles();
 			  }
 			  else{
 				  player1.rotatePosition();
 				  player2.rotatePosition();
 				  player3.rotatePosition();
 				  player4.rotatePosition();
-				  refleshServerReceiverLED_Doubles();
+//				  refleshServerReceiverLED_Doubles();
 			  }
+			  refleshServerReceiverLED(mode);
 
 			  myScore = scoreManager.getMyPoint();
 			  enemyScore = scoreManager.getEnemyPoint();
@@ -590,20 +594,44 @@ void refleshGameState(GAME_MODE_t mode)
 			  if(mode == SINGLES){
 				  singlesPlayer1.rotatePosition();
 				  singlesPlayer2.rotatePosition();
-				  refleshServerReceiverLED_Singles();
+//				  refleshServerReceiverLED_Singles();
 			  }
 			  else{
 				  player1.rotatePosition();
 				  player2.rotatePosition();
 				  player3.rotatePosition();
 				  player4.rotatePosition();
-				  refleshServerReceiverLED_Doubles();
+//				  refleshServerReceiverLED_Doubles();
 			  }
+			  refleshServerReceiverLED(mode);
 
 			  myScore = scoreManager.getMyPoint();
 			  enemyScore = scoreManager.getEnemyPoint();
 		  }
 	 }
+     static bool fivePointFlag = false;
+     if(mode == DOUBLES && !fivePointFlag && scoreManager.isFinalGame()){
+    	 	 //ダブルスの最終ゲームのとき
+    	 	 if(scoreManager.getMyPoint() == 5 || scoreManager.getEnemyPoint() == 5){
+    	 		 //どちらかが5ポイントになった場合にレシーバ交代
+    	 		if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER ||
+				player2.getCurrentPosition() == DoublesPositionManger::RECEIVER){//1,2ペアがレシーバのときは1,2をスワップ
+				player1.rotatePosition();
+				player1.rotatePosition();
+				player2.rotatePosition();
+				player2.rotatePosition();
+			}
+			else{//3,4ペアがレシーバの場合, 3,4をスワップ
+				player3.rotatePosition();
+				player3.rotatePosition();
+				player4.rotatePosition();
+				player4.rotatePosition();
+			}
+//    	 		refleshServerReceiverLED_Doubles();
+    	 		refleshServerReceiverLED(mode);
+    	 		fivePointFlag = true;
+    	 	 }
+     }
 }
 /* USER CODE END 4 */
 

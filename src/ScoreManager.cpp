@@ -82,3 +82,13 @@ void ScoreManager::reduceEnemyPoint()
 		enemyPoint--;
 	}
 }
+bool ScoreManager::isFinalGame()
+{
+	bool result = false;
+
+	if(myGame == enemyGame && myGame == GAMES_TO_WIN - 1){
+		result = true;
+	}
+
+	return result;
+}

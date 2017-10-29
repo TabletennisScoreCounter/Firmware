@@ -17,7 +17,7 @@
 class ScoreManager {
 public:
 	static const uint8_t GAME_POINT = 11;
-	static const uint8_t GAMES_TO_WIN = 4;
+	static const uint8_t GAMES_TO_WIN = 3;
 
 private:
 	uint8_t myPoint;
@@ -38,6 +38,7 @@ public:
 	bool isDeuce();
 	uint8_t getSum();
 	uint8_t getGameSum();
+	bool isFinalGame();
 private:
 
 };

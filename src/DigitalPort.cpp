@@ -68,7 +68,7 @@ uint16_t DigitalPort::getPin()
 int DigitalPort::getPortIndex(GPIO_TypeDef* port)
 {
 	int index{0};
-
+/*
 	switch ((uint32_t)port) {
 		case (uint32_t)GPIOA:
 			index = 0;
@@ -85,11 +85,12 @@ int DigitalPort::getPortIndex(GPIO_TypeDef* port)
 		default:
 			break;
 	}
-
+*/
 	return index;
 }
 void DigitalPort::peripheralClockEnable(GPIO_TypeDef* port)
 {
+	/*
 	switch ((uint32_t)port) {
 		case (uint32_t)GPIOA:
 			__HAL_RCC_GPIOA_CLK_ENABLE();
@@ -106,9 +107,11 @@ void DigitalPort::peripheralClockEnable(GPIO_TypeDef* port)
 		default:
 			break;
 	}
+	*/
 }
 void DigitalPort::peripheralClockDisable(GPIO_TypeDef* port)
 {
+	/*
 	switch ((uint32_t)port) {
 		case (uint32_t)GPIOA:
 			__HAL_RCC_GPIOA_CLK_DISABLE();
@@ -125,4 +128,5 @@ void DigitalPort::peripheralClockDisable(GPIO_TypeDef* port)
 		default:
 			break;
 	}
+	*/
 }
