@@ -108,14 +108,14 @@ void ScoreManager::nextGame()
 {
 	if(myGame < GAMES_TO_WIN && enemyGame < GAMES_TO_WIN){
 		if(isTheGameFinished()){
-			myPoint = 0;
-			enemyPoint = 0;
 			if(myPoint > enemyPoint){
 				myGame++;
 			}
 			else{
 				enemyGame++;
 			}
+			myPoint = 0;
+			enemyPoint = 0;
 		}
 	}
 }
