@@ -77,10 +77,25 @@ void ScoreManager::reduceMyPoint()
 		enemyPoint++;
 	}
 }
+void ScoreManager::reduceMyPoint2()
+{
+	if(myPoint > 0 /*&& enemyPoint < GAME_POINT*/){
+		myPoint--;
+		//enemyPoint++;
+	}
+}
+
 void ScoreManager::reduceEnemyPoint()
 {
 	if(enemyPoint > 0 && myPoint < GAME_POINT){
 		myPoint++;
+		enemyPoint--;
+	}
+}
+void ScoreManager::reduceEnemyPoint2()
+{
+	if(enemyPoint > 0 /*&& myPoint < GAME_POINT*/){
+		//myPoint++;
 		enemyPoint--;
 	}
 }
