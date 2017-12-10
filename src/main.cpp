@@ -381,11 +381,13 @@ void callBackChattering()
 				longPushFlag[2] = true;
 				//scoreManager.reduceEnemyPoint();
 				//refleshSegmentValue();
-				//cancelPreviousAction();
-				changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
-				scoreManager.swapPoint();
-				scoreManager.nextGame();//ゲーム更新
-				refleshSegmentValue();
+				cancelPreviousAction();
+//				if(scoreManager.isTheGameFinished()){
+//					changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
+//					scoreManager.swapPoint();
+//					scoreManager.nextGame();//ゲーム更新
+//					refleshSegmentValue();
+//				}
 				count4 = 0;
 			}
 		}
@@ -417,7 +419,13 @@ void callBackBlueButton()
 			//scoreManager.nextGame();//ゲーム更新
 
 			//refleshSegmentValue();
-			cancelPreviousAction();
+			//cancelPreviousAction();
+			if(scoreManager.isTheGameFinished()){
+				changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
+				scoreManager.swapPoint();
+				scoreManager.nextGame();//ゲーム更新
+				refleshSegmentValue();
+			}
 		}
 		else{
 			//scoreManager.reduceMyPoint();
