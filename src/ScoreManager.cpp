@@ -4,7 +4,7 @@ void ScoreManager::addMyPoint()
 {
 	if(!isTheGameFinished()){//ゲームが未完了
 		uint8_t myNextPoint = myPoint + 1;
-		if(myNextPoint < GAME_POINT){//自分の次のスコアが11点未満ならただ足すだけ
+		if(myNextPoint <= GAME_POINT){//自分の次のスコアが11点未満ならただ足すだけ
 			myPoint++;
 		}
 		else{//11点以上になる場合
@@ -23,7 +23,7 @@ void ScoreManager::addEnemyPoint()
 {
 	if(!isTheGameFinished()){//ゲームが未終了
 		uint8_t enemyNextPoint = enemyPoint + 1;
-		if(enemyNextPoint < GAME_POINT){//敵の次のスコアが11点未満ならただ足すだけ
+		if(enemyNextPoint <= GAME_POINT){//敵の次のスコアが11点未満ならただ足すだけ
 			enemyPoint++;
 		}
 		else{//11点以上になる場合

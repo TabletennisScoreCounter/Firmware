@@ -380,8 +380,11 @@ void callBackBlueButton()
 	if(!antiChatteringFlag[2]){
 		changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
 
+
 		scoreManager.swapPoint();
+
 		scoreManager.nextGame();//ゲーム更新
+
 		refleshSegmentValue();
 		antiChatteringFlag[2] = true;
 	}
