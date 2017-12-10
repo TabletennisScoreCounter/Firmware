@@ -366,7 +366,6 @@ void callBackChattering()
 }
 void refleshSegmentValue()
 {
-
 	segmentValue[0] = scoreManager.getMyPoint() / 10;
 	segmentValue[1] = scoreManager.getMyPoint() % 10;
 
@@ -382,6 +381,7 @@ void callBackBlueButton()
 		changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
 
 		scoreManager.swapPoint();
+		scoreManager.nextGame();//ゲーム更新
 		refleshSegmentValue();
 		antiChatteringFlag[2] = true;
 	}
