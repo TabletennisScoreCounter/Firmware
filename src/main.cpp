@@ -67,6 +67,10 @@ enum GAME_MODE_t{
 	SINGLES,
 	DOUBLES
 };
+enum ACTION_t{
+	UP_MY_POINT,
+	UP_ENEMY_POINT
+};
 
 void callBack();
 void callBackButton();
@@ -77,6 +81,7 @@ void callBackButton4();
 void callBackChattering();
 void refleshSegmentValue();
 void refleshServerReceiverLED(GAME_MODE_t mode);
+void refleshServerReceiverLEDInverse(GAME_MODE_t mode);
 static bool changeSideFlag = false;
 
 SegmentControl* seg;
@@ -103,7 +108,10 @@ bool antiChatteringFlag[10]{false};
 void refleshGameState(GAME_MODE_t mode);
 GAME_MODE_t gameMode = SINGLES;
 
-bool longPushFlag[2]{false};
+bool longPushFlag[3]{false};
+
+int previousAction;
+void cancelPreviousAction();
 
 /* USER CODE END 0 */
 
@@ -226,6 +234,7 @@ void callBackButton()
 		if(!longPushFlag[0]){//長押し非検知
 			scoreManager.addMyPoint();
 			refleshSegmentValue();
+			previousAction = UP_MY_POINT;
 		}
 		else{
 			//scoreManager.reduceMyPoint();
@@ -242,6 +251,7 @@ void callBackButton2()
 			scoreManager.addEnemyPoint();
 			refleshSegmentValue();
 			//antiChatteringFlag[0] = true;
+			previousAction = UP_ENEMY_POINT;
 		}
 		else{
 			//scoreManager.reduceMyPoint();
@@ -363,6 +373,23 @@ void callBackChattering()
 		count3 = 0;
 		longPushFlag[1] = false;
 	}
+
+	static uint16_t count4 = 0;
+	if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_13) == GPIO_PIN_RESET){//ボタン押されていたら
+		if(!longPushFlag[2]){
+			count4++;
+			if(count4 >= 300){
+				longPushFlag[2] = true;
+				//scoreManager.reduceEnemyPoint();
+				//refleshSegmentValue();
+				count4 = 0;
+			}
+		}
+	}
+	else{
+		count4 = 0;
+		longPushFlag[2] = false;
+	}
 }
 void refleshSegmentValue()
 {
@@ -378,14 +405,21 @@ void refleshSegmentValue()
 void callBackBlueButton()
 {
 	if(!antiChatteringFlag[2]){
-		changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
+		if(!longPushFlag[2]){//長押し非検知
+			changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
 
+			scoreManager.swapPoint();
 
-		scoreManager.swapPoint();
+			scoreManager.nextGame();//ゲーム更新
 
-		scoreManager.nextGame();//ゲーム更新
+			refleshSegmentValue();
+		}
+		else{
+			//scoreManager.reduceMyPoint();
+			//refleshSegmentValue();
+			longPushFlag[2] = false;
+		}
 
-		refleshSegmentValue();
 		antiChatteringFlag[2] = true;
 	}
 }
@@ -434,6 +468,7 @@ void refleshServerReceiverLED(GAME_MODE_t mode)
 		}
 	}
 }
+
 void initializeServerReceiverLED()
 {
 	LEDPWMPort_t led1_Red = {
@@ -636,6 +671,15 @@ void refleshGameState(GAME_MODE_t mode)
     	 		fivePointFlag = true;
     	 	 }
      }
+}
+void cancelPreviousAction()
+{
+	if(previousAction == UP_MY_POINT){
+
+	}
+	else{
+
+	}
 }
 /* USER CODE END 4 */
 
