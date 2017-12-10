@@ -39,6 +39,8 @@ public:
 	uint8_t getSum();
 	uint8_t getGameSum();
 	bool isFinalGame();
+	bool isTheGameFinished();
+	void nextGame();
 private:
 
 };

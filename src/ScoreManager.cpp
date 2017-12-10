@@ -2,7 +2,7 @@
 #include <cmath>
 void ScoreManager::addMyPoint()
 {
-	if(myGame < GAMES_TO_WIN && enemyGame < GAMES_TO_WIN){
+	if(!isTheGameFinished()){//ゲームが未完了
 		uint8_t myNextPoint = myPoint + 1;
 		if(myNextPoint < GAME_POINT){//自分の次のスコアが11点未満ならただ足すだけ
 			myPoint++;
@@ -12,16 +12,16 @@ void ScoreManager::addMyPoint()
 				myPoint++;
 			}
 			else{//相手とのスコア差が2点以上開いた場合はゲームが加算
-				myPoint = 0;
-				enemyPoint = 0;
-				myGame++;
+				//myPoint = 0;
+				//enemyPoint = 0;
+				//myGame++;
 			}
 		}
 	}
 }
 void ScoreManager::addEnemyPoint()
 {
-	if(myGame < GAMES_TO_WIN && enemyGame < GAMES_TO_WIN){
+	if(!isTheGameFinished()){//ゲームが未終了
 		uint8_t enemyNextPoint = enemyPoint + 1;
 		if(enemyNextPoint < GAME_POINT){//敵の次のスコアが11点未満ならただ足すだけ
 			enemyPoint++;
@@ -31,9 +31,9 @@ void ScoreManager::addEnemyPoint()
 				enemyPoint++;
 			}
 			else{//相手とのスコア差が2点以上開いた場合はゲームが加算
-				myPoint = 0;
-				enemyPoint = 0;
-				enemyGame++;
+				//myPoint = 0;
+				//enemyPoint = 0;
+				//enemyGame++;
 			}
 		}
 	}
@@ -91,4 +91,31 @@ bool ScoreManager::isFinalGame()
 	}
 
 	return result;
+}
+bool ScoreManager::isTheGameFinished()
+{
+	bool result = false;
+
+	if(myPoint >= GAME_POINT || enemyPoint >= GAME_POINT){
+		if(std::abs(myPoint - enemyPoint) > 1){
+			result = true;
+		}
+	}
+
+	return result;
+}
+void ScoreManager::nextGame()
+{
+	if(myGame < GAMES_TO_WIN && enemyGame < GAMES_TO_WIN){
+		if(isTheGameFinished()){
+			myPoint = 0;
+			enemyPoint = 0;
+			if(myPoint > enemyPoint){
+				myGame++;
+			}
+			else{
+				enemyGame++;
+			}
+		}
+	}
 }

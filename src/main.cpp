@@ -366,6 +366,7 @@ void callBackChattering()
 }
 void refleshSegmentValue()
 {
+
 	segmentValue[0] = scoreManager.getMyPoint() / 10;
 	segmentValue[1] = scoreManager.getMyPoint() % 10;
 
