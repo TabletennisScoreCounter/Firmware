@@ -2,9 +2,9 @@
 #include <cmath>
 void ScoreManager::addMyPoint()
 {
-	if(myGame < GAMES_TO_WIN && enemyGame < GAMES_TO_WIN){
+	if(!isTheGameFinished()){//ゲームが未完了
 		uint8_t myNextPoint = myPoint + 1;
-		if(myNextPoint < GAME_POINT){//自分の次のスコアが11点未満ならただ足すだけ
+		if(myNextPoint <= GAME_POINT){//自分の次のスコアが11点未満ならただ足すだけ
 			myPoint++;
 		}
 		else{//11点以上になる場合
@@ -12,18 +12,18 @@ void ScoreManager::addMyPoint()
 				myPoint++;
 			}
 			else{//相手とのスコア差が2点以上開いた場合はゲームが加算
-				myPoint = 0;
-				enemyPoint = 0;
-				myGame++;
+				//myPoint = 0;
+				//enemyPoint = 0;
+				//myGame++;
 			}
 		}
 	}
 }
 void ScoreManager::addEnemyPoint()
 {
-	if(myGame < GAMES_TO_WIN && enemyGame < GAMES_TO_WIN){
+	if(!isTheGameFinished()){//ゲームが未終了
 		uint8_t enemyNextPoint = enemyPoint + 1;
-		if(enemyNextPoint < GAME_POINT){//敵の次のスコアが11点未満ならただ足すだけ
+		if(enemyNextPoint <= GAME_POINT){//敵の次のスコアが11点未満ならただ足すだけ
 			enemyPoint++;
 		}
 		else{//11点以上になる場合
@@ -31,9 +31,9 @@ void ScoreManager::addEnemyPoint()
 				enemyPoint++;
 			}
 			else{//相手とのスコア差が2点以上開いた場合はゲームが加算
-				myPoint = 0;
-				enemyPoint = 0;
-				enemyGame++;
+				//myPoint = 0;
+				//enemyPoint = 0;
+				//enemyGame++;
 			}
 		}
 	}
@@ -47,14 +47,16 @@ void ScoreManager::resetPoint()
 }
 void ScoreManager::swapPoint()
 {
-	uint8_t tempPoint = myPoint;
-	uint8_t tempGame = myGame;
+	if(myGame < GAMES_TO_WIN && enemyGame < GAMES_TO_WIN){
+		uint8_t tempPoint = myPoint;
+		uint8_t tempGame = myGame;
 
-	myPoint = enemyPoint;
-	myGame = enemyGame;
+		myPoint = enemyPoint;
+		myGame = enemyGame;
 
-	enemyPoint = tempPoint;
-	enemyGame = tempGame;
+		enemyPoint = tempPoint;
+		enemyGame = tempGame;
+	}
 }
 bool ScoreManager::isDeuce()
 {
@@ -75,10 +77,25 @@ void ScoreManager::reduceMyPoint()
 		enemyPoint++;
 	}
 }
+void ScoreManager::reduceMyPoint2()
+{
+	if(myPoint > 0 /*&& enemyPoint < GAME_POINT*/){
+		myPoint--;
+		//enemyPoint++;
+	}
+}
+
 void ScoreManager::reduceEnemyPoint()
 {
 	if(enemyPoint > 0 && myPoint < GAME_POINT){
 		myPoint++;
+		enemyPoint--;
+	}
+}
+void ScoreManager::reduceEnemyPoint2()
+{
+	if(enemyPoint > 0 /*&& myPoint < GAME_POINT*/){
+		//myPoint++;
 		enemyPoint--;
 	}
 }
@@ -91,4 +108,31 @@ bool ScoreManager::isFinalGame()
 	}
 
 	return result;
+}
+bool ScoreManager::isTheGameFinished()
+{
+	bool result = false;
+
+	if(myPoint >= GAME_POINT || enemyPoint >= GAME_POINT){
+		if(std::abs(myPoint - enemyPoint) > 1){
+			result = true;
+		}
+	}
+
+	return result;
+}
+void ScoreManager::nextGame()
+{
+	if(myGame < GAMES_TO_WIN && enemyGame < GAMES_TO_WIN){
+		if(isTheGameFinished()){
+			if(myPoint > enemyPoint){
+				myGame++;
+			}
+			else{
+				enemyGame++;
+			}
+			myPoint = 0;
+			enemyPoint = 0;
+		}
+	}
 }

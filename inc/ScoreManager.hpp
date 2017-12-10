@@ -29,6 +29,8 @@ public:
 	void addEnemyPoint();
 	void reduceMyPoint();
 	void reduceEnemyPoint();
+	void reduceMyPoint2();
+	void reduceEnemyPoint2();
 	void resetPoint();
 	void swapPoint();
 	uint8_t getMyPoint(){return myPoint;}
@@ -39,6 +41,8 @@ public:
 	uint8_t getSum();
 	uint8_t getGameSum();
 	bool isFinalGame();
+	bool isTheGameFinished();
+	void nextGame();
 private:
 
 };

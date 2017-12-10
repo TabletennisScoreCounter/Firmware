@@ -19,6 +19,7 @@ public:
 	SinglesPositionManger(SINGLES_POSITION_t initialPosition);
 	void rotatePosition();
 	SINGLES_POSITION_t getCurrentPosition();
+	void rotatePositionInverse();
 private:
 	SINGLES_POSITION_t currentPosition;
 };

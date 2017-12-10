@@ -20,6 +20,7 @@ public:
 public:
 	DoublesPositionManger(DOUBLES_POSITION_t initialPosition);
 	void rotatePosition();
+	void rotatePositionInverse();
 	DOUBLES_POSITION_t getCurrentPosition();
 private:
 	DOUBLES_POSITION_t currentPosition;

@@ -26,6 +26,19 @@ void SinglesPositionManger::rotatePosition()
 		break;
 	}
 }
+void SinglesPositionManger::rotatePositionInverse()
+{//シングルスでは動きは同じ
+	switch(currentPosition){
+	case SERVER:
+		currentPosition = RECEIVER;
+		break;
+	case RECEIVER:
+		currentPosition = SERVER;
+		break;
+	default:
+		break;
+	}
+}
 SinglesPositionManger::SINGLES_POSITION_t SinglesPositionManger::getCurrentPosition()
 {
 	return currentPosition;
