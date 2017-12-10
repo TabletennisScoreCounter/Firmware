@@ -47,14 +47,16 @@ void ScoreManager::resetPoint()
 }
 void ScoreManager::swapPoint()
 {
-	uint8_t tempPoint = myPoint;
-	uint8_t tempGame = myGame;
+	if(myGame < GAMES_TO_WIN && enemyGame < GAMES_TO_WIN){
+		uint8_t tempPoint = myPoint;
+		uint8_t tempGame = myGame;
 
-	myPoint = enemyPoint;
-	myGame = enemyGame;
+		myPoint = enemyPoint;
+		myGame = enemyGame;
 
-	enemyPoint = tempPoint;
-	enemyGame = tempGame;
+		enemyPoint = tempPoint;
+		enemyGame = tempGame;
+	}
 }
 bool ScoreManager::isDeuce()
 {
