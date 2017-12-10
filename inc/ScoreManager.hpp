@@ -29,6 +29,8 @@ public:
 	void addEnemyPoint();
 	void reduceMyPoint();
 	void reduceEnemyPoint();
+	void reduceMyPoint2();
+	void reduceEnemyPoint2();
 	void resetPoint();
 	void swapPoint();
 	uint8_t getMyPoint(){return myPoint;}

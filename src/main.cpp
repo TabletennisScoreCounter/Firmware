@@ -81,7 +81,6 @@ void callBackButton4();
 void callBackChattering();
 void refleshSegmentValue();
 void refleshServerReceiverLED(GAME_MODE_t mode);
-void refleshServerReceiverLEDInverse(GAME_MODE_t mode);
 static bool changeSideFlag = false;
 
 SegmentControl* seg;
@@ -246,7 +245,7 @@ void callBackButton()
 }
 void callBackButton2()
 {
-	if(!antiChatteringFlag[0]){
+	if(!antiChatteringFlag[1]){
 		if(!longPushFlag[1]){
 			scoreManager.addEnemyPoint();
 			refleshSegmentValue();
@@ -258,7 +257,7 @@ void callBackButton2()
 			//refleshSegmentValue();
 			longPushFlag[1] = false;
 		}
-		antiChatteringFlag[0] = true;
+		antiChatteringFlag[1] = true;
 	}
 }
 void callBackButton3()
@@ -382,6 +381,11 @@ void callBackChattering()
 				longPushFlag[2] = true;
 				//scoreManager.reduceEnemyPoint();
 				//refleshSegmentValue();
+				//cancelPreviousAction();
+				changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
+				scoreManager.swapPoint();
+				scoreManager.nextGame();//ゲーム更新
+				refleshSegmentValue();
 				count4 = 0;
 			}
 		}
@@ -404,15 +408,16 @@ void refleshSegmentValue()
 }
 void callBackBlueButton()
 {
-	if(!antiChatteringFlag[2]){
+	if(!antiChatteringFlag[4]){
 		if(!longPushFlag[2]){//長押し非検知
-			changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
+			//changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
 
-			scoreManager.swapPoint();
+			//scoreManager.swapPoint();
 
-			scoreManager.nextGame();//ゲーム更新
+			//scoreManager.nextGame();//ゲーム更新
 
-			refleshSegmentValue();
+			//refleshSegmentValue();
+			cancelPreviousAction();
 		}
 		else{
 			//scoreManager.reduceMyPoint();
@@ -420,7 +425,7 @@ void callBackBlueButton()
 			longPushFlag[2] = false;
 		}
 
-		antiChatteringFlag[2] = true;
+		antiChatteringFlag[4] = true;
 	}
 }
 void refleshServerReceiverLED(GAME_MODE_t mode)
@@ -675,11 +680,26 @@ void refleshGameState(GAME_MODE_t mode)
 void cancelPreviousAction()
 {
 	if(previousAction == UP_MY_POINT){
+		//自分のスコアを減らす
+		scoreManager.reduceMyPoint2();
+	}
+	else{//敵のスコアを減らす
+		scoreManager.reduceEnemyPoint2();
+	}
+	refleshSegmentValue();
 
+	//ポジションを元に戻す
+	if(gameMode == SINGLES){
+		singlesPlayer1.rotatePositionInverse();
+		singlesPlayer2.rotatePositionInverse();
 	}
 	else{
-
+		player1.rotatePositionInverse();
+		player2.rotatePositionInverse();
+		player3.rotatePositionInverse();
+		player4.rotatePositionInverse();
 	}
+	refleshServerReceiverLED(gameMode);
 }
 /* USER CODE END 4 */
 
