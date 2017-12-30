@@ -71,6 +71,8 @@ enum ACTION_t{
 	UP_MY_POINT,
 	UP_ENEMY_POINT
 };
+static const uint8_t FIVE_GAMES_MATCH_POINT = 3;
+static const uint8_t SEVEN_GAMES_MATCH_POINT = 5;
 
 void callBack();
 void callBackButton();
@@ -150,6 +152,12 @@ int main(void)
 	  gameMode = SINGLES;
   }
 
+  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_10) == GPIO_PIN_SET){
+	  scoreManager.setGamesToWin(SEVEN_GAMES_MATCH_POINT);
+  }
+  else{
+	  scoreManager.setGamesToWin(FIVE_GAMES_MATCH_POINT);
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -662,23 +670,31 @@ void refleshGameState(GAME_MODE_t mode)
 		  }
 	 }
      static bool fivePointFlag = false;
-     if(mode == DOUBLES && !fivePointFlag && scoreManager.isFinalGame()){
+     if(!fivePointFlag && scoreManager.isFinalGame()){
     	 	 //ダブルスの最終ゲームのとき
     	 	 if(scoreManager.getMyPoint() == 5 || scoreManager.getEnemyPoint() == 5){
-    	 		 //どちらかが5ポイントになった場合にレシーバ交代
-    	 		if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER ||
-				player2.getCurrentPosition() == DoublesPositionManger::RECEIVER){//1,2ペアがレシーバのときは1,2をスワップ
-				player1.rotatePosition();
-				player1.rotatePosition();
-				player2.rotatePosition();
-				player2.rotatePosition();
-			}
-			else{//3,4ペアがレシーバの場合, 3,4をスワップ
-				player3.rotatePosition();
-				player3.rotatePosition();
-				player4.rotatePosition();
-				player4.rotatePosition();
-			}
+    	 		 if(mode == DOUBLES){
+    	 			//どちらかが5ポイントになった場合にレシーバ交代
+				if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER ||
+					player2.getCurrentPosition() == DoublesPositionManger::RECEIVER){//1,2ペアがレシーバのときは1,2をスワップ
+					player1.rotatePosition();
+					player1.rotatePosition();
+					player2.rotatePosition();
+					player2.rotatePosition();
+				}
+				else{//3,4ペアがレシーバの場合, 3,4をスワップ
+					player3.rotatePosition();
+					player3.rotatePosition();
+					player4.rotatePosition();
+					player4.rotatePosition();
+				 }
+    	 		 }
+    	 		 else{
+    	 			 singlesPlayer1.rotatePosition();
+    	 			 singlesPlayer2.rotatePosition();
+
+    	 		 }
+
 //    	 		refleshServerReceiverLED_Doubles();
     	 		refleshServerReceiverLED(mode);
     	 		fivePointFlag = true;
