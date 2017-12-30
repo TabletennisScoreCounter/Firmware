@@ -17,7 +17,7 @@
 class ScoreManager {
 public:
 	static const uint8_t GAME_POINT = 11;
-	static const uint8_t GAMES_TO_WIN = 3;
+	uint8_t GAMES_TO_WIN = 3;
 
 private:
 	uint8_t myPoint;
@@ -25,6 +25,8 @@ private:
 	uint8_t myGame;
 	uint8_t enemyGame;
 public:
+	uint8_t getGamesToWin();
+	void setGamesToWin(uint8_t gamesToWin);
 	void addMyPoint();
 	void addEnemyPoint();
 	void reduceMyPoint();
