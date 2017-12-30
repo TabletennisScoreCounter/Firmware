@@ -697,6 +697,7 @@ void refleshGameState(GAME_MODE_t mode)
 
 //    	 		refleshServerReceiverLED_Doubles();
     	 		refleshServerReceiverLED(mode);
+    	 		scoreManager.swapPoint();
     	 		fivePointFlag = true;
     	 	 }
      }
