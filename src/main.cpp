@@ -71,6 +71,8 @@ enum ACTION_t{
 	UP_MY_POINT,
 	UP_ENEMY_POINT
 };
+static const uint8_t FIVE_GAMES_MATCH_POINT = 3;
+static const uint8_t SEVEN_GAMES_MATCH_POINT = 5;
 
 void callBack();
 void callBackButton();
@@ -150,6 +152,12 @@ int main(void)
 	  gameMode = SINGLES;
   }
 
+  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_10) == GPIO_PIN_SET){
+	  scoreManager.setGamesToWin(SEVEN_GAMES_MATCH_POINT);
+  }
+  else{
+	  scoreManager.setGamesToWin(FIVE_GAMES_MATCH_POINT);
+  }
   /* USER CODE END 2 */
 
   /* Infinite loop */

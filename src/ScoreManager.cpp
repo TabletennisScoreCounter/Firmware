@@ -136,3 +136,11 @@ void ScoreManager::nextGame()
 		}
 	}
 }
+uint8_t ScoreManager::getGamesToWin()
+{
+	return GAMES_TO_WIN;
+}
+void ScoreManager::setGamesToWin(uint8_t gamesToWin)
+{
+	GAMES_TO_WIN = gamesToWin;
+}
