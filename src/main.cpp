@@ -72,7 +72,7 @@ enum ACTION_t{
 	UP_ENEMY_POINT
 };
 static const uint8_t FIVE_GAMES_MATCH_POINT = 3;
-static const uint8_t SEVEN_GAMES_MATCH_POINT = 5;
+static const uint8_t SEVEN_GAMES_MATCH_POINT = 4;
 
 void callBack();
 void callBackButton();

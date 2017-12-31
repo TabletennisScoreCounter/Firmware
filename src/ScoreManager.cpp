@@ -2,41 +2,47 @@
 #include <cmath>
 void ScoreManager::addMyPoint()
 {
-	if(!isTheGameFinished()){//ゲームが未完了
-		uint8_t myNextPoint = myPoint + 1;
-		if(myNextPoint <= GAME_POINT){//自分の次のスコアが11点未満ならただ足すだけ
-			myPoint++;
-		}
-		else{//11点以上になる場合
-			if((int)myNextPoint - (int)enemyPoint <= 2){//次の, 相手とのスコア差が2点未満なら足すだけ
+	if(!isMatch()){
+		if(!isTheGameFinished()){//ゲームが未完了
+			uint8_t myNextPoint = myPoint + 1;
+			if(myNextPoint <= GAME_POINT){//自分の次のスコアが11点未満ならただ足すだけ
 				myPoint++;
 			}
-			else{//相手とのスコア差が2点以上開いた場合はゲームが加算
-				//myPoint = 0;
-				//enemyPoint = 0;
-				//myGame++;
+			else{//11点以上になる場合
+				if((int)myNextPoint - (int)enemyPoint <= 2){//次の, 相手とのスコア差が2点未満なら足すだけ
+					myPoint++;
+				}
+				else{//相手とのスコア差が2点以上開いた場合はゲームが加算
+					//myPoint = 0;
+					//enemyPoint = 0;
+					//myGame++;
+				}
 			}
 		}
 	}
+
 }
 void ScoreManager::addEnemyPoint()
 {
-	if(!isTheGameFinished()){//ゲームが未終了
-		uint8_t enemyNextPoint = enemyPoint + 1;
-		if(enemyNextPoint <= GAME_POINT){//敵の次のスコアが11点未満ならただ足すだけ
-			enemyPoint++;
-		}
-		else{//11点以上になる場合
-			if((int)enemyNextPoint - (int)myPoint < 2){//次の, 相手とのスコア差が2点未満なら足すだけ
+	if(!isMatch()){
+		if(!isTheGameFinished()){//ゲームが未終了
+			uint8_t enemyNextPoint = enemyPoint + 1;
+			if(enemyNextPoint <= GAME_POINT){//敵の次のスコアが11点未満ならただ足すだけ
 				enemyPoint++;
 			}
-			else{//相手とのスコア差が2点以上開いた場合はゲームが加算
-				//myPoint = 0;
-				//enemyPoint = 0;
-				//enemyGame++;
+			else{//11点以上になる場合
+				if((int)enemyNextPoint - (int)myPoint < 2){//次の, 相手とのスコア差が2点未満なら足すだけ
+					enemyPoint++;
+				}
+				else{//相手とのスコア差が2点以上開いた場合はゲームが加算
+					//myPoint = 0;
+					//enemyPoint = 0;
+					//enemyGame++;
+				}
 			}
 		}
 	}
+
 }
 void ScoreManager::resetPoint()
 {
@@ -143,4 +149,14 @@ uint8_t ScoreManager::getGamesToWin()
 void ScoreManager::setGamesToWin(uint8_t gamesToWin)
 {
 	GAMES_TO_WIN = gamesToWin;
+}
+bool ScoreManager::isMatch()
+{
+	bool result = false;
+
+	if(myGame >= GAMES_TO_WIN || enemyGame >= GAMES_TO_WIN){
+		result = true;
+	}
+
+	return result;
 }
