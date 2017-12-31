@@ -671,9 +671,8 @@ void refleshGameState(GAME_MODE_t mode)
 	 }
      static bool fivePointFlag = false;
      if(!fivePointFlag && scoreManager.isFinalGame()){
-    	 	 //ダブルスの最終ゲームのとき
     	 	 if(scoreManager.getMyPoint() == 5 || scoreManager.getEnemyPoint() == 5){
-    	 		 if(mode == DOUBLES){
+    	 		 if(mode == DOUBLES){//ダブルスの最終ゲームのとき
     	 			//どちらかが5ポイントになった場合にレシーバ交代
 				if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER ||
 					player2.getCurrentPosition() == DoublesPositionManger::RECEIVER){//1,2ペアがレシーバのときは1,2をスワップ
@@ -697,7 +696,7 @@ void refleshGameState(GAME_MODE_t mode)
 
 //    	 		refleshServerReceiverLED_Doubles();
     	 		refleshServerReceiverLED(mode);
-    	 		scoreManager.swapPoint();
+    	 		//scoreManager.swapPoint();
     	 		fivePointFlag = true;
     	 	 }
      }

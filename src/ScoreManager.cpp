@@ -1,5 +1,7 @@
 #include "ScoreManager.hpp"
 #include <cmath>
+
+static bool fivePointFlag = false;
 void ScoreManager::addMyPoint()
 {
 	if(!isMatch()){
@@ -17,6 +19,14 @@ void ScoreManager::addMyPoint()
 					//enemyPoint = 0;
 					//myGame++;
 				}
+			}
+
+
+			if(!fivePointFlag && isFinalGame()){
+				 if(myPoint == 5 || enemyPoint == 5){
+					 swapPoint();
+					fivePointFlag = true;
+				 }
 			}
 		}
 	}
@@ -39,6 +49,13 @@ void ScoreManager::addEnemyPoint()
 					//enemyPoint = 0;
 					//enemyGame++;
 				}
+			}
+
+			if(!fivePointFlag && isFinalGame()){
+				 if(myPoint == 5 || enemyPoint == 5){
+					 swapPoint();
+					fivePointFlag = true;
+				 }
 			}
 		}
 	}
