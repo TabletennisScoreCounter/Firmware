@@ -46,6 +46,7 @@ public:
 	bool isTheGameFinished();
 	void nextGame();
 private:
+	bool isMatch();
 
 };
 
