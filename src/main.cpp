@@ -69,7 +69,9 @@ enum GAME_MODE_t{
 };
 enum ACTION_t{
 	UP_MY_POINT,
-	UP_ENEMY_POINT
+	UP_ENEMY_POINT,
+	UP_MY_POINT_WITH_SERVE_CHANGE,
+	UP_ENEMY_POINT_WITH_SERVE_CHANGE
 };
 static const uint8_t FIVE_GAMES_MATCH_POINT = 3;
 static const uint8_t SEVEN_GAMES_MATCH_POINT = 4;
@@ -634,6 +636,7 @@ void refleshGameState(GAME_MODE_t mode)
 				  singlesPlayer1.rotatePosition();
 				  singlesPlayer2.rotatePosition();
 //				  refleshServerReceiverLED_Singles();
+
 			  }
 			  else{
 				  player1.rotatePosition();
@@ -646,6 +649,13 @@ void refleshGameState(GAME_MODE_t mode)
 
 			  myScore = scoreManager.getMyPoint();
 			  enemyScore = scoreManager.getEnemyPoint();
+
+			  if(previousAction == UP_MY_POINT){//ポイント上昇を上書き
+				  previousAction = UP_MY_POINT_WITH_SERVE_CHANGE;
+			  }
+			  else if(previousAction == UP_ENEMY_POINT){
+				  previousAction = UP_ENEMY_POINT_WITH_SERVE_CHANGE;
+			  }
 		  }
 	 }
 	 else
@@ -667,6 +677,13 @@ void refleshGameState(GAME_MODE_t mode)
 
 			  myScore = scoreManager.getMyPoint();
 			  enemyScore = scoreManager.getEnemyPoint();
+
+			  if(previousAction == UP_MY_POINT){//ポイント上昇を上書き
+				  previousAction = UP_MY_POINT_WITH_SERVE_CHANGE;
+			  }
+			  else if(previousAction == UP_ENEMY_POINT){
+				  previousAction = UP_ENEMY_POINT_WITH_SERVE_CHANGE;
+			  }
 		  }
 	 }
      static bool fivePointFlag = false;
@@ -703,25 +720,29 @@ void refleshGameState(GAME_MODE_t mode)
 }
 void cancelPreviousAction()
 {
-	if(previousAction == UP_MY_POINT){
+	if(previousAction == UP_MY_POINT || previousAction == UP_MY_POINT_WITH_SERVE_CHANGE){
 		//自分のスコアを減らす
 		scoreManager.reduceMyPoint2();
 	}
-	else{//敵のスコアを減らす
+	else if(previousAction == UP_ENEMY_POINT || UP_ENEMY_POINT_WITH_SERVE_CHANGE){//敵のスコアを減らす
 		scoreManager.reduceEnemyPoint2();
 	}
 	refleshSegmentValue();
 
 	//ポジションを元に戻す
 	if(gameMode == SINGLES){
-		singlesPlayer1.rotatePositionInverse();
-		singlesPlayer2.rotatePositionInverse();
+		if(previousAction == UP_MY_POINT_WITH_SERVE_CHANGE || previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){
+			singlesPlayer1.rotatePositionInverse();
+			singlesPlayer2.rotatePositionInverse();
+		}
 	}
 	else{
-		player1.rotatePositionInverse();
-		player2.rotatePositionInverse();
-		player3.rotatePositionInverse();
-		player4.rotatePositionInverse();
+		if(previousAction == UP_MY_POINT_WITH_SERVE_CHANGE || previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){
+			player1.rotatePositionInverse();
+			player2.rotatePositionInverse();
+			player3.rotatePositionInverse();
+			player4.rotatePositionInverse();
+		}
 	}
 	refleshServerReceiverLED(gameMode);
 }
