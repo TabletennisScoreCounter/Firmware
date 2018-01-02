@@ -725,10 +725,41 @@ void cancelPreviousAction()
 {
 	if(previousAction == UP_MY_POINT || previousAction == UP_MY_POINT_WITH_SERVE_CHANGE){
 		//自分のスコアを減らす
+		if(scoreManager.isDeuce()){
+			myPrevScore--;
+		}
+		else{
+			if(previousAction == UP_MY_POINT_WITH_SERVE_CHANGE){
+				myPrevScore--;
+				myPrevScore--;
+			}
+		}
 		scoreManager.reduceMyPoint2();
+		/*
+		if(previousAction == UP_MY_POINT_WITH_SERVE_CHANGE){
+			myPrevScore--;
+			myPrevScore--;
+		}
+		*/
+
 	}
-	else if(previousAction == UP_ENEMY_POINT || UP_ENEMY_POINT_WITH_SERVE_CHANGE){//敵のスコアを減らす
+	else if(previousAction == UP_ENEMY_POINT || previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){//敵のスコアを減らす
+		if(scoreManager.isDeuce()){
+			enemyPrevScore--;
+		}
+		else{
+			if(previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){
+				enemyPrevScore--;
+				enemyPrevScore--;
+			}
+		}
 		scoreManager.reduceEnemyPoint2();
+		/*
+		if(previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){
+			enemyPrevScore--;
+			enemyPrevScore--;
+		}
+		*/
 	}
 	refleshSegmentValue();
 
