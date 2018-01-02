@@ -69,7 +69,9 @@ enum GAME_MODE_t{
 };
 enum ACTION_t{
 	UP_MY_POINT,
-	UP_ENEMY_POINT
+	UP_ENEMY_POINT,
+	UP_MY_POINT_WITH_SERVE_CHANGE,
+	UP_ENEMY_POINT_WITH_SERVE_CHANGE
 };
 static const uint8_t FIVE_GAMES_MATCH_POINT = 3;
 static const uint8_t SEVEN_GAMES_MATCH_POINT = 4;
@@ -113,6 +115,9 @@ bool longPushFlag[3]{false};
 
 int previousAction;
 void cancelPreviousAction();
+
+static uint8_t myPrevScore = 0;
+static uint8_t enemyPrevScore = 0;
 
 /* USER CODE END 0 */
 
@@ -560,8 +565,8 @@ void initializeButtons()
 }
 void refleshGameState(GAME_MODE_t mode)
 {
-	 static uint8_t myScore = 0;
-     static uint8_t enemyScore = 0;
+	 //static uint8_t myScore = 0;
+     //static uint8_t enemyScore = 0;
 
      static uint8_t setCount = 0;
 
@@ -579,8 +584,8 @@ void refleshGameState(GAME_MODE_t mode)
      }
 
      if(scoreManager.getGameSum() - setCount > 0){//ゲームセットの場合リセット
-        myScore = 0;
-	    enemyScore = 0;
+        myPrevScore = 0;
+	    enemyPrevScore = 0;
 
 	    if(mode == SINGLES){//シングルスの場合, 前のゲームセットごとに反転
 			while(singlesPlayer1.getCurrentPosition() != singlesPositionStatus[0]){//初期状態に戻す
@@ -629,11 +634,12 @@ void refleshGameState(GAME_MODE_t mode)
      }
 
      if(scoreManager.isDeuce()){//デュース
-		  if(scoreManager.getSum() - myScore - enemyScore > 0 ){//1本進むごとにサーブ交代
+		  if(scoreManager.getSum() - myPrevScore - enemyPrevScore > 0 ){//1本進むごとにサーブ交代
 			  if(mode == SINGLES){
 				  singlesPlayer1.rotatePosition();
 				  singlesPlayer2.rotatePosition();
 //				  refleshServerReceiverLED_Singles();
+
 			  }
 			  else{
 				  player1.rotatePosition();
@@ -644,13 +650,20 @@ void refleshGameState(GAME_MODE_t mode)
 			  }
 			  refleshServerReceiverLED(mode);
 
-			  myScore = scoreManager.getMyPoint();
-			  enemyScore = scoreManager.getEnemyPoint();
+			  myPrevScore = scoreManager.getMyPoint();
+			  enemyPrevScore = scoreManager.getEnemyPoint();
+
+			  if(previousAction == UP_MY_POINT){//ポイント上昇を上書き
+				  previousAction = UP_MY_POINT_WITH_SERVE_CHANGE;
+			  }
+			  else if(previousAction == UP_ENEMY_POINT){
+				  previousAction = UP_ENEMY_POINT_WITH_SERVE_CHANGE;
+			  }
 		  }
 	 }
 	 else
 	 {
-		  if(scoreManager.getSum() - myScore - enemyScore > 1){//2本進むごとにサーブ交代
+		  if(scoreManager.getSum() - myPrevScore - enemyPrevScore > 1){//2本進むごとにサーブ交代
 			  if(mode == SINGLES){
 				  singlesPlayer1.rotatePosition();
 				  singlesPlayer2.rotatePosition();
@@ -665,8 +678,15 @@ void refleshGameState(GAME_MODE_t mode)
 			  }
 			  refleshServerReceiverLED(mode);
 
-			  myScore = scoreManager.getMyPoint();
-			  enemyScore = scoreManager.getEnemyPoint();
+			  myPrevScore = scoreManager.getMyPoint();
+			  enemyPrevScore = scoreManager.getEnemyPoint();
+
+			  if(previousAction == UP_MY_POINT){//ポイント上昇を上書き
+				  previousAction = UP_MY_POINT_WITH_SERVE_CHANGE;
+			  }
+			  else if(previousAction == UP_ENEMY_POINT){
+				  previousAction = UP_ENEMY_POINT_WITH_SERVE_CHANGE;
+			  }
 		  }
 	 }
      static bool fivePointFlag = false;
@@ -703,25 +723,60 @@ void refleshGameState(GAME_MODE_t mode)
 }
 void cancelPreviousAction()
 {
-	if(previousAction == UP_MY_POINT){
+	if(previousAction == UP_MY_POINT || previousAction == UP_MY_POINT_WITH_SERVE_CHANGE){
 		//自分のスコアを減らす
+		if(scoreManager.isDeuce()){
+			myPrevScore--;
+		}
+		else{
+			if(previousAction == UP_MY_POINT_WITH_SERVE_CHANGE){
+				myPrevScore--;
+				myPrevScore--;
+			}
+		}
 		scoreManager.reduceMyPoint2();
+		/*
+		if(previousAction == UP_MY_POINT_WITH_SERVE_CHANGE){
+			myPrevScore--;
+			myPrevScore--;
+		}
+		*/
+
 	}
-	else{//敵のスコアを減らす
+	else if(previousAction == UP_ENEMY_POINT || previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){//敵のスコアを減らす
+		if(scoreManager.isDeuce()){
+			enemyPrevScore--;
+		}
+		else{
+			if(previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){
+				enemyPrevScore--;
+				enemyPrevScore--;
+			}
+		}
 		scoreManager.reduceEnemyPoint2();
+		/*
+		if(previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){
+			enemyPrevScore--;
+			enemyPrevScore--;
+		}
+		*/
 	}
 	refleshSegmentValue();
 
 	//ポジションを元に戻す
 	if(gameMode == SINGLES){
-		singlesPlayer1.rotatePositionInverse();
-		singlesPlayer2.rotatePositionInverse();
+		if(previousAction == UP_MY_POINT_WITH_SERVE_CHANGE || previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){
+			singlesPlayer1.rotatePositionInverse();
+			singlesPlayer2.rotatePositionInverse();
+		}
 	}
 	else{
-		player1.rotatePositionInverse();
-		player2.rotatePositionInverse();
-		player3.rotatePositionInverse();
-		player4.rotatePositionInverse();
+		if(previousAction == UP_MY_POINT_WITH_SERVE_CHANGE || previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){
+			player1.rotatePositionInverse();
+			player2.rotatePositionInverse();
+			player3.rotatePositionInverse();
+			player4.rotatePositionInverse();
+		}
 	}
 	refleshServerReceiverLED(gameMode);
 }
