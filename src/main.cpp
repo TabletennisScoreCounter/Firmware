@@ -116,6 +116,9 @@ bool longPushFlag[3]{false};
 int previousAction;
 void cancelPreviousAction();
 
+static uint8_t myPrevScore = 0;
+static uint8_t enemyPrevScore = 0;
+
 /* USER CODE END 0 */
 
 int main(void)
@@ -562,8 +565,8 @@ void initializeButtons()
 }
 void refleshGameState(GAME_MODE_t mode)
 {
-	 static uint8_t myScore = 0;
-     static uint8_t enemyScore = 0;
+	 //static uint8_t myScore = 0;
+     //static uint8_t enemyScore = 0;
 
      static uint8_t setCount = 0;
 
@@ -581,8 +584,8 @@ void refleshGameState(GAME_MODE_t mode)
      }
 
      if(scoreManager.getGameSum() - setCount > 0){//ゲームセットの場合リセット
-        myScore = 0;
-	    enemyScore = 0;
+        myPrevScore = 0;
+	    enemyPrevScore = 0;
 
 	    if(mode == SINGLES){//シングルスの場合, 前のゲームセットごとに反転
 			while(singlesPlayer1.getCurrentPosition() != singlesPositionStatus[0]){//初期状態に戻す
@@ -631,7 +634,7 @@ void refleshGameState(GAME_MODE_t mode)
      }
 
      if(scoreManager.isDeuce()){//デュース
-		  if(scoreManager.getSum() - myScore - enemyScore > 0 ){//1本進むごとにサーブ交代
+		  if(scoreManager.getSum() - myPrevScore - enemyPrevScore > 0 ){//1本進むごとにサーブ交代
 			  if(mode == SINGLES){
 				  singlesPlayer1.rotatePosition();
 				  singlesPlayer2.rotatePosition();
@@ -647,8 +650,8 @@ void refleshGameState(GAME_MODE_t mode)
 			  }
 			  refleshServerReceiverLED(mode);
 
-			  myScore = scoreManager.getMyPoint();
-			  enemyScore = scoreManager.getEnemyPoint();
+			  myPrevScore = scoreManager.getMyPoint();
+			  enemyPrevScore = scoreManager.getEnemyPoint();
 
 			  if(previousAction == UP_MY_POINT){//ポイント上昇を上書き
 				  previousAction = UP_MY_POINT_WITH_SERVE_CHANGE;
@@ -660,7 +663,7 @@ void refleshGameState(GAME_MODE_t mode)
 	 }
 	 else
 	 {
-		  if(scoreManager.getSum() - myScore - enemyScore > 1){//2本進むごとにサーブ交代
+		  if(scoreManager.getSum() - myPrevScore - enemyPrevScore > 1){//2本進むごとにサーブ交代
 			  if(mode == SINGLES){
 				  singlesPlayer1.rotatePosition();
 				  singlesPlayer2.rotatePosition();
@@ -675,8 +678,8 @@ void refleshGameState(GAME_MODE_t mode)
 			  }
 			  refleshServerReceiverLED(mode);
 
-			  myScore = scoreManager.getMyPoint();
-			  enemyScore = scoreManager.getEnemyPoint();
+			  myPrevScore = scoreManager.getMyPoint();
+			  enemyPrevScore = scoreManager.getEnemyPoint();
 
 			  if(previousAction == UP_MY_POINT){//ポイント上昇を上書き
 				  previousAction = UP_MY_POINT_WITH_SERVE_CHANGE;
