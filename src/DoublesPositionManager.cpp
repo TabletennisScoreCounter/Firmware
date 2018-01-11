@@ -8,24 +8,20 @@
 
 #include "DoublesPositionManager.hpp"
 
-DoublesPositionManger::DoublesPositionManger(DOUBLES_POSITION_t initialPosition)
-{
-	currentPosition = initialPosition;
-}
 void DoublesPositionManger::rotatePosition()
 {
-	switch(currentPosition){
+	switch(CurrentPosition){
 	case SERVER:
-		currentPosition = RECEIVER_ASISTANT;
+		CurrentPosition = RECEIVER_ASISTANT;
 		break;
 	case RECEIVER_ASISTANT:
-		currentPosition = SERVER_ASISTANT;
+		CurrentPosition = SERVER_ASISTANT;
 		break;
 	case SERVER_ASISTANT:
-		currentPosition = RECEIVER;
+		CurrentPosition = RECEIVER;
 		break;
 	case RECEIVER:
-		currentPosition = SERVER;
+		CurrentPosition = SERVER;
 		break;
 	default:
 		break;
@@ -33,29 +29,25 @@ void DoublesPositionManger::rotatePosition()
 }
 void DoublesPositionManger::rotatePositionInverse()
 {
-	switch(currentPosition){
+	switch(CurrentPosition){
 	case SERVER:
 		//currentPosition = RECEIVER_ASISTANT;
-		currentPosition = RECEIVER;
+		CurrentPosition = RECEIVER;
 		break;
 	case RECEIVER_ASISTANT:
 		//currentPosition = SERVER_ASISTANT;
-		currentPosition = SERVER;
+		CurrentPosition = SERVER;
 		break;
 	case SERVER_ASISTANT:
 		//currentPosition = RECEIVER;
-		currentPosition = RECEIVER_ASISTANT;
+		CurrentPosition = RECEIVER_ASISTANT;
 		break;
 	case RECEIVER:
 		//currentPosition = SERVER;
-		currentPosition = SERVER_ASISTANT;
+		CurrentPosition = SERVER_ASISTANT;
 		break;
 	default:
 		break;
 	}
-}
-DoublesPositionManger::DOUBLES_POSITION_t DoublesPositionManger::getCurrentPosition()
-{
-	return currentPosition;
 }
 

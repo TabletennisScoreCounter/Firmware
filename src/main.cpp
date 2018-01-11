@@ -93,13 +93,13 @@ uint8_t segmentValue[6]{0};
 ScoreManager scoreManager;
 void initializeSegment();
 
-DoublesPositionManger player1(DoublesPositionManger::SERVER);
-DoublesPositionManger player2(DoublesPositionManger::SERVER_ASISTANT);
-DoublesPositionManger player3(DoublesPositionManger::RECEIVER);
-DoublesPositionManger player4(DoublesPositionManger::RECEIVER_ASISTANT);
+DoublesPositionManger player1(PlayerPositionManager::SERVER);
+DoublesPositionManger player2(PlayerPositionManager::SERVER_ASISTANT);
+DoublesPositionManger player3(PlayerPositionManager::RECEIVER);
+DoublesPositionManger player4(PlayerPositionManager::RECEIVER_ASISTANT);
 
-SinglesPositionManger singlesPlayer1(SinglesPositionManger::SERVER);
-SinglesPositionManger singlesPlayer2(SinglesPositionManger::RECEIVER);
+SinglesPositionManger singlesPlayer1(PlayerPositionManager::SERVER);
+SinglesPositionManger singlesPlayer2(PlayerPositionManager::RECEIVER);
 
 FullcolorLEDDriver* led1;
 FullcolorLEDDriver* led2;
@@ -570,8 +570,8 @@ void refleshGameState(GAME_MODE_t mode)
 
      static uint8_t setCount = 0;
 
-     static SinglesPositionManger::SINGLES_POSITION_t singlesPositionStatus[2];//singlesPlayer1, singlesPlayer2の状態を把握
-     static DoublesPositionManger::DOUBLES_POSITION_t doublesPositionStatus[4];//player1, player2, player3, player4の状態を把握
+     static PlayerPositionManager::POSITION_t singlesPositionStatus[2];//singlesPlayer1, singlesPlayer2の状態を把握
+     static PlayerPositionManager::POSITION_t doublesPositionStatus[4];//player1, player2, player3, player4の状態を把握
 
      if(scoreManager.getGameSum() == 0 && scoreManager.getSum() == 0){//ゲームスタート時にポジション記憶
     	 	 singlesPositionStatus[0] = singlesPlayer1.getCurrentPosition();
