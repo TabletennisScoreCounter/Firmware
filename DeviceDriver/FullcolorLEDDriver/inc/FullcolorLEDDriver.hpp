@@ -1,5 +1,5 @@
 /*
- * FullcolorLEDDriver2.hpp
+ * FullcolorLEDDriver.hpp
  *
  *  Created on: 2017/09/18
  *      Author: Shuji

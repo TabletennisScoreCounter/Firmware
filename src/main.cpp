@@ -31,7 +31,6 @@
   ******************************************************************************
   */
 /* Includes ------------------------------------------------------------------*/
-#include <FullcolorLEDDriver.hpp>
 #include "stm32l4xx_hal.h"
 
 
@@ -41,9 +40,10 @@
 #include "SegmentControl.hpp"
 #include "ScoreManager.hpp"
 #include "DigitalOut.hpp"
-#include "FullcolorLEDDriver.hpp"
 #include "DoublesPositionManager.hpp"
 #include "SinglesPositionManager.hpp"
+
+#include "FullcolorLEDDriver.hpp"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
