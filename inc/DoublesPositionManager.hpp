@@ -8,22 +8,13 @@
 #ifndef DOUBLESPOSITIONMANAGER_HPP_
 #define DOUBLESPOSITIONMANAGER_HPP_
 
+#include "PlayerPositionManager.hpp"
 
-class DoublesPositionManger{
+class DoublesPositionManger : public PlayerPositionManager{
 public:
-	enum DOUBLES_POSITION_t{
-		SERVER,
-		RECEIVER,
-		SERVER_ASISTANT,
-		RECEIVER_ASISTANT
-	};
-public:
-	DoublesPositionManger(DOUBLES_POSITION_t initialPosition);
+	DoublesPositionManger(PlayerPositionManager::POSITION_t initialPosition) : PlayerPositionManager(initialPosition){};
 	void rotatePosition();
 	void rotatePositionInverse();
-	DOUBLES_POSITION_t getCurrentPosition();
-private:
-	DOUBLES_POSITION_t currentPosition;
 };
 
 

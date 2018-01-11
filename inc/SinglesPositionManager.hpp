@@ -8,20 +8,13 @@
 #ifndef SINGLESPOSITIONMANAGER_HPP_
 #define SINGLESPOSITIONMANAGER_HPP_
 
+#include "PlayerPositionManager.hpp"
 
-class SinglesPositionManger{
+class SinglesPositionManger : public PlayerPositionManager{
 public:
-	enum SINGLES_POSITION_t{
-		SERVER,
-		RECEIVER,
-	};
-public:
-	SinglesPositionManger(SINGLES_POSITION_t initialPosition);
+	SinglesPositionManger(PlayerPositionManager::POSITION_t initialPosition) : PlayerPositionManager(initialPosition){};
 	void rotatePosition();
-	SINGLES_POSITION_t getCurrentPosition();
 	void rotatePositionInverse();
-private:
-	SINGLES_POSITION_t currentPosition;
 };
 
 

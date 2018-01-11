@@ -9,18 +9,14 @@
 
 #include "SinglesPositionManager.hpp"
 
-SinglesPositionManger::SinglesPositionManger(SINGLES_POSITION_t initialPosition)
-{
-	currentPosition = initialPosition;
-}
 void SinglesPositionManger::rotatePosition()
 {
-	switch(currentPosition){
+	switch(CurrentPosition){
 	case SERVER:
-		currentPosition = RECEIVER;
+		CurrentPosition = RECEIVER;
 		break;
 	case RECEIVER:
-		currentPosition = SERVER;
+		CurrentPosition = SERVER;
 		break;
 	default:
 		break;
@@ -28,18 +24,5 @@ void SinglesPositionManger::rotatePosition()
 }
 void SinglesPositionManger::rotatePositionInverse()
 {//シングルスでは動きは同じ
-	switch(currentPosition){
-	case SERVER:
-		currentPosition = RECEIVER;
-		break;
-	case RECEIVER:
-		currentPosition = SERVER;
-		break;
-	default:
-		break;
-	}
-}
-SinglesPositionManger::SINGLES_POSITION_t SinglesPositionManger::getCurrentPosition()
-{
-	return currentPosition;
+	rotatePosition();
 }
