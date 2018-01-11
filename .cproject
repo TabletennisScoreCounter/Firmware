@@ -105,6 +105,8 @@
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
                                     									
+                                    <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/UserModules/PositionManager/inc&quot;"/>
+                                    									
                                     <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/DeviceDriver/FullcolorLEDDriver/inc&quot;"/>
                                     									
                                     <listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/core&quot;"/>
