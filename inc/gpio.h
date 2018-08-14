@@ -5,7 +5,7 @@
   *                      the gpio  
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -47,13 +47,23 @@
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN Private defines */
+typedef enum{
+	NC = 01,
+	PA0  = 0, PA1, PA2, PA3, PA4, PA5, PA6,PA7,PA8,PA9,PA10,PA11,PA12,PA13,PA14,PA15,
+	PB0  = 16, PB1, PB2, PB3, PB4, PB5, PB6,PB7,PB8,PB9,PB10,PB11,PB12,PB13,PB14,PB15,
+	PC0 = 32, PC1, PC2, PC3, PC4, PC5, PC6,PC7,PC8,PC9,PC10,PC11,PC12,PC13,PC14,PC15,
+	PD0  = 48, PD1, PD2, PD3, PD4, PD5, PD6,PD7,PD8,PD9,PD10,PD11,PD12,PD13,PD14,PD15
+}GPIO_PORT_NAME_t;
 
 /* USER CODE END Private defines */
 
 void MX_GPIO_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+GPIO_TypeDef* getGPIO_TypeDef(GPIO_PORT_NAME_t portName);
+uint16_t getGPIO_Pin(GPIO_PORT_NAME_t portName);
+void setGPIOOutput(GPIO_PORT_NAME_t portName);
+void GPIOIRQAttach(GPIO_PORT_NAME_t portName, void (*funcPtr)());
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
