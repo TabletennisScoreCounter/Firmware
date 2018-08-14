@@ -5,7 +5,7 @@
   *                      of the TIM instances.
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2017 STMicroelectronics
+  * COPYRIGHT(c) 2018 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -44,6 +44,7 @@
 #include "stm32l4xx_hal.h"
 #include "stm32l4xx_hal.h"
 #include "stm32l4xx_hal.h"
+#include "stm32l4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
 #include "gpio.h"
@@ -54,6 +55,7 @@ extern TIM_HandleTypeDef htim2;
 extern TIM_HandleTypeDef htim3;
 extern TIM_HandleTypeDef htim4;
 extern TIM_HandleTypeDef htim5;
+extern TIM_HandleTypeDef htim6;
 
 /* USER CODE BEGIN Private defines */
 
@@ -66,6 +68,7 @@ void MX_TIM2_Init(void);
 void MX_TIM3_Init(void);
 void MX_TIM4_Init(void);
 void MX_TIM5_Init(void);
+void MX_TIM6_Init(void);
                     
 void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                                 
@@ -85,6 +88,9 @@ void startTIM5();
 void IRQAttachTIM5(void (*funPtr)());
 void stopTIM5();
 void setDutyTIM(TIM_HandleTypeDef* htim, uint8_t Duty, uint32_t channel);
+void StartTIM6();
+void ClearCountTIM6();
+uint16_t GetCountTIM6();
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

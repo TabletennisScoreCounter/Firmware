@@ -119,6 +119,7 @@ void cancelPreviousAction();
 static uint8_t myPrevScore = 0;
 static uint8_t enemyPrevScore = 0;
 
+static bool waitingAfterButton = false;
 /* USER CODE END 0 */
 
 int main(void)
@@ -142,6 +143,7 @@ int main(void)
   MX_TIM3_Init();
   MX_TIM4_Init();
   MX_TIM5_Init();
+  MX_TIM6_Init();
 
   /* USER CODE BEGIN 2 */
   initializeServerReceiverLED();
@@ -149,6 +151,8 @@ int main(void)
   initializeSegment();
 
   initializeButtons();
+
+  StartTIM6();
 
   if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0) == GPIO_PIN_SET){
 	  gameMode = DOUBLES;
@@ -170,6 +174,14 @@ int main(void)
   while (1)
   {
 	  refleshGameState(gameMode);
+
+	  if(waitingAfterButton){
+		  uint16_t currentCount = GetCountTIM6();
+
+		  if(currentCount > 10000){
+			  waitingAfterButton = false;
+		  }
+	  }
   /* USER CODE END WHILE */
   /* USER CODE BEGIN 3 */
 
@@ -242,35 +254,39 @@ void callBack()
 }
 void callBackButton()
 {
-	if(!antiChatteringFlag[0]){
-		if(!longPushFlag[0]){//長押し非検知
-			scoreManager.addMyPoint();
-			refleshSegmentValue();
-			previousAction = UP_MY_POINT;
+	if(!waitingAfterButton){
+		ClearCountTIM6();
+		waitingAfterButton = true;
+
+		if(!antiChatteringFlag[0]){
+			if(!longPushFlag[0]){//長押し非検知
+				scoreManager.addMyPoint();
+				refleshSegmentValue();
+				previousAction = UP_MY_POINT;
+			}
+			else{
+				longPushFlag[0] = false;
+			}
+			antiChatteringFlag[0] = true;
 		}
-		else{
-			//scoreManager.reduceMyPoint();
-			//refleshSegmentValue();
-			longPushFlag[0] = false;
-		}
-		antiChatteringFlag[0] = true;
 	}
 }
 void callBackButton2()
 {
-	if(!antiChatteringFlag[1]){
-		if(!longPushFlag[1]){
-			scoreManager.addEnemyPoint();
-			refleshSegmentValue();
-			//antiChatteringFlag[0] = true;
-			previousAction = UP_ENEMY_POINT;
+	if(!waitingAfterButton){
+		ClearCountTIM6();
+		waitingAfterButton = true;
+		if(!antiChatteringFlag[1]){
+			if(!longPushFlag[1]){
+				scoreManager.addEnemyPoint();
+				refleshSegmentValue();
+				previousAction = UP_ENEMY_POINT;
+			}
+			else{
+				longPushFlag[1] = false;
+			}
+			antiChatteringFlag[1] = true;
 		}
-		else{
-			//scoreManager.reduceMyPoint();
-			//refleshSegmentValue();
-			longPushFlag[1] = false;
-		}
-		antiChatteringFlag[1] = true;
 	}
 }
 void callBackButton3()
@@ -281,7 +297,6 @@ void callBackButton3()
 				if(scoreManager.getGameSum() == 0){//初期しか動作しない
 					singlesPlayer1.rotatePosition();
 					singlesPlayer2.rotatePosition();
-//					refleshServerReceiverLED_Singles();
 				}
 			}
 			else{
@@ -301,7 +316,6 @@ void callBackButton3()
 					player3.rotatePosition();
 					player4.rotatePosition();
 				}
-//				refleshServerReceiverLED_Doubles();
 			}
 			refleshServerReceiverLED(gameMode);
 		}
@@ -328,7 +342,6 @@ void callBackButton4()
 					player4.rotatePosition();
 					player4.rotatePosition();
 				}
-//				refleshServerReceiverLED_Doubles();
 				refleshServerReceiverLED(DOUBLES);
 			}
 
