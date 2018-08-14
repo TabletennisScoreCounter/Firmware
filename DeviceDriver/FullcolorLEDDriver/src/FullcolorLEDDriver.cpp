@@ -1,11 +1,11 @@
 /*
- * FullcolorLEDDriver2.cpp
+ * FullcolorLEDDriver.cpp
  *
  *  Created on: 2017/09/18
  *      Author: Shuji
  */
 
-#include <FullcolorLEDDriver.hpp>
+#include "FullcolorLEDDriver.hpp"
 
 FullcolorLEDDriver::FullcolorLEDDriver(LEDPWMPort_t redPort, LEDPWMPort_t greenPort, LEDPWMPort_t bluePort)
 {
