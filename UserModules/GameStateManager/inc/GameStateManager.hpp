@@ -22,19 +22,18 @@ public:
 	};
 	GameStateManager(GAME_MODE_t gameMode);
 private:
-	ScoreManager* scoreManager;
-	SinglesPositionManger* singlesPosition1;
-	SinglesPositionManger* singlesPosition2;
-	DoublesPositionManger* doublesPosition1[2];
-	DoublesPositionManger* doublesPosition2[2];
+	ScoreManager* scoreManager = nullptr;
+	SinglesPositionManger* singlesPosition1 = nullptr;
+	SinglesPositionManger* singlesPosition2 = nullptr;
+	DoublesPositionManger* doublesPosition1[2] = {nullptr};
+	DoublesPositionManger* doublesPosition2[2] = {nullptr};
 	uint8_t prevPoint1;
 	uint8_t prevPoint2;
 	uint8_t prevGame1;
 	uint8_t prevGame2;
-	uint8_t prevServer;
-	uint8_t prevReciever;
+	PlayerPositionManager* prevServer = nullptr;
+	PlayerPositionManager* prevReciever = nullptr;
 	GAME_MODE_t GameMode;
-	void posRotate();
 };
 
 
