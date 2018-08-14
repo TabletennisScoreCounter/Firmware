@@ -5,7 +5,7 @@
   *                      of the TIM instances.
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -36,7 +36,12 @@
 #include "tim.h"
 
 /* USER CODE BEGIN 0 */
+#include "gpio.h"
 
+static void (*callBack)() = NULL;
+static void (*callBackTIM3)() = NULL;
+static void (*callBackTIM4)() = NULL;
+static void (*callBackTIM5)() = NULL;
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim1;
@@ -505,6 +510,101 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 } 
 
 /* USER CODE BEGIN 1 */
+void startTIM2()
+{
+	HAL_TIM_Base_Start_IT(&htim2);
+}
+void startTIM3()
+{
+	HAL_TIM_Base_Start_IT(&htim3);
+}
+void stopTIM3()
+{
+	HAL_TIM_Base_Stop_IT(&htim3);
+}
+void startTIM4()
+{
+	HAL_TIM_Base_Start_IT(&htim4);
+}
+void stopTIM4()
+{
+	HAL_TIM_Base_Stop_IT(&htim4);
+}
+void startTIM5()
+{
+	HAL_TIM_Base_Start_IT(&htim5);
+}
+void stopTIM5()
+{
+	HAL_TIM_Base_Stop_IT(&htim5);
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+{
+	if(htim == &htim2){
+		if(callBack != NULL){
+			callBack();
+		}
+	}
+	else if(htim == &htim3){
+		if(callBackTIM3 != NULL){
+			callBackTIM3();
+		}
+	}
+	else if(htim == &htim4){
+		if(callBackTIM4 != NULL){
+			callBackTIM4();
+		}
+	}
+	else if(htim == &htim5){
+		if(callBackTIM5 != NULL){
+			callBackTIM5();
+		}
+	}
+}
+void IRQAttachTIM2(void (*funcPtr)())
+{
+	callBack = funcPtr;
+}
+void IRQAttachTIM3(void (*funcPtr)())
+{
+	callBackTIM3 = funcPtr;
+}
+void IRQAttachTIM4(void (*funcPtr)())
+{
+	callBackTIM4 = funcPtr;
+}
+void IRQAttachTIM5(void (*funcPtr)())
+{
+	callBackTIM5 = funcPtr;
+}
+
+void startTIM1()
+{
+	//HAL_TIM_Base_Start(&htim1);
+	HAL_TIM_PWM_Start(&htim1,TIM_CHANNEL_1);
+}
+void stopTIM1()
+{
+	//HAL_TIM_Base_Stop(&htim1);
+	HAL_TIM_PWM_Stop(&htim1, TIM_CHANNEL_1);
+}
+void setDutyTIM(TIM_HandleTypeDef* htim, uint8_t Duty, uint32_t channel)
+{
+	TIM_OC_InitTypeDef sConfigOC;
+
+	sConfigOC.OCMode = TIM_OCMODE_PWM1;
+	sConfigOC.Pulse = (uint32_t)((double)Duty / (double)UINT8_MAX * htim->Init.Period);
+	sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
+	sConfigOC.OCNPolarity = TIM_OCNPOLARITY_HIGH;
+	sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
+	sConfigOC.OCIdleState = TIM_OCIDLESTATE_RESET;
+	sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
+
+	HAL_TIM_PWM_ConfigChannel(htim, &sConfigOC, channel);
+
+	HAL_TIM_PWM_Start(htim,channel);
+}
 
 /* USER CODE END 1 */
 

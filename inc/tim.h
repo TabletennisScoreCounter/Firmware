@@ -5,7 +5,7 @@
   *                      of the TIM instances.
   ******************************************************************************
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2017 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -46,7 +46,7 @@
 #include "stm32l4xx_hal.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "gpio.h"
 /* USER CODE END Includes */
 
 extern TIM_HandleTypeDef htim1;
@@ -71,7 +71,20 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
                                                 
 
 /* USER CODE BEGIN Prototypes */
-
+void startTIM1();
+void stopTIM2();
+void startTIM2();
+void IRQAttachTIM2(void (*funcPtr)());
+void startTIM3();
+void IRQAttachTIM3(void (*funcPtr)());
+void stopTIM3();
+void startTIM4();
+void IRQAttachTIM4(void (*funPtr)());
+void stopTIM4();
+void startTIM5();
+void IRQAttachTIM5(void (*funPtr)());
+void stopTIM5();
+void setDutyTIM(TIM_HandleTypeDef* htim, uint8_t Duty, uint32_t channel);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
