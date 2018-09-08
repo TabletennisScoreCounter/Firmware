@@ -4,7 +4,7 @@
  *  Created on: 2018/01/03
  *      Author: Shuji
  */
-#include "PlayerPositionManager.hpp"
+#include "../Inc/PlayerPositionManager.hpp"
 
 PlayerPositionManager::POSITION_t PlayerPositionManager::getCurrentPosition()
 {

@@ -4,7 +4,7 @@
  *  Created on: 2018/01/03
  *      Author: Shuji
  */
-#include "GameStateManager.hpp"
+#include "../Inc/GameStateManager.hpp"
 
 GameStateManager::GameStateManager(GameStateManager::GAME_MODE_t gameMode)
 {

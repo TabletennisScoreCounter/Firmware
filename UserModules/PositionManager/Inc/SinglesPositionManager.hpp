@@ -8,7 +8,7 @@
 #ifndef SINGLESPOSITIONMANAGER_HPP_
 #define SINGLESPOSITIONMANAGER_HPP_
 
-#include "PlayerPositionManager.hpp"
+#include "../Inc/PlayerPositionManager.hpp"
 
 class SinglesPositionManger : public PlayerPositionManager{
 public:

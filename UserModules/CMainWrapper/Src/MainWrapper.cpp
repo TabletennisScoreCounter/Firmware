@@ -11,12 +11,15 @@
 #include "tim.h"
 #include "gpio.h"
 #include "BusOut.hpp"
-#include "SegmentControl.hpp"
-#include "ScoreManager.hpp"
 #include "DigitalOut.hpp"
-#include "DoublesPositionManager.hpp"
-#include "SinglesPositionManager.hpp"
-#include "FullcolorLEDDriver.hpp"
+
+#include "../../ScoreManager/Inc/ScoreManager.hpp"
+
+#include "../../PositionManager/Inc/DoublesPositionManager.hpp"
+#include "../../PositionManager/Inc/SinglesPositionManager.hpp"
+
+#include "../../../DeviceDrivers/FullcolorLEDDriver/Inc/FullcolorLEDDriver.hpp"
+#include "../../../DeviceDrivers/SegmentDriver/Inc/SegmentControl.hpp"
 
 enum GAME_MODE_t{
 	SINGLES,

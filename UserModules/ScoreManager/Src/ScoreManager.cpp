@@ -1,4 +1,5 @@
-#include "ScoreManager.hpp"
+#include "../Inc/ScoreManager.hpp"
+
 #include <cmath>
 
 static bool fivePointFlag = false;

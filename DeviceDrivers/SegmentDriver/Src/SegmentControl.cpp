@@ -6,7 +6,7 @@
  */
 
 
-#include "SegmentControl.hpp"
+#include "../Inc/SegmentControl.hpp"
 
 
 SegmentControl::SegmentControl(GPIO_PORT_NAME_t bottomLeft, GPIO_PORT_NAME_t bottom,
