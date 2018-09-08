@@ -8,7 +8,7 @@
 #ifndef DOUBLESPOSITIONMANAGER_HPP_
 #define DOUBLESPOSITIONMANAGER_HPP_
 
-#include "../Inc/PlayerPositionManager.hpp"
+#include "PlayerPositionManager.hpp"
 
 class DoublesPositionManger : public PlayerPositionManager{
 public:

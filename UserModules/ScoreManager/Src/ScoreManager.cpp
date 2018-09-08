@@ -1,4 +1,4 @@
-#include "../Inc/ScoreManager.hpp"
+#include "ScoreManager.hpp"
 
 #include <cmath>
 

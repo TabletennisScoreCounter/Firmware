@@ -8,10 +8,10 @@
 #ifndef GAMESTATEMANAGER_HPP_
 #define GAMESTATEMANAGER_HPP_
 
-#include "../../ScoreManager/Inc/ScoreManager.hpp"
+#include "ScoreManager.hpp"
 
-#include "../../PositionManager/Inc/DoublesPositionManager.hpp"
-#include "../../PositionManager/Inc/SinglesPositionManager.hpp"
+#include "DoublesPositionManager.hpp"
+#include "SinglesPositionManager.hpp"
 
 
 

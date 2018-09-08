@@ -7,7 +7,7 @@
 
 
 
-#include "../Inc/SinglesPositionManager.hpp"
+#include "SinglesPositionManager.hpp"
 
 void SinglesPositionManger::rotatePosition()
 {

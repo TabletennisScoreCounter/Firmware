@@ -6,7 +6,7 @@
  */
 
 
-#include "../Inc/DoublesPositionManager.hpp"
+#include "DoublesPositionManager.hpp"
 
 void DoublesPositionManger::rotatePosition()
 {

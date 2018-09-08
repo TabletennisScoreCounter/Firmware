@@ -13,13 +13,13 @@
 #include "BusOut.hpp"
 #include "DigitalOut.hpp"
 
-#include "../../ScoreManager/Inc/ScoreManager.hpp"
+#include "ScoreManager.hpp"
 
-#include "../../PositionManager/Inc/DoublesPositionManager.hpp"
-#include "../../PositionManager/Inc/SinglesPositionManager.hpp"
+#include "DoublesPositionManager.hpp"
+#include "SinglesPositionManager.hpp"
 
-#include "../../../DeviceDrivers/FullcolorLEDDriver/Inc/FullcolorLEDDriver.hpp"
-#include "../../../DeviceDrivers/SegmentDriver/Inc/SegmentControl.hpp"
+#include "FullcolorLEDDriver.hpp"
+#include "SegmentControl.hpp"
 
 enum GAME_MODE_t{
 	SINGLES,

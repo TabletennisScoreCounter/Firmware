@@ -5,7 +5,7 @@
  *      Author: Shuji
  */
 
-#include "../Inc/FullcolorLEDDriver.hpp"
+#include "FullcolorLEDDriver.hpp"
 
 FullcolorLEDDriver::FullcolorLEDDriver(LEDPWMPort_t redPort, LEDPWMPort_t greenPort, LEDPWMPort_t bluePort)
 {
