@@ -440,6 +440,14 @@
                                 <inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.1498719148" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
                                 							
                             </tool>
+                            							
+                            <tool id="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release.1955465093" name="MCU GCC Assembler" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.exe.release">
+                                								
+                                <inputType id="cdt.managedbuild.tool.gnu.assembler.input.2139817791" superClass="cdt.managedbuild.tool.gnu.assembler.input"/>
+                                								
+                                <inputType id="fr.ac6.managedbuild.tool.gnu.cross.assembler.input.943274433" superClass="fr.ac6.managedbuild.tool.gnu.cross.assembler.input"/>
+                                							
+                            </tool>
                             						
                         </toolChain>
                         					
@@ -498,6 +506,7 @@
         <!--scannerConfigBuildInfo instanceId="fr.ac6.managedbuild.config.gnu.cross.exe.release.$(RELEASE_CONFIG_UID);fr.ac6.managedbuild.config.gnu.cross.exe.release.$(RELEASE_CONFIG_UID).;fr.ac6.managedbuild.tool.gnu.cross.c.compiler.$(RELEASE_TOOL_COMPILER_UID);cdt.managedbuild.tool.gnu.c.compiler.input.$(RELEASE_TOOL_COMPILER_INPUT_UID)">
 			<autodiscovery enabled="false" problemReportingEnabled="true" selectedProfileId=""/>
 		</scannerConfigBuildInfo-->
+        		
         <autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
         		
         <scannerConfigBuildInfo instanceId="fr.ac6.managedbuild.config.gnu.cross.exe.debug.450680260;fr.ac6.managedbuild.config.gnu.cross.exe.debug.450680260.;fr.ac6.managedbuild.tool.gnu.cross.c.compiler.694840670;fr.ac6.managedbuild.tool.gnu.cross.c.compiler.input.c.520738103">

@@ -11,12 +11,15 @@
 #include "tim.h"
 #include "gpio.h"
 #include "BusOut.hpp"
-#include "SegmentControl.hpp"
-#include "ScoreManager.hpp"
 #include "DigitalOut.hpp"
+
+#include "ScoreManager.hpp"
+
 #include "DoublesPositionManager.hpp"
 #include "SinglesPositionManager.hpp"
+
 #include "FullcolorLEDDriver.hpp"
+#include "SegmentControl.hpp"
 
 enum GAME_MODE_t{
 	SINGLES,
@@ -74,32 +77,55 @@ void cancelPreviousAction();
 static uint8_t myPrevScore = 0;
 static uint8_t enemyPrevScore = 0;
 
+static void checkSwitchInput()
+{
+
+}
+static void checkButtonInput()
+{
+	//左側ボタン状態チェック
+
+
+	//右側ボタン状態チェック
+
+
+	//青ボタン状態チェック
+
+
+	//白ボタン状態チェック
+
+
+	//黒ボタンチェック
+
+
+}
+
 void CWrappedMain()
 {
 	initializeServerReceiverLED();
 
-	  initializeSegment();
+	initializeSegment();
 
-	  initializeButtons();
+	initializeButtons();
 
-	  if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0) == GPIO_PIN_SET){
-		  gameMode = DOUBLES;
-	  }
-	  else{
-		  gameMode = SINGLES;
-	  }
+	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0) == GPIO_PIN_SET){
+		gameMode = DOUBLES;
+	}
+	else{
+		gameMode = SINGLES;
+	}
 
-	  if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_10) == GPIO_PIN_SET){
-		  scoreManager.setGamesToWin(SEVEN_GAMES_MATCH_POINT);
-	  }
-	  else{
-		  scoreManager.setGamesToWin(FIVE_GAMES_MATCH_POINT);
-	  }
+	if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_10) == GPIO_PIN_SET){
+		scoreManager.setGamesToWin(SEVEN_GAMES_MATCH_POINT);
+	}
+	else{
+		scoreManager.setGamesToWin(FIVE_GAMES_MATCH_POINT);
+	}
 
-	  while (1)
-	  {
-	  	  refleshGameState(gameMode);
-	  }
+	while (1)
+	{
+		refleshGameState(gameMode);
+	}
 }
 void callBack()
 {
@@ -438,9 +464,6 @@ void initializeButtons()
 }
 void refleshGameState(GAME_MODE_t mode)
 {
-	 //static uint8_t myScore = 0;
-     //static uint8_t enemyScore = 0;
-
      static uint8_t setCount = 0;
 
      static PlayerPositionManager::POSITION_t singlesPositionStatus[2];//singlesPlayer1, singlesPlayer2の状態を把握
