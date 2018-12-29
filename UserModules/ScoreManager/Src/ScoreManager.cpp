@@ -42,7 +42,7 @@ void ScoreManager::addEnemyPoint()
 				enemyPoint++;
 			}
 			else{//11点以上になる場合
-				if((int)enemyNextPoint - (int)myPoint < 2){//次の, 相手とのスコア差が2点未満なら足すだけ
+				if((int)enemyNextPoint - (int)myPoint <= 2){//次の, 相手とのスコア差が2点未満なら足すだけ
 					enemyPoint++;
 				}
 				else{//相手とのスコア差が2点以上開いた場合はゲームが加算
