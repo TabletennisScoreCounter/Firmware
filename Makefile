@@ -139,6 +139,25 @@ C_INCLUDES =  \
 -IDrivers/CMSIS/Device/ST/STM32L4xx/Include \
 -IDrivers/CMSIS/Include
 
+# C++ includes
+CPP_INCLUDES =  \
+-IInc \
+-IDrivers/STM32L4xx_HAL_Driver/Inc \
+-IDrivers/STM32L4xx_HAL_Driver/Inc/Legacy \
+-IDrivers/CMSIS/Device/ST/STM32L4xx/Include \
+-IDrivers/CMSIS/Include \
+-IDeviceDrivers/FullcolorLEDDriver/Inc \
+-IDeviceDrivers/SegmentDriver/Inc \
+-IPeripheralDrivers/BusOut/Inc \
+-IPeripheralDrivers/DigitalIn/Inc \
+-IPeripheralDrivers/DigitalOut/Inc \
+-IPeripheralDrivers/DigitalPort/Inc \
+-IUserModules/BitCalculator/Inc \
+-IUserModules/CMainWrapper/Inc \
+-IUserModules/GameStateManager/Inc \
+-IUserModules/PositionManager/Inc \
+-IUserModules/ScoreManager/Inc 
+
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
