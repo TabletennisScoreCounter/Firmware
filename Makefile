@@ -68,7 +68,7 @@ PeripheralDrivers/DigitalIn/Src/DigitalIn.cpp \
 PeripheralDrivers/DigitalOut/Src/DigitalOut.cpp \
 PeripheralDrivers/DigitalPort/Src/DigitalPort.cpp \
 UserModules/BitCalculator/Src/bitCalc.cpp \
-UserModules/CMainWrapper/Src/CMainWrapper.cpp \
+UserModules/CMainWrapper/Src/MainWrapper.cpp \
 UserModules/GameStateManager/src/GameStateManager.cpp \
 UserModules/PositionManager/src/DoublesPositionManager.cpp \
 UserModules/PositionManager/src/PlayerPositionManager.cpp \
