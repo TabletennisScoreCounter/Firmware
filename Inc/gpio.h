@@ -1,10 +1,16 @@
 /**
   ******************************************************************************
-  * @file    stm32l4xx_it.h
-  * @brief   This file contains the headers of the interrupt handlers.
+  * File Name          : gpio.h
+  * Description        : This file contains all the functions prototypes for 
+  *                      the gpio  
   ******************************************************************************
+  ** This notice applies to any and all portions of this file
+  * that are not between comment pairs USER CODE BEGIN and
+  * USER CODE END. Other portions of this file, whether 
+  * inserted by the user or by software development tools
+  * are owned by their respective copyright owners.
   *
-  * COPYRIGHT(c) 2018 STMicroelectronics
+  * COPYRIGHT(c) 2019 STMicroelectronics
   *
   * Redistribution and use in source and binary forms, with or without modification,
   * are permitted provided that the following conditions are met:
@@ -32,34 +38,51 @@
   */
 
 /* Define to prevent recursive inclusion -------------------------------------*/
-#ifndef __STM32L4xx_IT_H
-#define __STM32L4xx_IT_H
-
+#ifndef __gpio_H
+#define __gpio_H
 #ifdef __cplusplus
  extern "C" {
-#endif 
+#endif
 
 /* Includes ------------------------------------------------------------------*/
-/* Exported types ------------------------------------------------------------*/
-/* Exported constants --------------------------------------------------------*/
-/* Exported macro ------------------------------------------------------------*/
-/* Exported functions ------------------------------------------------------- */
+#include "stm32l4xx_hal.h"
+#include "main.h"
 
-void SysTick_Handler(void);
-void EXTI0_IRQHandler(void);
-void EXTI1_IRQHandler(void);
-void EXTI3_IRQHandler(void);
-void EXTI4_IRQHandler(void);
-void TIM2_IRQHandler(void);
-void TIM3_IRQHandler(void);
-void TIM4_IRQHandler(void);
-void EXTI15_10_IRQHandler(void);
-void TIM5_IRQHandler(void);
+/* USER CODE BEGIN Includes */
+
+/* USER CODE END Includes */
+
+/* USER CODE BEGIN Private defines */
+typedef enum{
+	NC = 01,
+	PA0  = 0, PA1, PA2, PA3, PA4, PA5, PA6,PA7,PA8,PA9,PA10,PA11,PA12,PA13,PA14,PA15,
+	PB0  = 16, PB1, PB2, PB3, PB4, PB5, PB6,PB7,PB8,PB9,PB10,PB11,PB12,PB13,PB14,PB15,
+	PC0 = 32, PC1, PC2, PC3, PC4, PC5, PC6,PC7,PC8,PC9,PC10,PC11,PC12,PC13,PC14,PC15,
+	PD0  = 48, PD1, PD2, PD3, PD4, PD5, PD6,PD7,PD8,PD9,PD10,PD11,PD12,PD13,PD14,PD15
+}GPIO_PORT_NAME_t;
+
+/* USER CODE END Private defines */
+
+void MX_GPIO_Init(void);
+
+/* USER CODE BEGIN Prototypes */
+GPIO_TypeDef* getGPIO_TypeDef(GPIO_PORT_NAME_t portName);
+uint16_t getGPIO_Pin(GPIO_PORT_NAME_t portName);
+void setGPIOOutput(GPIO_PORT_NAME_t portName);
+void GPIOIRQAttach(GPIO_PORT_NAME_t portName, void (*funcPtr)());
+/* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }
 #endif
+#endif /*__ pinoutConfig_H */
 
-#endif /* __STM32L4xx_IT_H */
+/**
+  * @}
+  */
+
+/**
+  * @}
+  */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
