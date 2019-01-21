@@ -57,7 +57,24 @@ Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c \
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c \
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c \
 Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c \
-Src/system_stm32l4xx.c  
+Src/system_stm32l4xx.c
+
+# C++ sources
+CPP_SOURCES =  \
+DeviceDrivers/FullcolorLEDDriver/Src/FullcolorLEDDriver.cpp \
+DeviceDrivers/SegmentDriver/Src/SegmentControl.cpp \
+PeripheralDrivers/BusOut/Src/BusOut.cpp \
+PeripheralDrivers/DigitalIn/Src/DigitalIn.cpp \
+PeripheralDrivers/DigitalOut/Src/DigitalOut.cpp \
+PeripheralDrivers/DigitalPort/Src/DigitalPort.cpp \
+UserModules/BitCalculator/Src/bitCalc.cpp \
+UserModules/CMainWrapper/Src/CMainWrapper.cpp \
+UserModules/GameStateManager/src/GameStateManager.cpp \
+UserModules/PositionManager/src/DoublesPositionManager.cpp \
+UserModules/PositionManager/src/PlayerPositionManager.cpp \
+UserModules/PositionManager/src/SinglesPositionManager.cpp \
+UserModules/ScoreManager/src/ScoreManager.cpp 
+
 
 # ASM sources
 ASM_SOURCES =  \
