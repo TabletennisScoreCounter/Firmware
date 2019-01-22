@@ -16,6 +16,7 @@
             ],
             
             "preLaunchCommands": [
+                "interrupt",
                 "break main",
                 "monitor reset halt",
                 "continue"
