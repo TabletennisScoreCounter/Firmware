@@ -77,28 +77,6 @@ void cancelPreviousAction();
 static uint8_t myPrevScore = 0;
 static uint8_t enemyPrevScore = 0;
 
-static void checkSwitchInput()
-{
-
-}
-static void checkButtonInput()
-{
-	//左側ボタン状態チェック
-
-
-	//右側ボタン状態チェック
-
-
-	//青ボタン状態チェック
-
-
-	//白ボタン状態チェック
-
-
-	//黒ボタンチェック
-
-
-}
 
 void CWrappedMain()
 {
@@ -587,7 +565,7 @@ void refleshGameState(GAME_MODE_t mode)
 	 }
      static bool fivePointFlag = false;
      if(!fivePointFlag && scoreManager.isFinalGame()){
-    	 	 if(scoreManager.getMyPoint() == 5 || scoreManager.getEnemyPoint() == 5){
+    	 	if(scoreManager.getMyPoint() == 5 || scoreManager.getEnemyPoint() == 5){
     	 		 if(mode == DOUBLES){//ダブルスの最終ゲームのとき
     	 			//どちらかが5ポイントになった場合にレシーバ交代
 				if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER ||
@@ -603,12 +581,11 @@ void refleshGameState(GAME_MODE_t mode)
 					player4.rotatePosition();
 					player4.rotatePosition();
 				 }
-    	 		 }
-    	 		 else{
-    	 			 singlesPlayer1.rotatePosition();
-    	 			 singlesPlayer2.rotatePosition();
-
-    	 		 }
+			}
+			else{
+				singlesPlayer1.rotatePosition();
+				singlesPlayer2.rotatePosition();
+			}
 
 //    	 		refleshServerReceiverLED_Doubles();
     	 		refleshServerReceiverLED(mode);
