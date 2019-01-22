@@ -12,7 +12,7 @@
             "type": "cortex-debug",
             "servertype": "openocd",
             "configFiles": [
-                "${env:OPENOCD_SCRIPT_DIR}/board/st_nucleo_l4.cfg"
+                "${env:OPENOCD_SCRIPT_DIR}/board/st_nucleo_l476rg.cfg"
             ],
             
             "preLaunchCommands": [
