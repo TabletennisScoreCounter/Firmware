@@ -1,0 +1,29 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Cortex Debug",
+            "cwd": "${workspaceRoot}",
+            "executable": "Debug/TabletennisScoreCounter.elf",
+            "request": "launch",
+            "type": "cortex-debug",
+            "servertype": "openocd",
+            "configFiles": [
+                "C:/OpenOCD/0.10.0-10-20181020-0522/scripts/board/st_nucleo_l4.cfg"
+            ],
+            
+            "preLaunchCommands": [
+                "break main",
+                "monitor reset halt",
+                "interrupt"
+            ],
+            "postLaunchCommands": [
+                //"break main",
+                "continue",
+            ],
+        }
+    ]
+}
