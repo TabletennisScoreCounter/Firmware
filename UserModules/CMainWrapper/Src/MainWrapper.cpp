@@ -63,7 +63,6 @@ FullcolorLEDDriver* led2;
 
 bool antiChatteringFlag[10]{false};
 
-void refleshGameState(GAME_MODE_t mode);
 GAME_MODE_t gameMode = SINGLES;
 
 bool longPushFlag[3]{false};
@@ -81,9 +80,7 @@ void initializeServerReceiverLED();  //サーバレシーバLED初期化
 void initializeButtons();	//ボタン初期化
 void initializeSegment();   //SegmentLED初期化
 
-
-
-
+void refleshGameState(GAME_MODE_t mode); //状態更新
 
 void CWrappedMain()
 {
@@ -462,7 +459,6 @@ void refleshGameState(GAME_MODE_t mode)
 	    }
 	    refleshServerReceiverLED(mode);
 	    setCount = scoreManager.getGameSum();
-
     }
 
     if(scoreManager.isDeuce()){//デュース
