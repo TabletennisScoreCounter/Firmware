@@ -1,6 +1,6 @@
 [
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -33,7 +33,7 @@
   "file": "Src/main.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -66,7 +66,7 @@
   "file": "Src/gpio.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -99,7 +99,7 @@
   "file": "Src/tim.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -132,7 +132,7 @@
   "file": "Src/stm32l4xx_it.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -165,7 +165,7 @@
   "file": "Src/stm32l4xx_hal_msp.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -198,7 +198,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -231,7 +231,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_tim_ex.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -264,7 +264,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -297,7 +297,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -330,7 +330,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_i2c_ex.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -363,7 +363,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -396,7 +396,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_rcc_ex.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -429,7 +429,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -462,7 +462,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ex.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -495,7 +495,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_flash_ramfunc.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -528,7 +528,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_gpio.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -561,7 +561,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -594,7 +594,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_dma_ex.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -627,7 +627,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -660,7 +660,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_pwr_ex.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -693,7 +693,7 @@
   "file": "Drivers/STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-c",
@@ -726,7 +726,7 @@
   "file": "Src/system_stm32l4xx.c"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-gcc",
    "-x",
@@ -760,7 +760,7 @@
   "file": "startup/startup_stm32l476xx.s"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -803,7 +803,7 @@
   "file": "DeviceDrivers/FullcolorLEDDriver/Src/FullcolorLEDDriver.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -846,7 +846,7 @@
   "file": "DeviceDrivers/SegmentDriver/Src/SegmentControl.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -889,7 +889,7 @@
   "file": "PeripheralDrivers/BusOut/Src/BusOut.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -932,7 +932,7 @@
   "file": "PeripheralDrivers/DigitalIn/Src/DigitalIn.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -975,7 +975,7 @@
   "file": "PeripheralDrivers/DigitalOut/Src/DigitalOut.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -1018,7 +1018,7 @@
   "file": "PeripheralDrivers/DigitalPort/Src/DigitalPort.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -1061,7 +1061,7 @@
   "file": "UserModules/BitCalculator/Src/bitCalc.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -1104,7 +1104,7 @@
   "file": "UserModules/CMainWrapper/Src/MainWrapper.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -1147,7 +1147,7 @@
   "file": "UserModules/GameStateManager/src/GameStateManager.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -1190,7 +1190,7 @@
   "file": "UserModules/PositionManager/src/DoublesPositionManager.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -1233,7 +1233,7 @@
   "file": "UserModules/PositionManager/src/PlayerPositionManager.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -1276,7 +1276,7 @@
   "file": "UserModules/PositionManager/src/SinglesPositionManager.cpp"
  },
  {
-  "directory": "/Users/Shuji/Documents/workspace/Tabletennis/FW",
+  "directory": "C:\\Users\\mm07860\\workspace\\TableTennis",
   "arguments": [
    "arm-none-eabi-g++",
    "-c",
@@ -1318,4 +1318,4 @@
   ],
   "file": "UserModules/ScoreManager/src/ScoreManager.cpp"
  }
-]
+]
