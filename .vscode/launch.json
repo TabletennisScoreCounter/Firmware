@@ -12,17 +12,18 @@
             "type": "cortex-debug",
             "servertype": "openocd",
             "configFiles": [
-                "C:/OpenOCD/0.10.0-10-20181020-0522/scripts/board/st_nucleo_l4.cfg"
+                "${env:OPENOCD_SCRIPT_DIR}/board/st_nucleo_l4.cfg"
             ],
             
             "preLaunchCommands": [
                 "break main",
                 "monitor reset halt",
-                "interrupt"
+                "continue"
             ],
+            
             "postLaunchCommands": [
-                //"break main",
-                "continue",
+           //     //"break main",
+                //"continue",
             ],
         }
     ]
