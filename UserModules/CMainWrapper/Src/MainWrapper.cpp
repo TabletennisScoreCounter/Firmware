@@ -23,6 +23,9 @@
 
 #include "LCDDisplayDriver.h"
 
+#include <string.h>
+#include <stdio.h>
+
 enum GAME_MODE_t{
 	SINGLES,
 	DOUBLES
@@ -271,8 +274,8 @@ void refleshSegmentValue()
 	segmentValue[5] = scoreManager.getEnemyPoint() % 10;
 
 	//LCDDisplayの値を反映
-	char gameChar[10];
-	char pointChar[10];
+	char gameChar[50];
+	char pointChar[50];
 
 	sprintf(gameChar, "Game : %d - %d", segmentValue[2], segmentValue[3]);
 	sprintf(pointChar, "Point : %d%d - %d%d", segmentValue[0], segmentValue[1], segmentValue[4], segmentValue[5]);
