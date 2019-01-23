@@ -59,7 +59,7 @@ Src/i2c.c \
 Src/tim.c \
 Src/stm32l4xx_it.c \
 Src/stm32l4xx_hal_msp.c \
-UserModules/LCDDisplayDriver/src/LCDDisplayDriver.c
+DeviceDrivers/LCDDisplayDriver/src/LCDDisplayDriver.c
 
 # C++ sources
 CPP_SOURCES =  \
@@ -143,7 +143,7 @@ C_INCLUDES =  \
 -IDeviceDrivers/FullcolorLEDDriver/Inc \
 -IDeviceDrivers/SegmentDriver/Inc \
 -IUserModules/CMainWrapper/Inc \
--IUserModules/LCDDisplayDriver/inc
+-IDeviceDrivers/LCDDisplayDriver/inc
 
 # C++ includes
 CPP_INCLUDES =  \
@@ -163,7 +163,7 @@ CPP_INCLUDES =  \
 -IUserModules/GameStateManager/Inc \
 -IUserModules/PositionManager/Inc \
 -IUserModules/ScoreManager/Inc \
--IUserModules/LCDDisplayDriver/inc
+-IDeviceDrivers/LCDDisplayDriver/inc
 
 
 # compile gcc flags
