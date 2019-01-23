@@ -269,6 +269,17 @@ void refleshSegmentValue()
 
 	segmentValue[4] = scoreManager.getEnemyPoint() / 10;
 	segmentValue[5] = scoreManager.getEnemyPoint() % 10;
+
+	//LCDDisplayの値を反映
+	char gameChar[10];
+	char pointChar[10];
+
+	sprintf(gameChar, "Game : %d - %d", segmentValue[2], segmentValue[3]);
+	sprintf(pointChar, "Point : %d%d - %d%d", segmentValue[0], segmentValue[1], segmentValue[4], segmentValue[5]);
+
+	clearChar_LCDDisplayDriver();
+	setChar_LCDDisplayDriver((uint8_t*)gameChar, strlen(gameChar), 1);
+	setChar_LCDDisplayDriver((uint8_t*)pointChar, strlen(pointChar), 2);
 }
 void callBackBlueButton()
 {
@@ -608,6 +619,8 @@ void checkSetting()
 }
 void initialize()
 {
+	initialize_LCDDisplayDriver();
+
 	initializeServerReceiverLED();
 
 	initializeSegment();
