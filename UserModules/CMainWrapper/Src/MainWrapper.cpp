@@ -21,6 +21,8 @@
 #include "FullcolorLEDDriver.hpp"
 #include "SegmentControl.hpp"
 
+#include "LCDDisplayDriver.h"
+
 enum GAME_MODE_t{
 	SINGLES,
 	DOUBLES
