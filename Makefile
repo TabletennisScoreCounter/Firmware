@@ -58,7 +58,8 @@ Src/gpio.c \
 Src/i2c.c \
 Src/tim.c \
 Src/stm32l4xx_it.c \
-Src/stm32l4xx_hal_msp.c
+Src/stm32l4xx_hal_msp.c \
+UserModules/LCDDisplayDriver/src/LCDDisplayDriver.c
 
 # C++ sources
 CPP_SOURCES =  \
