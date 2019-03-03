@@ -88,7 +88,7 @@ void initializeSegment();   //SegmentLED初期化
 void refleshGameState(GAME_MODE_t mode); //状態更新
 
 //LCD関連
-bool isLCDWriteTaskReceived = false;
+bool isLCDWriteTaskReceived = true; //初回だけ表示するために初期値true
 
 void CWrappedMain()
 {
