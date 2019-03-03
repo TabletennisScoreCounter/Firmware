@@ -6,10 +6,9 @@
         {
             "label": "build all",
             "type": "shell",
-            "command": "compiledb",
+            "command": "make",
             "args": [
                 // Ask msbuild to generate full paths for file names.
-                "make",
                 "all"
             ],
             "group": "build",
@@ -28,6 +27,17 @@
             "group": "build",
             
             // Use the standard MS compiler pattern to detect errors, warnings and infos
+            "problemMatcher": "$gcc"
+        },
+        {
+            "label": "compile commands update",
+            "type": "shell",
+            "command": "compiledb",
+            "args": [
+                "-n",
+                "make"
+            ],
+            "group": "build",
             "problemMatcher": "$gcc"
         }
 

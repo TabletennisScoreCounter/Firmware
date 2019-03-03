@@ -21,6 +21,11 @@
 #include "FullcolorLEDDriver.hpp"
 #include "SegmentControl.hpp"
 
+#include "LCDDisplayDriver.h"
+
+#include <string.h>
+#include <stdio.h>
+
 enum GAME_MODE_t{
 	SINGLES,
 	DOUBLES
@@ -49,7 +54,6 @@ SegmentControl* seg;
 BusOut* channelSel;
 uint8_t segmentValue[6]{0};
 ScoreManager scoreManager;
-void initializeSegment();
 
 DoublesPositionManger player1(PlayerPositionManager::SERVER);
 DoublesPositionManger player2(PlayerPositionManager::SERVER_ASISTANT);
@@ -62,11 +66,8 @@ SinglesPositionManger singlesPlayer2(PlayerPositionManager::RECEIVER);
 FullcolorLEDDriver* led1;
 FullcolorLEDDriver* led2;
 
-void initializeServerReceiverLED();
-void initializeButtons();
 bool antiChatteringFlag[10]{false};
 
-void refleshGameState(GAME_MODE_t mode);
 GAME_MODE_t gameMode = SINGLES;
 
 bool longPushFlag[3]{false};
@@ -77,54 +78,40 @@ void cancelPreviousAction();
 static uint8_t myPrevScore = 0;
 static uint8_t enemyPrevScore = 0;
 
-static void checkSwitchInput()
-{
+// function prototype
+void checkSetting(); //設定スイッチ状態チェック
+void initialize();   //初期化
+void initializeServerReceiverLED();  //サーバレシーバLED初期化
+void initializeButtons();	//ボタン初期化
+void initializeSegment();   //SegmentLED初期化
 
-}
-static void checkButtonInput()
-{
-	//左側ボタン状態チェック
+void refleshGameState(GAME_MODE_t mode); //状態更新
 
-
-	//右側ボタン状態チェック
-
-
-	//青ボタン状態チェック
-
-
-	//白ボタン状態チェック
-
-
-	//黒ボタンチェック
-
-
-}
+//LCD関連
+bool isLCDWriteTaskReceived = true; //初回だけ表示するために初期値true
 
 void CWrappedMain()
 {
-	initializeServerReceiverLED();
-
-	initializeSegment();
-
-	initializeButtons();
-
-	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0) == GPIO_PIN_SET){
-		gameMode = DOUBLES;
-	}
-	else{
-		gameMode = SINGLES;
-	}
-
-	if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_10) == GPIO_PIN_SET){
-		scoreManager.setGamesToWin(SEVEN_GAMES_MATCH_POINT);
-	}
-	else{
-		scoreManager.setGamesToWin(FIVE_GAMES_MATCH_POINT);
-	}
+	initialize();	
 
 	while (1)
 	{
 		refleshGameState(gameMode);
+
+		if(isLCDWriteTaskReceived){
+			//LCDDisplayの値を反映
+			char gameChar[50];
+			char pointChar[50];
+
+			sprintf(gameChar, "Game : %d - %d", segmentValue[2], segmentValue[3]);
+			sprintf(pointChar, "Point : %d%d - %d%d", segmentValue[0], segmentValue[1], segmentValue[4], segmentValue[5]);
+
+			clearChar_LCDDisplayDriver();
+			setChar_LCDDisplayDriver((uint8_t*)gameChar, strlen(gameChar), 1);
+			setChar_LCDDisplayDriver((uint8_t*)pointChar, strlen(pointChar), 2);
+
+			isLCDWriteTaskReceived = false;
+		}
 	}
 }
 void callBack()
@@ -148,8 +135,6 @@ void callBackButton()
 			previousAction = UP_MY_POINT;
 		}
 		else{
-			//scoreManager.reduceMyPoint();
-			//refleshSegmentValue();
 			longPushFlag[0] = false;
 		}
 		antiChatteringFlag[0] = true;
@@ -161,12 +146,9 @@ void callBackButton2()
 		if(!longPushFlag[1]){
 			scoreManager.addEnemyPoint();
 			refleshSegmentValue();
-			//antiChatteringFlag[0] = true;
 			previousAction = UP_ENEMY_POINT;
 		}
 		else{
-			//scoreManager.reduceMyPoint();
-			//refleshSegmentValue();
 			longPushFlag[1] = false;
 		}
 		antiChatteringFlag[1] = true;
@@ -180,7 +162,6 @@ void callBackButton3()
 				if(scoreManager.getGameSum() == 0){//初期しか動作しない
 					singlesPlayer1.rotatePosition();
 					singlesPlayer2.rotatePosition();
-//					refleshServerReceiverLED_Singles();
 				}
 			}
 			else{
@@ -200,7 +181,6 @@ void callBackButton3()
 					player3.rotatePosition();
 					player4.rotatePosition();
 				}
-//				refleshServerReceiverLED_Doubles();
 			}
 			refleshServerReceiverLED(gameMode);
 		}
@@ -227,7 +207,6 @@ void callBackButton4()
 					player4.rotatePosition();
 					player4.rotatePosition();
 				}
-//				refleshServerReceiverLED_Doubles();
 				refleshServerReceiverLED(DOUBLES);
 			}
 
@@ -291,15 +270,7 @@ void callBackChattering()
 			count4++;
 			if(count4 >= 300){
 				longPushFlag[2] = true;
-				//scoreManager.reduceEnemyPoint();
-				//refleshSegmentValue();
 				cancelPreviousAction();
-//				if(scoreManager.isTheGameFinished()){
-//					changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
-//					scoreManager.swapPoint();
-//					scoreManager.nextGame();//ゲーム更新
-//					refleshSegmentValue();
-//				}
 				count4 = 0;
 			}
 		}
@@ -319,19 +290,13 @@ void refleshSegmentValue()
 
 	segmentValue[4] = scoreManager.getEnemyPoint() / 10;
 	segmentValue[5] = scoreManager.getEnemyPoint() % 10;
+
+	isLCDWriteTaskReceived = true;
 }
 void callBackBlueButton()
 {
 	if(!antiChatteringFlag[4]){
 		if(!longPushFlag[2]){//長押し非検知
-			//changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
-
-			//scoreManager.swapPoint();
-
-			//scoreManager.nextGame();//ゲーム更新
-
-			//refleshSegmentValue();
-			//cancelPreviousAction();
 			if(scoreManager.isTheGameFinished()){
 				changeSideFlag = !changeSideFlag;//MyとEnemyを入れ替え
 				scoreManager.swapPoint();
@@ -340,8 +305,6 @@ void callBackBlueButton()
 			}
 		}
 		else{
-			//scoreManager.reduceMyPoint();
-			//refleshSegmentValue();
 			longPushFlag[2] = false;
 		}
 
@@ -397,49 +360,48 @@ void refleshServerReceiverLED(GAME_MODE_t mode)
 void initializeServerReceiverLED()
 {
 	LEDPWMPort_t led1_Red = {
-			  .PortName = PA9,
-			  .TimerHandle = &htim1,
-			  .TimerChannel = TIM_CHANNEL_2
+		.PortName = PA9,
+		.TimerHandle = &htim1,
+		.TimerChannel = TIM_CHANNEL_2
+	};
 
-	  };
+	LEDPWMPort_t led1_Green = {
+		.PortName = PB10,
+		.TimerHandle = &htim2,
+		.TimerChannel = TIM_CHANNEL_3
+	};
 
-	  LEDPWMPort_t led1_Green = {
-			  .PortName = PB10,
-			  .TimerHandle = &htim2,
-			  .TimerChannel = TIM_CHANNEL_3
-	  };
+	LEDPWMPort_t led1_Blue = {
+		.PortName = PA8,
+		.TimerHandle = &htim1,
+		.TimerChannel = TIM_CHANNEL_1
+	};
 
-	  LEDPWMPort_t led1_Blue = {
-			  .PortName = PA8,
-			  .TimerHandle = &htim1,
-			  .TimerChannel = TIM_CHANNEL_1
-	  };
-
-	  LEDPWMPort_t led2_Red = {
-	  		  .PortName = PB4,
-	  		  .TimerHandle = &htim3,
-	  		  .TimerChannel = TIM_CHANNEL_1
-	  };
-	  LEDPWMPort_t led2_Green = {
-	  		  .PortName = PA10,
-	  		  .TimerHandle = &htim1,
-	  		  .TimerChannel = TIM_CHANNEL_3
-	  };
-	  LEDPWMPort_t led2_Blue = {
-	  		  .PortName = PB5,
-	  		  .TimerHandle = &htim3,
-	  		  .TimerChannel = TIM_CHANNEL_2
-	  };
+	LEDPWMPort_t led2_Red = {
+	  	.PortName = PB4,
+	  	.TimerHandle = &htim3,
+	  	.TimerChannel = TIM_CHANNEL_1
+	};
+	LEDPWMPort_t led2_Green = {
+	  	.PortName = PA10,
+	  	.TimerHandle = &htim1,
+	  	.TimerChannel = TIM_CHANNEL_3
+	};
+	LEDPWMPort_t led2_Blue = {
+	  	.PortName = PB5,
+	  	.TimerHandle = &htim3,
+	  	.TimerChannel = TIM_CHANNEL_2
+	};
 
 
-	  led1 = new FullcolorLEDDriver(led1_Red, led1_Green, led1_Blue);
-	  led2 = new FullcolorLEDDriver(led2_Red, led2_Green, led2_Blue);
+	led1 = new FullcolorLEDDriver(led1_Red, led1_Green, led1_Blue);
+	led2 = new FullcolorLEDDriver(led2_Red, led2_Green, led2_Blue);
 
-	  led1->setDuty(5);
-	  led2->setDuty(5);
+	led1->setDuty(5);
+	led2->setDuty(5);
 
-	  led1->setColor(FullcolorLEDDriver::RED);
-	  led2->setColor(FullcolorLEDDriver::BLUE);
+	led1->setColor(FullcolorLEDDriver::RED);
+	led2->setColor(FullcolorLEDDriver::BLUE);
 }
 void initializeSegment()
 {
@@ -464,22 +426,22 @@ void initializeButtons()
 }
 void refleshGameState(GAME_MODE_t mode)
 {
-     static uint8_t setCount = 0;
+    static uint8_t setCount = 0;
 
-     static PlayerPositionManager::POSITION_t singlesPositionStatus[2];//singlesPlayer1, singlesPlayer2の状態を把握
-     static PlayerPositionManager::POSITION_t doublesPositionStatus[4];//player1, player2, player3, player4の状態を把握
+    static PlayerPositionManager::POSITION_t singlesPositionStatus[2];//singlesPlayer1, singlesPlayer2の状態を把握
+    static PlayerPositionManager::POSITION_t doublesPositionStatus[4];//player1, player2, player3, player4の状態を把握
 
-     if(scoreManager.getGameSum() == 0 && scoreManager.getSum() == 0){//ゲームスタート時にポジション記憶
-    	 	 singlesPositionStatus[0] = singlesPlayer1.getCurrentPosition();
-		 singlesPositionStatus[1] = singlesPlayer2.getCurrentPosition();
+    if(scoreManager.getGameSum() == 0 && scoreManager.getSum() == 0){//ゲームスタート時にポジション記憶
+    	singlesPositionStatus[0] = singlesPlayer1.getCurrentPosition();
+		singlesPositionStatus[1] = singlesPlayer2.getCurrentPosition();
 
-    	 	 doublesPositionStatus[0] = player1.getCurrentPosition();
-		 doublesPositionStatus[1] = player2.getCurrentPosition();
-		 doublesPositionStatus[2] = player3.getCurrentPosition();
-		 doublesPositionStatus[3] = player4.getCurrentPosition();
-     }
+    	doublesPositionStatus[0] = player1.getCurrentPosition();
+		doublesPositionStatus[1] = player2.getCurrentPosition();
+		doublesPositionStatus[2] = player3.getCurrentPosition();
+		doublesPositionStatus[3] = player4.getCurrentPosition();
+    }
 
-     if(scoreManager.getGameSum() - setCount > 0){//ゲームセットの場合リセット
+    if(scoreManager.getGameSum() - setCount > 0){//ゲームセットの場合リセット
         myPrevScore = 0;
 	    enemyPrevScore = 0;
 
@@ -494,8 +456,6 @@ void refleshGameState(GAME_MODE_t mode)
 			//新しい値を記憶
 			singlesPositionStatus[0] = singlesPlayer1.getCurrentPosition();
 			singlesPositionStatus[1] = singlesPlayer2.getCurrentPosition();
-
-//			refleshServerReceiverLED_Singles();
 	    }
 	    else{//ダブルスの場合, 前のゲームセットと, チームを反転し, さらにサーバレシーバ関係をずらす
 			while(player1.getCurrentPosition() != doublesPositionStatus[0]){//初期状態に戻す
@@ -521,75 +481,67 @@ void refleshGameState(GAME_MODE_t mode)
 			doublesPositionStatus[1] = player2.getCurrentPosition();
 			doublesPositionStatus[2] = player3.getCurrentPosition();
 			doublesPositionStatus[3] = player4.getCurrentPosition();
-
-//			refleshServerReceiverLED_Doubles();
 	    }
 	    refleshServerReceiverLED(mode);
 	    setCount = scoreManager.getGameSum();
+    }
 
-     }
+    if(scoreManager.isDeuce()){//デュース
+		if(scoreManager.getSum() - myPrevScore - enemyPrevScore > 0 ){//1本進むごとにサーブ交代
+			if(mode == SINGLES){
+				singlesPlayer1.rotatePosition();
+				singlesPlayer2.rotatePosition();
+			}
+			else{
+				player1.rotatePosition();
+				player2.rotatePosition();
+				player3.rotatePosition();
+				player4.rotatePosition();
+			}
+			refleshServerReceiverLED(mode);
 
-     if(scoreManager.isDeuce()){//デュース
-		  if(scoreManager.getSum() - myPrevScore - enemyPrevScore > 0 ){//1本進むごとにサーブ交代
-			  if(mode == SINGLES){
-				  singlesPlayer1.rotatePosition();
-				  singlesPlayer2.rotatePosition();
-//				  refleshServerReceiverLED_Singles();
+			myPrevScore = scoreManager.getMyPoint();
+			enemyPrevScore = scoreManager.getEnemyPoint();
 
-			  }
-			  else{
-				  player1.rotatePosition();
-				  player2.rotatePosition();
-				  player3.rotatePosition();
-				  player4.rotatePosition();
-//				  refleshServerReceiverLED_Doubles();
-			  }
-			  refleshServerReceiverLED(mode);
+			if(previousAction == UP_MY_POINT){//ポイント上昇を上書き
+				previousAction = UP_MY_POINT_WITH_SERVE_CHANGE;
+			}
+			else if(previousAction == UP_ENEMY_POINT){
+				previousAction = UP_ENEMY_POINT_WITH_SERVE_CHANGE;
+			}
+		}
+	}
+	else
+	{
+		if(scoreManager.getSum() - myPrevScore - enemyPrevScore > 1){//2本進むごとにサーブ交代
+			if(mode == SINGLES){
+				singlesPlayer1.rotatePosition();
+				singlesPlayer2.rotatePosition();
+			}
+			else{
+				player1.rotatePosition();
+				player2.rotatePosition();
+				player3.rotatePosition();
+				player4.rotatePosition();
+			}
+			refleshServerReceiverLED(mode);
 
-			  myPrevScore = scoreManager.getMyPoint();
-			  enemyPrevScore = scoreManager.getEnemyPoint();
+			myPrevScore = scoreManager.getMyPoint();
+			enemyPrevScore = scoreManager.getEnemyPoint();
 
-			  if(previousAction == UP_MY_POINT){//ポイント上昇を上書き
-				  previousAction = UP_MY_POINT_WITH_SERVE_CHANGE;
-			  }
-			  else if(previousAction == UP_ENEMY_POINT){
-				  previousAction = UP_ENEMY_POINT_WITH_SERVE_CHANGE;
-			  }
-		  }
-	 }
-	 else
-	 {
-		  if(scoreManager.getSum() - myPrevScore - enemyPrevScore > 1){//2本進むごとにサーブ交代
-			  if(mode == SINGLES){
-				  singlesPlayer1.rotatePosition();
-				  singlesPlayer2.rotatePosition();
-//				  refleshServerReceiverLED_Singles();
-			  }
-			  else{
-				  player1.rotatePosition();
-				  player2.rotatePosition();
-				  player3.rotatePosition();
-				  player4.rotatePosition();
-//				  refleshServerReceiverLED_Doubles();
-			  }
-			  refleshServerReceiverLED(mode);
-
-			  myPrevScore = scoreManager.getMyPoint();
-			  enemyPrevScore = scoreManager.getEnemyPoint();
-
-			  if(previousAction == UP_MY_POINT){//ポイント上昇を上書き
-				  previousAction = UP_MY_POINT_WITH_SERVE_CHANGE;
-			  }
-			  else if(previousAction == UP_ENEMY_POINT){
-				  previousAction = UP_ENEMY_POINT_WITH_SERVE_CHANGE;
-			  }
-		  }
-	 }
-     static bool fivePointFlag = false;
-     if(!fivePointFlag && scoreManager.isFinalGame()){
-    	 	 if(scoreManager.getMyPoint() == 5 || scoreManager.getEnemyPoint() == 5){
-    	 		 if(mode == DOUBLES){//ダブルスの最終ゲームのとき
-    	 			//どちらかが5ポイントになった場合にレシーバ交代
+			if(previousAction == UP_MY_POINT){//ポイント上昇を上書き
+				previousAction = UP_MY_POINT_WITH_SERVE_CHANGE;
+			}
+			else if(previousAction == UP_ENEMY_POINT){
+				previousAction = UP_ENEMY_POINT_WITH_SERVE_CHANGE;
+			}
+		}
+	}
+    static bool fivePointFlag = false;
+    if(!fivePointFlag && scoreManager.isFinalGame()){
+    	if(scoreManager.getMyPoint() == 5 || scoreManager.getEnemyPoint() == 5){
+    	 	if(mode == DOUBLES){//ダブルスの最終ゲームのとき
+    	 		//どちらかが5ポイントになった場合にレシーバ交代
 				if(player1.getCurrentPosition() == DoublesPositionManger::RECEIVER ||
 					player2.getCurrentPosition() == DoublesPositionManger::RECEIVER){//1,2ペアがレシーバのときは1,2をスワップ
 					player1.rotatePosition();
@@ -602,20 +554,17 @@ void refleshGameState(GAME_MODE_t mode)
 					player3.rotatePosition();
 					player4.rotatePosition();
 					player4.rotatePosition();
-				 }
-    	 		 }
-    	 		 else{
-    	 			 singlesPlayer1.rotatePosition();
-    	 			 singlesPlayer2.rotatePosition();
+				}
+			}
+			else{
+				singlesPlayer1.rotatePosition();
+				singlesPlayer2.rotatePosition();
+			}
 
-    	 		 }
-
-//    	 		refleshServerReceiverLED_Doubles();
-    	 		refleshServerReceiverLED(mode);
-    	 		//scoreManager.swapPoint();
-    	 		fivePointFlag = true;
-    	 	 }
-     }
+    	 	refleshServerReceiverLED(mode);
+    	 	fivePointFlag = true;
+    	}
+    }
 }
 void cancelPreviousAction()
 {
@@ -631,13 +580,6 @@ void cancelPreviousAction()
 			}
 		}
 		scoreManager.reduceMyPoint2();
-		/*
-		if(previousAction == UP_MY_POINT_WITH_SERVE_CHANGE){
-			myPrevScore--;
-			myPrevScore--;
-		}
-		*/
-
 	}
 	else if(previousAction == UP_ENEMY_POINT || previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){//敵のスコアを減らす
 		if(scoreManager.isDeuce()){
@@ -650,12 +592,7 @@ void cancelPreviousAction()
 			}
 		}
 		scoreManager.reduceEnemyPoint2();
-		/*
-		if(previousAction == UP_ENEMY_POINT_WITH_SERVE_CHANGE){
-			enemyPrevScore--;
-			enemyPrevScore--;
-		}
-		*/
+		
 	}
 	refleshSegmentValue();
 
@@ -675,4 +612,32 @@ void cancelPreviousAction()
 		}
 	}
 	refleshServerReceiverLED(gameMode);
+}
+void checkSetting()
+{
+	if(HAL_GPIO_ReadPin(GPIOB,GPIO_PIN_0) == GPIO_PIN_SET){
+		gameMode = DOUBLES;
+	}
+	else{
+		gameMode = SINGLES;
+	}
+
+	if(HAL_GPIO_ReadPin(GPIOC,GPIO_PIN_10) == GPIO_PIN_SET){
+		scoreManager.setGamesToWin(SEVEN_GAMES_MATCH_POINT);
+	}
+	else{
+		scoreManager.setGamesToWin(FIVE_GAMES_MATCH_POINT);
+	}
+}
+void initialize()
+{
+	initialize_LCDDisplayDriver();
+
+	initializeServerReceiverLED();
+
+	initializeSegment();
+
+	initializeButtons();
+
+	checkSetting();
 }
