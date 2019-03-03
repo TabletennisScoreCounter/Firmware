@@ -87,13 +87,31 @@ void initializeSegment();   //SegmentLED初期化
 
 void refleshGameState(GAME_MODE_t mode); //状態更新
 
+//LCD関連
+bool isLCDWriteTaskReceived = false;
+
 void CWrappedMain()
 {
 	initialize();	
-	
+
 	while (1)
 	{
 		refleshGameState(gameMode);
+
+		if(isLCDWriteTaskReceived){
+			//LCDDisplayの値を反映
+			char gameChar[50];
+			char pointChar[50];
+
+			sprintf(gameChar, "Game : %d - %d", segmentValue[2], segmentValue[3]);
+			sprintf(pointChar, "Point : %d%d - %d%d", segmentValue[0], segmentValue[1], segmentValue[4], segmentValue[5]);
+
+			clearChar_LCDDisplayDriver();
+			setChar_LCDDisplayDriver((uint8_t*)gameChar, strlen(gameChar), 1);
+			setChar_LCDDisplayDriver((uint8_t*)pointChar, strlen(pointChar), 2);
+
+			isLCDWriteTaskReceived = false;
+		}
 	}
 }
 void callBack()
@@ -273,16 +291,7 @@ void refleshSegmentValue()
 	segmentValue[4] = scoreManager.getEnemyPoint() / 10;
 	segmentValue[5] = scoreManager.getEnemyPoint() % 10;
 
-	//LCDDisplayの値を反映
-	char gameChar[50];
-	char pointChar[50];
-
-	sprintf(gameChar, "Game : %d - %d", segmentValue[2], segmentValue[3]);
-	sprintf(pointChar, "Point : %d%d - %d%d", segmentValue[0], segmentValue[1], segmentValue[4], segmentValue[5]);
-
-	clearChar_LCDDisplayDriver();
-	setChar_LCDDisplayDriver((uint8_t*)gameChar, strlen(gameChar), 1);
-	setChar_LCDDisplayDriver((uint8_t*)pointChar, strlen(pointChar), 2);
+	isLCDWriteTaskReceived = true;
 }
 void callBackBlueButton()
 {

@@ -68,6 +68,7 @@ void setChar_LCDDisplayDriver(uint8_t* str, uint8_t length, uint8_t line)
 
 	if(writeResult == HAL_OK){
 		I2C1_Master_MEM_WriteBytes(DEVICE_ADDRESS, DATA_ADDRESS, str, length, TIME_OUT);
+		HAL_Delay(2);
 	}
 	else{
 		MX_I2C1_Init();
