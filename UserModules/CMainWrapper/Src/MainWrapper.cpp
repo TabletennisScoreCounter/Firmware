@@ -67,6 +67,8 @@ FullcolorLEDDriver* led1;
 FullcolorLEDDriver* led2;
 
 bool antiChatteringFlag[10]{false};
+void allPushButtonDisable();
+void allPushButtonEnable();
 
 GAME_MODE_t gameMode = SINGLES;
 
@@ -128,7 +130,7 @@ void callBack()
 }
 void callBackButton()
 {
-	if(!antiChatteringFlag[0]){
+	if(!antiChatteringFlag[0] & !antiChatteringFlag[1]){
 		if(!longPushFlag[0]){//長押し非検知
 			scoreManager.addMyPoint();
 			refleshSegmentValue();
@@ -142,7 +144,7 @@ void callBackButton()
 }
 void callBackButton2()
 {
-	if(!antiChatteringFlag[1]){
+	if(!antiChatteringFlag[1] & !antiChatteringFlag[0]){
 		if(!longPushFlag[1]){
 			scoreManager.addEnemyPoint();
 			refleshSegmentValue();
@@ -216,14 +218,16 @@ void callBackButton4()
 }
 void callBackChattering()
 {
-	static uint8_t count[10]{0};
+	static uint16_t count[10]{0};
 
 	for(int i = 0; i < 10; i++){
 		if(antiChatteringFlag[i]){
+			//allPushButtonDisable();
 			count[i]++;
 
 			if(count[i] >= 100){
 				antiChatteringFlag[i] = false;
+				//allPushButtonEnable();
 				count[i] = 0;
 			}
 		}
@@ -640,4 +644,17 @@ void initialize()
 	initializeButtons();
 
 	checkSetting();
+}
+void allPushButtonDisable()
+{
+	//アンチチャタリングフラグをプッシュボタン全てについてON
+	antiChatteringFlag[0] = true;
+	antiChatteringFlag[1] = true;
+}
+void allPushButtonEnable()
+{
+	//アンチチャタリングフラグをプッシュボタン全てについてOFF
+	antiChatteringFlag[0] = false;
+	antiChatteringFlag[1] = false;
+
 }
