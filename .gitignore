@@ -2,3 +2,5 @@
 language.settings.xml
 TabletennisScorecounter Debug.cfg
 compile_commands.json
+FW_OSBase/build/
+FW_OSBase/.clangd/
