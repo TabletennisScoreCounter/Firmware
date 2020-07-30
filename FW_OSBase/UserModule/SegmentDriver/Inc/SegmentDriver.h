@@ -1,11 +1,11 @@
 #include <stdint.h>
 
 typedef enum {
-    LEFT_SCORE_SEGMENTPAIR,
-    RIGHT_SCORE_SEGMENTPAIR,
-    LEFT_GAMECOUNT_SEGMENT_PAIR,
-    RIGHT_GAMECOUNT_SEGMENT_PAIR
-}SegmentPairName_t;
+    LEFT_SCORE_INDICATOR,
+    RIGHT_SCORE_INDICATOR,
+    LEFT_GAMECOUNT_INDICATOR,
+    RIGHT_GAMECOUNT_INDICATOR
+}IndicatorName_t;
 
-void SetValue(SegmentPairName_t segmentPair, uint8_t value);
+void SetValue(IndicatorName_t indicatorName, uint8_t value);
 void SegmentDriverTask(void* args);
