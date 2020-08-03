@@ -8,4 +8,4 @@ typedef enum {
 }IndicatorName_t;
 
 void SetValue(IndicatorName_t indicatorName, uint8_t value);
-void SegmentDriverTask(void* args);
+void SegmentDriverTask(const void* args);

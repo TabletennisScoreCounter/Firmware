@@ -28,7 +28,7 @@
 typedef GPIO_PinState SegmentAnode_state_t;
 
 //private valuables
-static SegmentAnode_state_t segmentLEDStates[NUMBER_OF_SEGMENTS][NUMBER_OF_INDICATOR];
+static SegmentAnode_state_t segmentLEDStates[NUMBER_OF_INDICATOR][NUMBER_OF_SEGMENTS];
 static const GPIO_TypeDef* segmentGPIOPorts[NUMBER_OF_SEGMENTS] = {
   SEGMENT_ANODE_TOP_GPIO_Port,
   SEGMENT_ANODE_TOPLEFT_GPIO_Port,
@@ -68,7 +68,7 @@ static void setSegmentValue(int indicatorIndex, uint8_t value);
 static void selectIndicator(int indicatorIndex);
 static void reflectSegmentValue(int indicatorIndex);
 
-void SegmentDriverTask(void* args)
+void SegmentDriverTask(const void* args)
 {
   int indicatorIndex = INDICATOR_INDEX_LEFTSCORE_UPPER;
 
@@ -120,9 +120,9 @@ void setSegmentValue(int indicatorIndex, uint8_t value)
       valueToWrite == 7 ||
       valueToWrite == 8 || 
       valueToWrite == 9){
-    segmentLEDStates[SEGMENT_POS_TOP][indicatorIndex] = SEGMENT_ON;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_TOP] = SEGMENT_ON;
   }else{
-    segmentLEDStates[SEGMENT_POS_TOP][indicatorIndex] = SEGMENT_OFF;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_TOP] = SEGMENT_OFF;
   }
   
   if(valueToWrite == 0 ||
@@ -131,9 +131,9 @@ void setSegmentValue(int indicatorIndex, uint8_t value)
       valueToWrite == 6 || 
       valueToWrite == 8 || 
       valueToWrite == 9){
-    segmentLEDStates[SEGMENT_POS_TOPLEFT][indicatorIndex] = SEGMENT_ON;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_TOPLEFT] = SEGMENT_ON;
   }else{
-    segmentLEDStates[SEGMENT_POS_TOPLEFT][indicatorIndex] = SEGMENT_OFF;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_TOPLEFT] = SEGMENT_OFF;
   }
 
   if(valueToWrite == 0 ||
@@ -144,9 +144,9 @@ void setSegmentValue(int indicatorIndex, uint8_t value)
       valueToWrite == 7 ||
       valueToWrite == 8 || 
       valueToWrite == 9){
-    segmentLEDStates[SEGMENT_POS_TOPRIGHT][indicatorIndex] = SEGMENT_ON;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_TOPRIGHT] = SEGMENT_ON;
   }else{
-    segmentLEDStates[SEGMENT_POS_TOPRIGHT][indicatorIndex] = SEGMENT_OFF;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_TOPRIGHT] = SEGMENT_OFF;
   }
 
   if(valueToWrite == 2 ||
@@ -157,18 +157,18 @@ void setSegmentValue(int indicatorIndex, uint8_t value)
       valueToWrite == 6 ||
       valueToWrite == 8 || 
       valueToWrite == 9){
-    segmentLEDStates[SEGMENT_POS_MIDDLE][indicatorIndex] = SEGMENT_ON;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_MIDDLE] = SEGMENT_ON;
   }else{
-    segmentLEDStates[SEGMENT_POS_MIDDLE][indicatorIndex] = SEGMENT_OFF;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_MIDDLE] = SEGMENT_OFF;
   }
 
   if(valueToWrite == 0 ||
       valueToWrite == 2 ||
       valueToWrite == 6 ||
       valueToWrite == 8){
-    segmentLEDStates[SEGMENT_POS_BOTTOMLEFT][indicatorIndex] = SEGMENT_ON;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_BOTTOMLEFT] = SEGMENT_ON;
   }else{
-    segmentLEDStates[SEGMENT_POS_BOTTOMLEFT][indicatorIndex] = SEGMENT_OFF;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_BOTTOMLEFT] = SEGMENT_OFF;
   }
 
   if(valueToWrite == 0 ||
@@ -180,9 +180,9 @@ void setSegmentValue(int indicatorIndex, uint8_t value)
       valueToWrite == 7 ||
       valueToWrite == 8 ||
       valueToWrite == 9){
-    segmentLEDStates[SEGMENT_POS_BOTTOMRIGHT][indicatorIndex] = SEGMENT_ON;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_BOTTOMRIGHT] = SEGMENT_ON;
   }else{
-    segmentLEDStates[SEGMENT_POS_BOTTOMRIGHT][indicatorIndex] = SEGMENT_OFF;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_BOTTOMRIGHT] = SEGMENT_OFF;
   }
 
   if(valueToWrite == 0 ||
@@ -191,15 +191,15 @@ void setSegmentValue(int indicatorIndex, uint8_t value)
       valueToWrite == 5 ||
       valueToWrite == 6 ||
       valueToWrite == 8){
-    segmentLEDStates[SEGMENT_POS_BOTTOM][indicatorIndex] = SEGMENT_ON;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_BOTTOM] = SEGMENT_ON;
   }else{
-    segmentLEDStates[SEGMENT_POS_BOTTOM][indicatorIndex] = SEGMENT_OFF;
+    segmentLEDStates[indicatorIndex][SEGMENT_POS_BOTTOM] = SEGMENT_OFF;
   }
 }
 void reflectSegmentValue(int indicatorIndex)
 {
   for(int i = 0; i < NUMBER_OF_SEGMENTS; i++){
-    HAL_GPIO_WritePin((GPIO_TypeDef*)segmentGPIOPorts[i], segmentGPIOPins[i], segmentLEDStates[i][indicatorIndex]);
+    HAL_GPIO_WritePin((GPIO_TypeDef*)segmentGPIOPorts[i], segmentGPIOPins[i], segmentLEDStates[indicatorIndex][i]);
   }
 }
 void selectIndicator(int indicatorIndex)
