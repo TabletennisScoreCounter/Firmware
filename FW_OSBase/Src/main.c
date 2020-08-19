@@ -50,6 +50,7 @@
 #include "main.h"
 #include "stm32l4xx_hal.h"
 #include "cmsis_os.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -107,6 +108,7 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_USART2_UART_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */

@@ -1,11 +1,28 @@
 #include "ButtonEventManager.h"
+#include <stdbool.h>
 #include "gpio.h"
+#include "tim.h"
+#include "cmsis_os.h"
 
-#define NUMBER_OF_BUTTONS 4
+
+typedef enum{
+  STATUS_STANDBY,
+  STATUS_LONGPUSH_CHECKING,
+  STATUS_DEADTIME
+}ModuleStatus_t;
+
+#define NUMBER_OF_BUTTONS 5
 
 #define NO_BUTTON_PUSHED NUMBER_OF_BUTTONS
 
+#define TIMER_HANDLE_LONGPUSH_CHECK htim3
+
+#define LONGPUSH_TIMER_COUNT_THRESHOLD_MS 1000
+#define DEADTIME_TIMER_COUNT_THRESHOLD_MS 500
+
 static ButtonEvent_t eventStatus = NO_EVENT;
+
+static ModuleStatus_t moduleStatus = STATUS_STANDBY;
 
 static const GPIO_TypeDef* buttonGPIOPorts[NUMBER_OF_BUTTONS] = {
     BUTTON_COUNTUP_LEFTSCORE_GPIO_Port,
@@ -13,14 +30,14 @@ static const GPIO_TypeDef* buttonGPIOPorts[NUMBER_OF_BUTTONS] = {
     BUTTON_SERVERSWAP_GPIO_Port,
     BUTTON_RECEIVERSWAP_GPIO_Port,
     B1_GPIO_Port
-}
+};
 static const uint16_t buttonGPIOPins[NUMBER_OF_BUTTONS] = {
     BUTTON_COUNTUP_LEFTSCORE_Pin,
     BUTTON_COUNTUP_RIGHTSCORE_Pin,
     BUTTON_SERVERSWAP_Pin,
     BUTTON_RECEIVERSWAP_Pin,
     B1_Pin
-}
+};
 static const ButtonEvent_t buttonEventMap[NUMBER_OF_BUTTONS + 1] = {
     LEFTSCORE_BUTTON_PUSH,
     RIGHTSCORE_BUTTON_PUSH,
@@ -28,35 +45,81 @@ static const ButtonEvent_t buttonEventMap[NUMBER_OF_BUTTONS + 1] = {
     RECEIVER_SWAP_PUSH,
     BLUE_BUTTON_PUSH,
     NO_BUTTON_PUSHED
-}
+};
 static bool buttonPushLong[NUMBER_OF_BUTTONS] = {
-    false;
-    false;
-    false;
-    false;
-    false;
-}
+    false,
+    false,
+    false,
+    false,
+    false,
+};
 
-static int checkPushedButtonIndex()
+static void resetTimerCount();
+static bool checkTimerCountErapsed(int targetCount);
+static bool checkButtonPushed(int index);
+
+bool checkButtonPushed(int index)
 {
-    int result = NO_BUTTON_PUSHED;
+  return (HAL_GPIO_ReadPin((GPIO_TypeDef*)buttonGPIOPorts[index], buttonGPIOPins[index]) == GPIO_PIN_SET);
+}
+void resetTimerCount()
+{
+  __HAL_TIM_SET_COUNTER(&TIMER_HANDLE_LONGPUSH_CHECK, 0);
+}
+bool checkTimerCountErapsed(int targetCount)
+{
+  return (__HAL_TIM_GET_COUNTER(&TIMER_HANDLE_LONGPUSH_CHECK) >= targetCount);
+}
+int checkPushedButtonIndex()
+{
+  int result = NO_BUTTON_PUSHED;
 
-    for(int i = 0; i < NUMBER_OF_BUTTONS; i++){
-        if(HAL_GPIO_ReadPin(buttonGPIOPorts[i], buttonGPIOPins[i]) == GPIO_PIN_SET){
-            result = i;
-            break;
-        }
+  for(int i = 0; i < NUMBER_OF_BUTTONS; i++){
+    if(HAL_GPIO_ReadPin((GPIO_TypeDef*)buttonGPIOPorts[i], buttonGPIOPins[i]) == GPIO_PIN_SET){
+      result = i;
+      break;
     }
+  }
+
+  return result;
 }
 void ButtonEventManagingTask(const void* args)
 {
-    buttonEventMap[NO_BUTTON_PUSHED] = NO_EVENT;
-    
-    while(1){
-        if(eventStatus == NO_EVENT){
-            eventStatus = buttonEventMap[checkPushedButtonIndex()];
-        } 
+  int lastPushedButtonIndex = NO_BUTTON_PUSHED;
+
+  while(1){
+    switch(moduleStatus){
+      case STATUS_STANDBY:
+        lastPushedButtonIndex = checkPushedButtonIndex();
+        moduleStatus = STATUS_LONGPUSH_CHECKING;
+        resetTimerCount();
+        break;
+      case STATUS_LONGPUSH_CHECKING:
+        if(!checkTimerCountErapsed(LONGPUSH_TIMER_COUNT_THRESHOLD_MS) && !checkButtonPushed(lastPushedButtonIndex)){//時間内にボタンが離されたら
+          eventStatus = buttonEventMap[lastPushedButtonIndex];//押下イベント発生
+          buttonPushLong[lastPushedButtonIndex] = false;//短時間押下
+          moduleStatus = STATUS_DEADTIME;//デッドタイム入り
+          resetTimerCount();//デッドタイムカウント開始
+        }else if(checkTimerCountErapsed(LONGPUSH_TIMER_COUNT_THRESHOLD_MS) && checkButtonPushed(lastPushedButtonIndex)){//ボタンが押されたまま時間経過したら
+          eventStatus = buttonEventMap[lastPushedButtonIndex];//押下イベント発生
+          buttonPushLong[lastPushedButtonIndex] = true;//長時間押下
+          moduleStatus = STATUS_DEADTIME;//デッドタイム入り
+          resetTimerCount();//デッドタイムカウント開始
+        }else{
+          //Do Nothing
+        }
+        break;
+      case STATUS_DEADTIME:
+        if(checkTimerCountErapsed(DEADTIME_TIMER_COUNT_THRESHOLD_MS) && !checkButtonPushed(lastPushedButtonIndex)){//デッドタイム経過し, ボタンが離されていたら
+          lastPushedButtonIndex = NO_BUTTON_PUSHED;//ボタン押下履歴消去
+          moduleStatus = STATUS_STANDBY;//新規イベント発生許可
+        }
+        break;
+      default:
+        break;
     }
+    osDelay(10);
+  }
 }
 ButtonEvent_t GetLastEvent()
 {
