@@ -1,6 +1,7 @@
 #include "ButtonEventManager.h"
 #include <stdbool.h>
 #include "gpio.h"
+#include "main.h"
 #include "tim.h"
 #include "cmsis_os.h"
 
@@ -17,7 +18,7 @@ typedef enum{
 
 #define TIMER_HANDLE_LONGPUSH_CHECK htim3
 
-#define LONGPUSH_TIMER_COUNT_THRESHOLD_MS 1000
+#define LONGPUSH_TIMER_COUNT_THRESHOLD_MS 2000
 #define DEADTIME_TIMER_COUNT_THRESHOLD_MS 500
 
 static ButtonEvent_t eventStatus = NO_EVENT;
@@ -29,14 +30,14 @@ static const GPIO_TypeDef* buttonGPIOPorts[NUMBER_OF_BUTTONS] = {
     BUTTON_COUNTUP_RIGHTSCORE_GPIO_Port,
     BUTTON_SERVERSWAP_GPIO_Port,
     BUTTON_RECEIVERSWAP_GPIO_Port,
-    B1_GPIO_Port
+    BLUE_BUTTON_GPIO_Port
 };
 static const uint16_t buttonGPIOPins[NUMBER_OF_BUTTONS] = {
     BUTTON_COUNTUP_LEFTSCORE_Pin,
     BUTTON_COUNTUP_RIGHTSCORE_Pin,
     BUTTON_SERVERSWAP_Pin,
     BUTTON_RECEIVERSWAP_Pin,
-    B1_Pin
+    BLUE_BUTTON_Pin
 };
 static const ButtonEvent_t buttonEventMap[NUMBER_OF_BUTTONS + 1] = {
     LEFTSCORE_BUTTON_PUSH,
@@ -45,6 +46,13 @@ static const ButtonEvent_t buttonEventMap[NUMBER_OF_BUTTONS + 1] = {
     RECEIVER_SWAP_PUSH,
     BLUE_BUTTON_PUSH,
     NO_BUTTON_PUSHED
+};
+static const GPIO_PinState buttonAssertStates[NUMBER_OF_BUTTONS] = {
+  GPIO_PIN_RESET,
+  GPIO_PIN_RESET,
+  GPIO_PIN_RESET,
+  GPIO_PIN_RESET,
+  GPIO_PIN_RESET,
 };
 static bool buttonPushLong[NUMBER_OF_BUTTONS] = {
     false,
@@ -60,7 +68,7 @@ static bool checkButtonPushed(int index);
 
 bool checkButtonPushed(int index)
 {
-  return (HAL_GPIO_ReadPin((GPIO_TypeDef*)buttonGPIOPorts[index], buttonGPIOPins[index]) == GPIO_PIN_SET);
+  return (HAL_GPIO_ReadPin((GPIO_TypeDef*)buttonGPIOPorts[index], buttonGPIOPins[index]) == buttonAssertStates[index]);
 }
 void resetTimerCount()
 {
@@ -75,7 +83,7 @@ int checkPushedButtonIndex()
   int result = NO_BUTTON_PUSHED;
 
   for(int i = 0; i < NUMBER_OF_BUTTONS; i++){
-    if(HAL_GPIO_ReadPin((GPIO_TypeDef*)buttonGPIOPorts[i], buttonGPIOPins[i]) == GPIO_PIN_SET){
+    if(checkButtonPushed(i)){
       result = i;
       break;
     }
@@ -87,12 +95,16 @@ void ButtonEventManagingTask(const void* args)
 {
   int lastPushedButtonIndex = NO_BUTTON_PUSHED;
 
+  HAL_TIM_Base_Start(&TIMER_HANDLE_LONGPUSH_CHECK);
+
   while(1){
     switch(moduleStatus){
       case STATUS_STANDBY:
         lastPushedButtonIndex = checkPushedButtonIndex();
-        moduleStatus = STATUS_LONGPUSH_CHECKING;
-        resetTimerCount();
+        if(lastPushedButtonIndex != NO_BUTTON_PUSHED){
+          moduleStatus = STATUS_LONGPUSH_CHECKING;
+          resetTimerCount();
+        }
         break;
       case STATUS_LONGPUSH_CHECKING:
         if(!checkTimerCountErapsed(LONGPUSH_TIMER_COUNT_THRESHOLD_MS) && !checkButtonPushed(lastPushedButtonIndex)){//時間内にボタンが離されたら
