@@ -30,10 +30,6 @@ typedef enum{
   ROLE_RECEIVER_PARTENR
 }PlayerRole_t;
 
-typedef enum {
-  PLAYSIDE_LEFT = 0,
-  PLAYSIDE_RIGHT
-} PlaySide_t;
 
 typedef enum {
   THREE_SET_MATCH = 0,
@@ -95,6 +91,14 @@ static bool checkDuce();
 
 static bool isMatchStarted();
 
+uint32_t GetScoreCount(PlaySide_t playSide)
+{
+  return scoreCount[playSide];
+}
+uint32_t GetGameCount(PlaySide_t playSide)
+{
+  return gameCount[playSide];
+}
 PlayerColor_t GetCurrentServerColor()
 {
   PlayerColor_t result = PLAYERCOLOR_RED;
