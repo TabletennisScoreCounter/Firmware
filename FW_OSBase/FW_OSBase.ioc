@@ -1,6 +1,8 @@
 #MicroXplorer Configuration settings - do not modify
-FREERTOS.IPParameters=Tasks01
+FREERTOS.FootprintOK=true
+FREERTOS.IPParameters=Tasks01,configMAX_TASK_NAME_LEN,FootprintOK
 FREERTOS.Tasks01=defaultTask,0,128,StartDefaultTask,Default,NULL
+FREERTOS.configMAX_TASK_NAME_LEN=16
 File.Version=6
 KeepUserPlacement=true
 Mcu.Family=STM32L4

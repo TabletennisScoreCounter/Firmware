@@ -59,6 +59,7 @@
 #include "SegmentDriver.h"
 #include "ButtonEventManager.h"
 #include "GameManager.h"
+#include "IndicateManager.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -81,6 +82,7 @@
 osThreadId segmentTaskHandle;
 osThreadId buttonEventManageTaskHandle;
 osThreadId gameManageTaskHandle;
+osThreadId indicateManageTaskHandle;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 
@@ -121,14 +123,17 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  osThreadDef(segmentTask, SegmentDriverTask, osPriorityNormal, 0, 128);
+  osThreadDef(segmentTask, SegmentDriverTask, osPriorityNormal, 0, 64);
   segmentTaskHandle = osThreadCreate(osThread(segmentTask), NULL);
 
-  osThreadDef(buttonEventManageTask, ButtonEventManagingTask, osPriorityNormal, 0, 128);
+  osThreadDef(buttonEventManageTask, ButtonEventManagingTask, osPriorityNormal, 0, 64);
   buttonEventManageTaskHandle = osThreadCreate(osThread(buttonEventManageTask), NULL);
 
-  osThreadDef(gameManageTask, GameManagingTask, osPriorityNormal, 0, 128);
+  osThreadDef(gameManageTask, GameManagingTask, osPriorityNormal, 0, 64);
   gameManageTaskHandle = osThreadCreate(osThread(gameManageTask), NULL);
+
+  osThreadDef(indicateManageTask, IndicateManagingTask, osPriorityNormal, 0, 64);
+  indicateManageTaskHandle = osThreadCreate(osThread(indicateManageTask), NULL);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */

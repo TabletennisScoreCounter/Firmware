@@ -133,7 +133,8 @@ void GameManagingTask(const void* args)
       event = GetLastEvent();
     }
 
-    switch(event){//スコア反映
+    switch(event){//イベント応答
+
       case LEFTSCORE_BUTTON_PUSH:
         countUpScore(PLAYSIDE_LEFT);
         break;
@@ -157,7 +158,7 @@ void GameManagingTask(const void* args)
         break;
     }
 
-    if(event != NO_EVENT){//役割ローテーション
+    if(event != NO_EVENT && !isGameSet()){//役割ローテーション
       rotationSequence(gameMode);
     }
 
