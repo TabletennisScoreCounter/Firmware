@@ -334,7 +334,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
     PA9     ------> TIM1_CH2
     PA10     ------> TIM1_CH3 
     */
-    GPIO_InitStruct.Pin = SERVERSWAPLEDANODE_BLUE_Pin|SERVERSWAPLEDANODE_RED_Pin|RECEIVERSWAPLEDANODE_GREEN_Pin;
+    GPIO_InitStruct.Pin = SERVERLEDANODE_BLUE_Pin|SERVERLEDANODE_RED_Pin|RECEIVERLEDANODE_GREEN_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -354,12 +354,12 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
     /**TIM2 GPIO Configuration    
     PB10     ------> TIM2_CH3 
     */
-    GPIO_InitStruct.Pin = SERVERSWAPLEDANODE_GREEN_Pin;
+    GPIO_InitStruct.Pin = SERVERLEDANODE_GREEN_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
     GPIO_InitStruct.Alternate = GPIO_AF1_TIM2;
-    HAL_GPIO_Init(SERVERSWAPLEDANODE_GREEN_GPIO_Port, &GPIO_InitStruct);
+    HAL_GPIO_Init(SERVERLEDANODE_GREEN_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN TIM2_MspPostInit 1 */
 
@@ -375,7 +375,7 @@ void HAL_TIM_MspPostInit(TIM_HandleTypeDef* timHandle)
     PB4 (NJTRST)     ------> TIM3_CH1
     PB5     ------> TIM3_CH2 
     */
-    GPIO_InitStruct.Pin = RECEIVERSWAPLEDANODE_RED_Pin|RECEIVERSWAPLEDANODE_BLUE_Pin;
+    GPIO_InitStruct.Pin = RECEIVERLEDANODE_RED_Pin|RECEIVERLEDANODE_BLUE_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
