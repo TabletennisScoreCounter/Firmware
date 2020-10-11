@@ -46,7 +46,7 @@ static PlayerRole_t playerRoles[NUM_OF_PLAYERS] = {
 
 static const int rotationStep[NUM_OF_GAMEMODE] = {
   2,
-  4
+  3
 };
 
 static PlayerColor_t playerColor[NUM_OF_PLAYERS] = {
@@ -137,30 +137,36 @@ void GameManagingTask(const void* args)
 
       case LEFTSCORE_BUTTON_PUSH:
         countUpScore(PLAYSIDE_LEFT);
+        if(!isGameSet()){
+          rotationSequence(gameMode);
+        }
         break;
       case RIGHTSCORE_BUTTON_PUSH:
         countUpScore(PLAYSIDE_RIGHT);
+        if(!isGameSet()){
+          rotationSequence(gameMode);
+        }
         break;
       case BLUE_BUTTON_PUSH:
         startNextGame();
         break;
       case SERVER_SWAP_PUSH:
         if(!isMatchStarted()){
-          //TODO:サーバー入れ替え実装
+          normalyRotatePlayerRoles(gameMode);
         }
         break;
       case RECEIVER_SWAP_PUSH:
-        if(!isMatchStarted()){
-          //TODO:レシーバ入れ替え実装
+        if(!isMatchStarted() && gameMode == DOUBLES_MODE){
+          receiverSideSwap();
         }
         break;
       default:
         break;
     }
 
-    if(event != NO_EVENT && !isGameSet()){//役割ローテーション
-      rotationSequence(gameMode);
-    }
+//    if(event != NO_EVENT && !isGameSet()){//役割ローテーション
+//      rotationSequence(gameMode);
+//    }
 
     osDelay(10);
   }
@@ -179,7 +185,7 @@ GameMode_t checkGameModeSwitch()
 {
   GameMode_t result = SINGLES_MODE;
 
-  if(HAL_GPIO_ReadPin(GAMEMODE_SELECT_SWITCH_GPIO_Port, GAMEMODE_SELECT_SWITCH_Pin) == GPIO_PIN_SET){
+  if(HAL_GPIO_ReadPin(GAMEMODE_SELECT_SWITCH_GPIO_Port, GAMEMODE_SELECT_SWITCH_Pin) == GPIO_PIN_RESET){
     result = SINGLES_MODE;
   }else{
     result = DOUBLES_MODE;

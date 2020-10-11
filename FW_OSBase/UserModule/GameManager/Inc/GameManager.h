@@ -20,7 +20,6 @@ PlayerColor_t GetCurrentServerColor();
 PlayerColor_t GetCurrentReceiverColor();
 uint32_t GetScoreCount(PlaySide_t playSide);
 uint32_t GetGameCount(PlaySide_t playSide);
-
 void GameManagingTask(const void* args);
 
 #endif
