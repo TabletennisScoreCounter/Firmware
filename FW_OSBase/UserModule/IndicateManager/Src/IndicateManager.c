@@ -6,8 +6,6 @@
 
 void IndicateManagingTask(const void* args)
 {
-  EnableFullColorLED();
-
   while(1){
     uint32_t scoreLeft = GetScoreCount(PLAYSIDE_LEFT);
     uint32_t scoreRight = GetScoreCount(PLAYSIDE_RIGHT);
@@ -26,6 +24,5 @@ void IndicateManagingTask(const void* args)
     SetReceiverLEDColor((LEDColor_t)receiverColor);
 
     osDelay(20);
-
   }
 }

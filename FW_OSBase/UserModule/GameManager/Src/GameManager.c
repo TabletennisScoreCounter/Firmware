@@ -134,7 +134,6 @@ void GameManagingTask(const void* args)
     }
 
     switch(event){//イベント応答
-
       case LEFTSCORE_BUTTON_PUSH:
         countUpScore(PLAYSIDE_LEFT);
         if(!isGameSet()){
@@ -163,10 +162,6 @@ void GameManagingTask(const void* args)
       default:
         break;
     }
-
-//    if(event != NO_EVENT && !isGameSet()){//役割ローテーション
-//      rotationSequence(gameMode);
-//    }
 
     osDelay(10);
   }
