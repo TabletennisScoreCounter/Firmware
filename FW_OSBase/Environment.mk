@@ -6,6 +6,6 @@ endif
 ifeq ($(HOSTNAME), ydmnts019)
 	GCC_PATH = $(subst \,/,$(ARM_NONE_EABI_TOOLS_DIR))
 endif
-ifeq ($(HOSTNAME), MacBookAir)
+ifeq ($(HOSTNAME), MacBookAir.local)
 	GCC_PATH = $(subst \,/,$(ARM_NONE_EABI_TOOLS_DIR))
 endif
