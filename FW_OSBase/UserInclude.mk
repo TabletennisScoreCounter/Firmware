@@ -3,5 +3,6 @@ C_INCLUDES +=  \
 -IUserModule/ButtonEventManager/Inc \
 -IUserModule/GameManager/Inc \
 -IUserModule/IndicateManager/Inc \
--IUserModule/FullColorLEDDriver/Inc
+-IUserModule/FullColorLEDDriver/Inc \
+-IUserModule/LCDDisplayDriver/Inc
 
