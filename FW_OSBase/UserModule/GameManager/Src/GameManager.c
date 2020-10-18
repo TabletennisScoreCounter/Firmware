@@ -247,10 +247,10 @@ void startNextGame()
 }
 void swapSide()
 {
-  uint32_t leftSidePoint = gameCount[PLAYSIDE_LEFT];
-
-  gameCount[PLAYSIDE_LEFT] = gameCount[PLAYSIDE_RIGHT];
-  gameCount[PLAYSIDE_RIGHT] = leftSidePoint;
+//  uint32_t leftSidePoint = gameCount[PLAYSIDE_LEFT];
+//
+//  gameCount[PLAYSIDE_LEFT] = gameCount[PLAYSIDE_RIGHT];
+//  gameCount[PLAYSIDE_RIGHT] = leftSidePoint;
 }
 bool checkDuce()
 {
