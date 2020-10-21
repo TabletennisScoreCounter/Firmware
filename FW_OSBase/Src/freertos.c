@@ -123,16 +123,16 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
-  osThreadDef(segmentTask, SegmentDriverTask, osPriorityNormal, 0, 64);
+  osThreadDef(segmentTask, SegmentDriverTask, osPriorityNormal, 0, 32);
   segmentTaskHandle = osThreadCreate(osThread(segmentTask), NULL);
 
-  osThreadDef(buttonEventManageTask, ButtonEventManagingTask, osPriorityNormal, 0, 64);
+  osThreadDef(buttonEventManageTask, ButtonEventManagingTask, osPriorityNormal, 0, 32);
   buttonEventManageTaskHandle = osThreadCreate(osThread(buttonEventManageTask), NULL);
 
-  osThreadDef(gameManageTask, GameManagingTask, osPriorityNormal, 0, 64);
+  osThreadDef(gameManageTask, GameManagingTask, osPriorityNormal, 0, 32);
   gameManageTaskHandle = osThreadCreate(osThread(gameManageTask), NULL);
 
-  osThreadDef(indicateManageTask, IndicateManagingTask, osPriorityNormal, 0, 64);
+  osThreadDef(indicateManageTask, IndicateManagingTask, osPriorityNormal, 0, 128);
   indicateManageTaskHandle = osThreadCreate(osThread(indicateManageTask), NULL);
   /* USER CODE END RTOS_THREADS */
 

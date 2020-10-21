@@ -30,7 +30,6 @@ typedef enum{
   ROLE_RECEIVER_PARTENR
 }PlayerRole_t;
 
-
 typedef enum {
   THREE_SET_MATCH = 0,
   FIVE_SET_MATCH,
@@ -127,10 +126,18 @@ void GameManagingTask(const void* args)
 
   int countToMatch = matchCount[checkGameMatchRuleSwitch()];
 
+  PlayerRole_t initialPlayerRolesOfTheSet[NUM_OF_PLAYERS];
+
   while(1){
     ButtonEvent_t event = NO_EVENT;
     if(gameCount[PLAYSIDE_LEFT] < countToMatch && gameCount[PLAYSIDE_RIGHT] < countToMatch){//試合終了でなければ, ボタン押下を受け付ける
       event = GetLastEvent();
+    }
+
+    if(scoreCount[PLAYSIDE_LEFT] + scoreCount[PLAYSIDE_RIGHT] == 0){//セット開始時の配置状態を記録
+      for(int i = 0; i < NUM_OF_PLAYERS; i++){
+        initialPlayerRolesOfTheSet[i] = playerRoles[i];
+      }
     }
 
     switch(event){//イベント応答
@@ -148,6 +155,13 @@ void GameManagingTask(const void* args)
         break;
       case BLUE_BUTTON_PUSH:
         startNextGame();
+        for(int i = 0; i < NUM_OF_PLAYERS; i++){
+          playerRoles[i] = initialPlayerRolesOfTheSet[i];
+        }
+        normalyRotatePlayerRoles(gameMode);
+        if(gameMode == DOUBLES_MODE){
+          receiverSideSwap();
+        }
         break;
       case SERVER_SWAP_PUSH:
         if(!isMatchStarted()){
@@ -189,8 +203,12 @@ GameMode_t checkGameModeSwitch()
 }
 GameMatchRule_t checkGameMatchRuleSwitch()
 {
-  //TODO: 実装
-  return THREE_SET_MATCH;
+  GameMatchRule_t result = THREE_SET_MATCH;
+  if(HAL_GPIO_ReadPin(MATCHCOUNT_SELECT_SWITCH_GPIO_Port, MATCHCOUNT_SELECT_SWITCH_Pin) == GPIO_PIN_SET){
+    result = FIVE_SET_MATCH;
+  }
+
+  return result;
 }
 void normalyRotatePlayerRoles(GameMode_t gameMode)
 {
