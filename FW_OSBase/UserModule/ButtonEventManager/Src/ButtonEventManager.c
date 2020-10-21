@@ -113,7 +113,7 @@ void ButtonEventManagingTask(const void* args)
           moduleStatus = STATUS_DEADTIME;//デッドタイム入り
           resetTimerCount();//デッドタイムカウント開始
         }else if(checkTimerCountErapsed(LONGPUSH_TIMER_COUNT_THRESHOLD_MS) && checkButtonPushed(lastPushedButtonIndex)){//ボタンが押されたまま時間経過したら
-          eventStatus = buttonEventMap[lastPushedButtonIndex];//押下イベント発生
+          eventStatus = buttonEventMap[lastPushedButtonIndex] | LONG_PUSH_FLAG;//押下イベント発生
           buttonPushLong[lastPushedButtonIndex] = true;//長時間押下
           moduleStatus = STATUS_DEADTIME;//デッドタイム入り
           resetTimerCount();//デッドタイムカウント開始
@@ -135,8 +135,8 @@ void ButtonEventManagingTask(const void* args)
 }
 ButtonEvent_t GetLastEvent()
 {
-    ButtonEvent_t result = eventStatus;
-    eventStatus = NO_EVENT;
-    
-    return result;
+  ButtonEvent_t result = eventStatus;
+  eventStatus = NO_EVENT;
+  
+  return result;
 }

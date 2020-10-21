@@ -71,24 +71,22 @@ static const uint32_t matchCount[NUM_OF_MATCH_RULE] = {
   5
 };
 
+static uint32_t scoreCountLog[NUM_OF_SIDE];
+static PlayerRole_t playerRolesLog[NUM_OF_PLAYERS];
+
 static void normalyRotatePlayerRoles(GameMode_t gameMode);
 static void receiverSideSwap();
-
 static GameMode_t checkGameModeSwitch();
 static void rotationSequence(GameMode_t gameMode);
-
 static void countUpScore(PlaySide_t playSide);
 static bool isGameSet();
-
 static void startNextGame();
-
 static void swapSide();
-
 static GameMatchRule_t checkGameMatchRuleSwitch();
-
 static bool checkDuce();
-
 static bool isMatchStarted();
+static void cancelPreviousAction();
+static void memorizeCurrentStatus();
 
 uint32_t GetScoreCount(PlaySide_t playSide)
 {
@@ -128,6 +126,8 @@ void GameManagingTask(const void* args)
 
   PlayerRole_t initialPlayerRolesOfTheSet[NUM_OF_PLAYERS];
 
+  memorizeCurrentStatus();
+
   while(1){
     ButtonEvent_t event = NO_EVENT;
     if(gameCount[PLAYSIDE_LEFT] < countToMatch && gameCount[PLAYSIDE_RIGHT] < countToMatch){//試合終了でなければ, ボタン押下を受け付ける
@@ -142,12 +142,14 @@ void GameManagingTask(const void* args)
 
     switch(event){//イベント応答
       case LEFTSCORE_BUTTON_PUSH:
+        memorizeCurrentStatus();
         countUpScore(PLAYSIDE_LEFT);
         if(!isGameSet()){
           rotationSequence(gameMode);
         }
         break;
       case RIGHTSCORE_BUTTON_PUSH:
+        memorizeCurrentStatus();
         countUpScore(PLAYSIDE_RIGHT);
         if(!isGameSet()){
           rotationSequence(gameMode);
@@ -162,6 +164,7 @@ void GameManagingTask(const void* args)
         if(gameMode == DOUBLES_MODE){
           receiverSideSwap();
         }
+        memorizeCurrentStatus();
         break;
       case SERVER_SWAP_PUSH:
         if(!isMatchStarted()){
@@ -172,6 +175,9 @@ void GameManagingTask(const void* args)
         if(!isMatchStarted() && gameMode == DOUBLES_MODE){
           receiverSideSwap();
         }
+        break;
+      case BLUE_BUTTON_PUSH_LONG:
+        cancelPreviousAction();
         break;
       default:
         break;
@@ -278,4 +284,24 @@ bool isMatchStarted()
 {
   //ゲーム数もスコア数も全部ゼロ(足して0と同値)でなければスタートしている
   return (scoreCount[PLAYSIDE_LEFT] + scoreCount[PLAYSIDE_RIGHT] + gameCount[PLAYSIDE_LEFT] + gameCount[PLAYSIDE_RIGHT] != 0);
+}
+void cancelPreviousAction()
+{
+  for(int i = 0; i < NUM_OF_SIDE; i++){
+    scoreCount[i] = scoreCountLog[i];
+  }
+
+  for(int i = 0; i < NUM_OF_PLAYERS; i++){
+    playerRoles[i] = playerRolesLog[i];
+  }
+}
+void memorizeCurrentStatus()
+{
+  for(int i = 0; i < NUM_OF_SIDE; i++){
+    scoreCountLog[i] = scoreCount[i];
+  }
+
+  for(int i = 0; i < NUM_OF_PLAYERS; i++){
+    playerRolesLog[i] = playerRoles[i];
+  }
 }
