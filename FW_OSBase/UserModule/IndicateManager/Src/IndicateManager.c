@@ -20,6 +20,8 @@ void IndicateManagingTask(const void* args)
   uint32_t gameLeft = 0;
   uint32_t gameRight = 0;
 
+  printLCD(scoreLeft, scoreRight, gameLeft, gameRight);
+
   while(1){
     uint32_t scoreLeftNew = GetScoreCount(PLAYSIDE_LEFT);
     uint32_t scoreRightNew = GetScoreCount(PLAYSIDE_RIGHT);
