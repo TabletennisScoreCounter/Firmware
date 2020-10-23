@@ -128,16 +128,14 @@ void GameManagingTask(const void* args)
 
   memorizeCurrentStatus();
 
+  for(int i = 0; i < NUM_OF_PLAYERS; i++){//セット開始時の配置状態を記録
+    initialPlayerRolesOfTheSet[i] = playerRoles[i];
+  }
+
   while(1){
     ButtonEvent_t event = NO_EVENT;
     if(gameCount[PLAYSIDE_LEFT] < countToMatch && gameCount[PLAYSIDE_RIGHT] < countToMatch){//試合終了でなければ, ボタン押下を受け付ける
       event = GetLastEvent();
-    }
-
-    if(scoreCount[PLAYSIDE_LEFT] + scoreCount[PLAYSIDE_RIGHT] == 0){//セット開始時の配置状態を記録
-      for(int i = 0; i < NUM_OF_PLAYERS; i++){
-        initialPlayerRolesOfTheSet[i] = playerRoles[i];
-      }
     }
 
     switch(event){//イベント応答
@@ -156,15 +154,24 @@ void GameManagingTask(const void* args)
         }
         break;
       case BLUE_BUTTON_PUSH:
-        startNextGame();
-        for(int i = 0; i < NUM_OF_PLAYERS; i++){
-          playerRoles[i] = initialPlayerRolesOfTheSet[i];
+        if(isGameSet()){
+          for(int i = 0; i < NUM_OF_PLAYERS; i++){
+            playerRoles[i] = initialPlayerRolesOfTheSet[i];
+          }
+          
+          normalyRotatePlayerRoles(gameMode);
+          if(gameMode == DOUBLES_MODE){
+            receiverSideSwap();
+          }
+
+          startNextGame();
+          memorizeCurrentStatus();
+
+          for(int i = 0; i < NUM_OF_PLAYERS; i++){//セット開始時の配置状態を記録
+            initialPlayerRolesOfTheSet[i] = playerRoles[i];
+          }
         }
-        normalyRotatePlayerRoles(gameMode);
-        if(gameMode == DOUBLES_MODE){
-          receiverSideSwap();
-        }
-        memorizeCurrentStatus();
+
         break;
       case SERVER_SWAP_PUSH:
         if(!isMatchStarted()){
