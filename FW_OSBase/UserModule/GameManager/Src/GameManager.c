@@ -4,6 +4,7 @@
 #include "cmsis_os.h"
 #include <stdbool.h>
 #include "ButtonEventManager.h"
+#include "Flags.h"
 
 #define NUM_OF_PLAYERS 4 
 #define NUM_OF_GAMEMODE 2
@@ -216,9 +217,13 @@ GameMode_t checkGameModeSwitch()
 }
 GameMatchRule_t checkGameMatchRuleSwitch()
 {
-  GameMatchRule_t result = THREE_SET_MATCH;
+  GameMatchRule_t result = FIVE_SET_MATCH;
   if(HAL_GPIO_ReadPin(MATCHCOUNT_SELECT_SWITCH_GPIO_Port, MATCHCOUNT_SELECT_SWITCH_Pin) == GPIO_PIN_SET){
-    result = FIVE_SET_MATCH;
+    result = SEVEN_SET_MATCH;
+  }
+
+  if(REDUCE_GAMES == 1){
+    result = (GameMatchRule_t)((int)result - 1);
   }
 
   return result;
@@ -278,10 +283,12 @@ void startNextGame()
 }
 void swapSide()
 {
-//  uint32_t leftSidePoint = gameCount[PLAYSIDE_LEFT];
-//
-//  gameCount[PLAYSIDE_LEFT] = gameCount[PLAYSIDE_RIGHT];
-//  gameCount[PLAYSIDE_RIGHT] = leftSidePoint;
+  if(CHANGE_SIDE == 1){
+    uint32_t leftSidePoint = gameCount[PLAYSIDE_LEFT];
+
+    gameCount[PLAYSIDE_LEFT] = gameCount[PLAYSIDE_RIGHT];
+    gameCount[PLAYSIDE_RIGHT] = leftSidePoint;
+  }
 }
 bool checkDuce()
 {
