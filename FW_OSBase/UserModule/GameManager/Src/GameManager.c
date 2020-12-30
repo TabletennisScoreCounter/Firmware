@@ -69,7 +69,7 @@ static uint32_t scoreCount[NUM_OF_SIDE] = {
 static const uint32_t matchCount[NUM_OF_MATCH_RULE] = {
   2,
   3,
-  5
+  4
 };
 
 static uint32_t scoreCountLog[NUM_OF_SIDE];
