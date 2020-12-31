@@ -1,0 +1,258 @@
+@startuml
+
+title System requirement diagram
+
+hide circle
+hide empty members
+hide method
+
+left to right direction
+
+'要求'
+class "スコア表示" as RequirementScoreIndicate <<Functional Requirement>> #LightGreen{
+  ID=REQ01
+  Text=ポイントを二桁, ゲーム数を1桁で遠くからでも見やすく表示すること
+}
+
+class "スコア操作" as RequirementScoreControl <<Functional Requirement>> #LightGreen{
+  ID=REQ02
+  Text=ユーザーの操作により, ポイントをカウントアップできること
+}
+
+class "操作キャンセル" as RequirementCancelControl <<Functional Requirement>> #LightGreen{
+  ID=REQ03
+  Text=ユーザーの操作により, 直前の操作内容をキャンセルできること
+}
+
+class "シングルス/ダブルス" as RequirementSinglesDoubles <<Functional Requirement>> #LightGreen{
+  ID=REQ04
+  Text=シングルス, ダブルス両方で使用可能なこと
+}
+
+class "マッチカウント" as RequirementMatchCount <<Functional Requirement>> #LightGreen{
+  ID=REQ05
+  Text=3,5,7セットマッチに対応すること
+}
+
+class "手元表示" as Requirement2ndDisplay <<Functional Requirement>> #LightGreen{
+  ID=REQ06
+  Text=ボタン操作するユーザーが見えるように, 手元に別の表示を設けること
+}
+
+class "ゲーム終了時点での動作" as RequirementGameSetAction <<Functional Requirement>> #LightGreen{
+  ID=REQ07
+  Text=ゲームが終了した時点で, ゲーム数のカウントアップ, ポイント数のリセットは行わず, ユーザーの操作を待つこと
+}
+
+class "次ゲームへの移行" as RequirementActionNextGame <<Functional Requirement>> #LightGreen{
+  ID=REQ08
+  Text=ゲーム終了状態で, ユーザーの操作により, ゲーム数のカウントアップ, ポイント数のリセットを行うこと
+}
+class "サイドチェンジの対応" as RequirementSideChange <<Functional Requirement>> #LightGreen{
+  ID=REQ09
+  Text=次ゲームへの移行操作により, ゲームカウント, ポイント数の表示を, 左右入れ替えること
+}
+
+class "サーバー, レシーバーの表示" as RequirementIndicateServerReceiver <<Functional Requirement>> #LightGreen{
+  ID=REQ10
+  Text=コート内で, サーバーが誰なのか, レシーバーが誰なのかわかるような表示をすること
+}
+
+class "サーバー, レシーバーの選択" as RequirementSelectServerReceiver <<Functional Requirement>> #LightGreen{
+  ID=REQ11
+  Text=シングルスでは, サーバーが誰か, ダブルスでは, サーバー, レシーバーが誰かを選択できること
+}
+
+class "公式ルール準拠" as RequirementTabletennisOfficialRule <<Fuctional Requirement>> #LightGreen{
+  Text=サーバー, レシーバーの変化は, 卓球の公式ルールに乗っ取ったものとすること
+}
+
+'詳細要求
+class "ゲーム終了条件" as RequirementRuleGameSet <<requirement>> #LightGreen{
+  ID=REQ12
+  Text=どちらかが2ポイント以上の差で11点とるか, デュースを迎えた場合は, どちらかが2ポイント差をつけた場合, ゲーム終了とすること
+}
+class "デュース" as RequirementRuleDuce <<requirement>> #LightGreen{
+  ID=REQ13
+  Text=10:10を迎えた場合, デュースとすること
+}
+class "チェンジエンド" as RequirementRuleChangeEnd <<requirement>> #LightGreen{
+  ID=REQ14
+  Text=ゲーム間, 及び, 最終セットで, どちらかが5ポイントとったらチェンジエンドすること
+}
+class "ゲーム内でのサーブ権" as RequirementRuleServerSideInGame <<requirement>> #LightGreen{
+  ID=REQ15
+  Text=ゲーム内のサーブ権は, 2ポイントごとにサイド交代すること. デュース後は, 1ポイントごとに交代すること
+}
+class "ゲーム間でのサーブ権" as RequirementRuleServerSideGameSet <<requirement>> #LightGreen{
+  ID=REQ16
+  Text=ゲームが変わったときは, 最後にレシーブをしたサイドがサーバとすること
+}
+class "ダブルスでのゲーム内サーブ権" as RequirementRuleDoublesServerReceiverInGame <<requirement>> #LightGreen{
+  ID=REQ17
+  Text=ダブルスでは, ゲーム内では, サーバー -> レシーバーパートナー -> サーバーパートナー -> レシーバー の順で役割がローテーションすること
+}
+class "ダブルスでのチェンジエンド時のサーブ権" as RequirementRuleDoublesServerReceiverChangeEnd <<requirement>> #LightGreen{
+  ID=REQ18
+  Text=ダブルスでは, ゲームが変わったとき, および, 最終セットで5ポイントルールにより, チェンジエンドが発生するとき, その直前にレシーバパートナーだった者が, レシーバになること
+}
+
+'要求-詳細要求接続
+RequirementTabletennisOfficialRule +-- RequirementRuleGameSet
+RequirementTabletennisOfficialRule +-- RequirementRuleDuce
+RequirementTabletennisOfficialRule +-- RequirementRuleChangeEnd
+RequirementTabletennisOfficialRule +-- RequirementRuleServerSideInGame
+RequirementTabletennisOfficialRule +-- RequirementRuleServerSideGameSet
+RequirementTabletennisOfficialRule +-- RequirementRuleDoublesServerReceiverInGame
+RequirementTabletennisOfficialRule +-- RequirementRuleDoublesServerReceiverChangeEnd
+
+'要件
+class "表示器" as SpecIndicator <<Specification>>{
+  ID=REQ01-1
+  Text=表示器として, 大型の7SEGLEDを用い, ゲームカウント用には両サイド一つずつ, ポイントカウントには両サイド二つずつ有する
+}
+class "スコア操作インターフェース" as SpecScoreControlInterface <<Specification>>{
+  ID=REQ02-1
+  Text=スコアカウントアップ用の, プッシュボタンを, 両サイド一つずつ有する
+}
+class "スコア操作インターフェース動作" as SpecScoreControlAction <<Specification>>{
+  ID=REQ02-2
+  Text=両サイドのボタン押下により, 該当サイドのスコアが1つカウントアップされる
+}
+class "スコア操作インターフェース感度" as SpecScoreControlSensitivity <<Specification>>{
+  ID=REQ02-3
+  Text=ボタン押下後, 1秒間は, 他の入力を受け付けない
+}
+class "操作キャンセルインターフェース" as SpecCancelInterface <<Specification>>{
+  ID=REQ03-1
+  Text=直前の操作キャンセル用の, プッシュボタンを一つ有する
+}
+class "操作キャンセル可能回数" as SpecCancelDepth <<Specification>>{
+  ID=REQ03-2
+  Text=キャンセル可能なのは, 直前の1操作のみとする
+}
+class "キャンセル操作" as SpecCancelAction <<Specification>>{
+  ID=REQ03-3
+  Text=キャンセルボタンを2秒以上長押しして離す操作でのみキャンセルは実行される
+}
+class "シングルスダブルス選択インターフェース" as SpecSinglesDoublesSelectInterface <<Specification>>{
+  ID=REQ04-1
+  Text=シングルスダブルス選択用の, スライドスイッチを有する
+}
+class "インターフェース反映タイミング" as SpecSinglesDoublesSelectTiming <<Specification>>{
+  ID=REQ04-2
+  Text=リセット, 電源投入時のスイッチの状態のみが反映され, それ以降の操作は一切受け付けない
+}
+class "マッチカウント選択インターフェース" as SpecMatchCountSelectInterface <<Specification>>{
+  ID=REQ05-1
+  Text=マッチカウントを選択する, 3ポイントのスライドスイッチを有する
+}
+class "マッチカウント反映タイミング" as SpecMatchCountSelectTiming <<Specification>>{
+  ID=REQ05-2
+  Text=リセット, 電源投入時のスイッチの状態のみが反映され, それ以降の操作は一切受け付けない
+}
+class "手元インジケータ" as SpecLocalIndicator <<Specification>>{
+  ID=REQ06-1
+  Text=液晶の小型LCDパネルを有する
+}
+class "手元インジケータ表示内容" as SpecLocalIndicateContents <<Specification>>{
+  ID=REQ06-2
+  Text=液晶の小型LCDパネルには, 7SegLEDと同じ内容を, 2行で表示する
+}
+class "ゲーム終了時のアクション" as SpecGameSetAction <<Specification>>{
+  ID=REQ07-1
+  Text=ゲーム終了時, 次ゲーム移行操作以外は一切受け付けない
+}
+class "次ゲーム移行インターフェース" as SpecNextGameInterface <<Specification>>{
+  ID=REQ08-1
+  Text=次ゲーム移行用の, プッシュボタンを有する
+}
+class "次ゲーム移行時の動作" as SpecNextGameAction <<Specification>>{
+  ID=REQ08-2
+  Text=ゲーム終了時, 次ゲーム移行ボタンを押下されると, スコアを0にリセットし, ゲームを取ったサイドのゲームカウントをカウントアップする
+}
+class "サイドチェンジ動作" as SpecSideChangeAction <<Specification>>{
+  ID=REQ09-1
+  Text=ルール上, サイドチェンジが発生するとき, 表示領域もそれに合わせて左右入れ替える
+}
+class "サーバレシーバ表示方法" as SpecServerReceiverIndicateMethod <<Specification>>{
+  ID=REQ10-1
+  Text=ゲーム開始前に, 4人<ダブルス>, または2人<シングルス>に赤青緑黄のどれかの色をあてがい, 何色がサーバーか, レシーバーかを示す
+}
+class "サーバレシーバ表示インターフェース" as SpecServerReceiverIndicateInterface <<Specification>>{
+  ID=REQ10-2
+  Text=サーバー, レシーバの色を表示する, フルカラーLEDをそれぞれ有する
+}
+class "ダブルスでの色の組み合わせ" as SpecColorCombinationDoubles <<Specification>>{
+  ID=REQ10-3
+  Text=ダブルスのとき, 赤のパートナーは緑, 青のパートナーは黄とする
+}
+class "シングルスでの色の組み合わせ" as SpecColorCombinationSingles <<Specification>>{
+  ID=REQ10-4
+  Text=シングルスの時, 赤か青を選べる
+}
+
+class "サーバーレシーバ選択インターフェース" as SpecServerReceiverSelectInterface <<Specification>>{
+  ID=REQ11-1
+  Text=サーバーが誰か, レシーバーが誰かを選択する, プッシュボタンをそれぞれ有する
+}
+class "ダブルス時のサーバー選択アクション" as SpecServerSelectActionDoubles <<Specification>>{
+  ID=REQ11-2
+  Text=サーバー選択ボタンを押下すると, サーバー側のLEDの色が, 赤, 青, 緑, 黄の順で変わり, それに伴い, レシーバ側の色は, 青, 緑, 黄, 赤の順に変化する
+}
+class "シングルス時のサーバー選択アクション" as SpecServerSelectActionSingles <<Specification>>{
+  ID=REQ11-3
+  Text=サーバー選択ボタンを押下すると, サーバー側のLEDの色が, 赤, 青の順で変わり, レシーバ側の色は, 青, 赤の順で変わる
+}
+class "ダブルス時のレシーバ選択アクション" as SpecReceiverSelectActionDoubles <<Specification>>{
+  ID=REQ11-4
+  Text=レシーバー選択ボタンを押下すると, そのとき表示中の色の, パートナーと色が入れ替わる
+}
+class "シングルス時のレシーバ選択アクション" as SpecReceiverSelectActionSingles <<Specification>>{
+  ID=REQ11-5
+  Text=レシーバー選択ボタンの操作は受け付けない
+}
+class "サーバーレシーバ選択タイミング" as SpecServerReceiverSelectTiming <<Specification>>{
+  ID=REQ11-6
+  Text=サーバーレシーバー選択ボタンの操作は, ゲーム開始前<スコアもゲームもともに0>のときのみ受け付ける
+}
+
+'要求-要件接続
+RequirementScoreIndicate +-- SpecIndicator
+
+RequirementScoreControl +-- SpecScoreControlInterface
+RequirementScoreControl +-- SpecScoreControlAction
+RequirementScoreControl +-- SpecScoreControlSensitivity
+
+RequirementCancelControl +-- SpecCancelInterface
+RequirementCancelControl +-- SpecCancelDepth
+RequirementCancelControl +-- SpecCancelAction
+
+RequirementSinglesDoubles +-- SpecSinglesDoublesSelectInterface
+RequirementSinglesDoubles +-- SpecSinglesDoublesSelectTiming
+
+RequirementMatchCount +-- SpecMatchCountSelectInterface
+RequirementMatchCount +-- SpecMatchCountSelectTiming
+
+Requirement2ndDisplay +-- SpecLocalIndicator
+Requirement2ndDisplay +-- SpecLocalIndicateContents
+
+RequirementGameSetAction +-- SpecGameSetAction
+
+RequirementActionNextGame +-- SpecNextGameInterface
+RequirementActionNextGame +-- SpecNextGameAction
+
+RequirementSideChange +-- SpecSideChangeAction
+
+RequirementIndicateServerReceiver +-- SpecServerReceiverIndicateMethod
+RequirementIndicateServerReceiver +-- SpecServerReceiverIndicateInterface
+RequirementIndicateServerReceiver +-- SpecColorCombinationDoubles
+RequirementIndicateServerReceiver +-- SpecColorCombinationSingles
+
+RequirementSelectServerReceiver +-- SpecServerReceiverSelectInterface
+RequirementSelectServerReceiver +-- SpecServerSelectActionDoubles
+RequirementSelectServerReceiver +-- SpecServerSelectActionSingles
+RequirementSelectServerReceiver +-- SpecReceiverSelectActionDoubles
+RequirementSelectServerReceiver +-- SpecReceiverSelectActionSingles
+RequirementSelectServerReceiver +-- SpecServerReceiverSelectTiming
+@enduml

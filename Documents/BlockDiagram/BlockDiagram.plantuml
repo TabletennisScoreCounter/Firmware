@@ -1,0 +1,61 @@
+@startuml
+title Block diagram
+
+actor "User" as ActorUser
+
+package "システム"{
+  node "手元表示用LCD" as SecondDisplay
+  node "次ゲーム移行ボタン" as ButtonNextGame
+  node "リセットボタン" as ButtonReset
+  node "電源スイッチ" as PowerSwitch
+
+  node "制御基板"{
+    node "メインプロセッサ基板\nSTM32L476RG-nucleo" as MainProcessorBoard
+    node "信号増幅回路\nトランジスタ回路" as SignalAmplifier
+    node "電池ケース(単一乾電池2本)" as BatteryCase
+    node "昇圧回路(秋月DCDCキット)" as VoltageBooster
+
+    MainProcessorBoard -- SignalAmplifier : Digital Out
+
+    BatteryCase -- PowerSwitch
+    PowerSwitch -- VoltageBooster : 3V
+    VoltageBooster -- "7segments + 6commonAnode + 2*3color" SignalAmplifier : 7.2V
+    PowerSwitch -- MainProcessorBoard : 3V
+  }
+  node "インターフェース基板"{
+    node "LED表示器" as IndicatorLED
+    node "7SEG LED" as SegmentLED
+    node "プッシュボタン" as NodePushButton
+    node "スライドスイッチ" as NodeSlideSwitch
+    node "カウントアップボタン" as PushButtonForCountUp
+    node "サーバー選択ボタン" as ServerSelectButton
+    node "レシーバ選択ボタン" as ReceiverSelectButton
+    node "マッチカウント選択スイッチ" as MatchCountSelectSwitch
+    node "シングルスダブルス選択スイッチ" as SinglesDoublesSelectSwitch
+    node "サーバー表示LED" as ServerIndicateLED
+    node "レシーバ表示LED" as ReceiverIndicateLED
+
+    NodePushButton <|-- "2" PushButtonForCountUp
+    NodePushButton <|-- ServerSelectButton
+    NodePushButton <|-- ReceiverSelectButton
+
+    NodeSlideSwitch <|-- MatchCountSelectSwitch
+    NodeSlideSwitch <|-- SinglesDoublesSelectSwitch
+
+    IndicatorLED <|-- "6 * 7Segments" SegmentLED
+    IndicatorLED <|-- ServerIndicateLED
+    IndicatorLED <|-- ReceiverIndicateLED
+
+  }
+
+  MainProcessorBoard -- NodePushButton : Digital In, PullUp
+  MainProcessorBoard -- NodeSlideSwitch : Digital In, PullUp
+  SignalAmplifier -- IndicatorLED
+
+  MainProcessorBoard -- SecondDisplay : I2C, Power
+
+  MainProcessorBoard -- ButtonNextGame : Digital In, PullUp
+  MainProcessorBoard -- ButtonReset : Digital In, PullUp
+}
+
+@enduml
