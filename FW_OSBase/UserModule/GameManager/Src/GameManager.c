@@ -88,6 +88,7 @@ static bool checkDuce();
 static bool isMatchStarted();
 static void cancelPreviousAction();
 static void memorizeCurrentStatus();
+static bool isStartOfSet();
 
 uint32_t GetScoreCount(PlaySide_t playSide)
 {
@@ -175,7 +176,7 @@ void GameManagingTask(const void* args)
 
         break;
       case SERVER_SWAP_PUSH:
-        if(!isMatchStarted()){
+        if(isStartOfSet()){
           normalyRotatePlayerRoles(gameMode);
         }
         break;
@@ -318,4 +319,9 @@ void memorizeCurrentStatus()
   for(int i = 0; i < NUM_OF_PLAYERS; i++){
     playerRolesLog[i] = playerRoles[i];
   }
+}
+bool isStartOfSet()
+{
+  //ゲーム数もスコア数も全部ゼロ(足して0と同値)でなければスタートしている
+  return (scoreCount[PLAYSIDE_LEFT] + scoreCount[PLAYSIDE_RIGHT] == 0);
 }
