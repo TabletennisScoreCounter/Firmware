@@ -1,4 +1,6 @@
-C_SOURCES +=  \
+USER_OPT = -O0
+
+USER_C_SOURCES +=  \
 UserModule/SegmentDriver/Src/SegmentDriver.c \
 UserModule/ButtonEventManager/Src/ButtonEventManager.c \
 UserModule/GameManager/Src/GameManager.c \

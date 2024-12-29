@@ -76,10 +76,10 @@ Src/stm32l4xx_hal_timebase_TIM.c \
 Src/i2c.c
 
 #user source
-include UserSource.mk
+include makefiles/UserSource.mk
 
 #environment define
-include Environment.mk
+include makefiles/Environment.mk
 
 # ASM sources
 ASM_SOURCES =  \
@@ -147,23 +147,30 @@ C_INCLUDES =  \
 -IDrivers/CMSIS/Include
 
 #user include
-include UserInclude.mk
+include makefiles/UserInclude.mk
 
 #browsing include
-include BrowseInclude.mk
+include makefiles/BrowseInclude.mk
 
 # compile gcc flags
 ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
 CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
+USER_CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+
+# User Define
+include makefiles/UserDefine.mk
+
 ifeq ($(DEBUG), 1)
 CFLAGS += -g -gdwarf-2
+USER_CFLAGS += -g -gdwarf-2
 endif
 
 
 # Generate dependency information
 CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
+USER_CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
 
 #######################################
@@ -187,9 +194,22 @@ all: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/$(TARGET).hex $(BUILD_DIR)/$(TARGET
 # list of objects
 OBJECTS = $(addprefix $(BUILD_DIR)/,$(notdir $(C_SOURCES:.c=.o)))
 vpath %.c $(sort $(dir $(C_SOURCES)))
+
+# list of user objects
+USER_OBJECTS = $(addprefix $(BUILD_DIR)/UserSources/,$(notdir $(USER_C_SOURCES:.c=.o)))
+vpath %.c $(sort $(dir $(USER_C_SOURCES)))
+
 # list of ASM program objects
 OBJECTS += $(addprefix $(BUILD_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
+
+OBJECTS += $(USER_OBJECTS)
+
+$(BUILD_DIR)/UserSources/%.o: %.c Makefile | $(BUILD_DIR)/UserSources 
+	$(CC) -c $(USER_CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/UserSources/$(notdir $(<:.c=.lst)) $< -o $@
+
+$(info USER_CFLAGS = $(USER_CFLAGS))
+$(info USER_OBJECTS = $(USER_OBJECTS))
 
 $(BUILD_DIR)/%.o: %.c Makefile | $(BUILD_DIR) 
 	$(CC) -c $(CFLAGS) -Wa,-a,-ad,-alms=$(BUILD_DIR)/$(notdir $(<:.c=.lst)) $< -o $@
@@ -210,6 +230,8 @@ $(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
 $(BUILD_DIR):
 	mkdir $@		
 
+$(BUILD_DIR)/UserSources:
+	mkdir -p $@
 #######################################
 # clean up
 #######################################
