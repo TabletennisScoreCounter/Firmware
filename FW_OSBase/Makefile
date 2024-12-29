@@ -157,7 +157,7 @@ ASFLAGS = $(MCU) $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffuncti
 
 CFLAGS = $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
 
-USER_CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections
+USER_CFLAGS += $(MCU) $(C_DEFS) $(C_INCLUDES) $(USER_OPT) -Wall -fdata-sections -ffunction-sections
 
 # User Define
 include makefiles/UserDefine.mk
