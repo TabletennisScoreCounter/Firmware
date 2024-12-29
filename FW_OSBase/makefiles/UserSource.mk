@@ -1,10 +1,10 @@
 USER_OPT = -O0
 
 USER_C_SOURCES +=  \
-UserModule/SegmentDriver/Src/SegmentDriver.c \
-UserModule/ButtonEventManager/Src/ButtonEventManager.c \
-UserModule/GameManager/Src/GameManager.c \
-UserModule/IndicateManager/Src/IndicateManager.c \
-UserModule/FullColorLEDDriver/Src/FullColorLEDDriver.c \
-UserModule/LCDDisplayDriver/Src/LCDDisplayDriver.c \
+UserSources/SegmentDriver/Src/SegmentDriver.c \
+UserSources/ButtonEventManager/Src/ButtonEventManager.c \
+UserSources/GameManager/Src/GameManager.c \
+UserSources/IndicateManager/Src/IndicateManager.c \
+UserSources/FullColorLEDDriver/Src/FullColorLEDDriver.c \
+UserSources/LCDDisplayDriver/Src/LCDDisplayDriver.c \
 
