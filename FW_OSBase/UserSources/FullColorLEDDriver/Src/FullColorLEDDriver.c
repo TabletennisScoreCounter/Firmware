@@ -77,7 +77,7 @@ void setPWMDuty(TIM_HandleTypeDef* phtim, uint32_t timerChannel, uint32_t duty)
   sConfigOC.OCNIdleState = TIM_OCNIDLESTATE_RESET;
   if (HAL_TIM_PWM_ConfigChannel(phtim, &sConfigOC, timerChannel) != HAL_OK)
   {
-    _Error_Handler(__FILE__, __LINE__);
+    Error_Handler();
   }
 
 }

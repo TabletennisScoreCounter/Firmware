@@ -6,4 +6,6 @@ C_INCLUDES +=  \
 -IUserSources/FullColorLEDDriver/Inc \
 -IUserSources/LCDDisplayDriver/Inc \
 -IUserSources/Flags/Inc \
+-IUserSources/Tasks/TaskCommon/Inc \
+-IUserSources/Tasks/MainTask/Inc \
 

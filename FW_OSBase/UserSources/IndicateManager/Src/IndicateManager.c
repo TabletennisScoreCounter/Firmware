@@ -6,8 +6,20 @@
 #include "LCDDisplayDriver.h"
 #include <string.h>
 #include <stdio.h>
+#include "TaskCommon.h"
+
+//! スレッドスリープ時間[ms]
+#define TASK_SLEEP_TIME 10
+
+//! タスク名
+#define TASK_NAME "IndicateManagingTask"
+
+//! スタックサイズ[DWORD]
+#define TASK_STACK_SIZE 128
 
 static void printLCD(uint32_t scoreLeft, uint32_t scoreRight, uint32_t gameLeft, uint32_t gameRight);
+
+static void IndicateManagingTask(const void* args);
 
 void IndicateManagingTask(const void* args)
 {
@@ -65,4 +77,8 @@ void printLCD(uint32_t scoreLeft, uint32_t scoreRight, uint32_t gameLeft, uint32
   ClearChar_LCDDisplayDriver();
   SetChar_LCDDisplayDriver((uint8_t*)gameChar, strlen(gameChar), 1);
   SetChar_LCDDisplayDriver((uint8_t*)pointChar, strlen(pointChar), 2);
+}
+void IndicateManagingTask_Start(void* args)
+{
+  TaskCommon_CreateTask(TASK_NAME, (os_pthread)IndicateManagingTask, osPriorityNormal, TASK_STACK_SIZE, NULL);
 }

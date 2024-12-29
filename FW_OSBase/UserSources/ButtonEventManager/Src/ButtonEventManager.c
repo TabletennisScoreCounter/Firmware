@@ -1,5 +1,6 @@
 #include "ButtonEventManager.h"
 #include <stdbool.h>
+#include "TaskCommon.h"
 #include "gpio.h"
 #include "main.h"
 #include "tim.h"
@@ -20,6 +21,15 @@ typedef enum{
 
 #define LONGPUSH_TIMER_COUNT_THRESHOLD_MS 2000
 #define DEADTIME_TIMER_COUNT_THRESHOLD_MS 500
+
+//! スレッドスリープ時間[ms]
+#define TASK_SLEEP_TIME 10
+
+//! タスク名
+#define TASK_NAME "ButtonPushDetectTask"
+
+//! スタックサイズ[DWORD]
+#define TASK_STACK_SIZE 128
 
 static ButtonEvent_t eventStatus = NO_EVENT;
 
@@ -65,6 +75,8 @@ static bool buttonPushLong[NUMBER_OF_BUTTONS] = {
 static void resetTimerCount();
 static bool checkTimerCountErapsed(int targetCount);
 static bool checkButtonPushed(int index);
+
+static void ButtonEventManagingTask(const void* args);
 
 bool checkButtonPushed(int index)
 {
@@ -139,4 +151,8 @@ ButtonEvent_t GetLastEvent()
   eventStatus = NO_EVENT;
   
   return result;
+}
+void ButtonPushDetectTask_Start(void* args)
+{
+  TaskCommon_CreateTask(TASK_NAME, (os_pthread)ButtonEventManagingTask, osPriorityNormal, TASK_STACK_SIZE, args);
 }

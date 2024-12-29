@@ -1,4 +1,5 @@
 #include "GameManager.h"
+#include "TaskCommon.h"
 #include "gpio.h"
 #include "main.h"
 #include "cmsis_os.h"
@@ -18,6 +19,14 @@
 #define SERVER_CHANGE_STEP_NORMAL 2
 #define SERVER_CHANGE_SETP_DUCE 1
 
+//! スレッドスリープ時間[ms]
+#define TASK_SLEEP_TIME 10
+
+//! タスク名
+#define TASK_NAME "GameManagingTask"
+
+//! スタックサイズ[DWORD]
+#define TASK_STACK_SIZE 128
 
 typedef enum{
   SINGLES_MODE = 0, 
@@ -75,6 +84,7 @@ static const uint32_t matchCount[NUM_OF_MATCH_RULE] = {
 static uint32_t scoreCountLog[NUM_OF_SIDE];
 static PlayerRole_t playerRolesLog[NUM_OF_PLAYERS];
 
+static void GameManagingTask(const void* args);
 static void normalyRotatePlayerRoles(GameMode_t gameMode);
 static void receiverSideSwap();
 static GameMode_t checkGameModeSwitch();
@@ -324,4 +334,8 @@ bool isStartOfSet()
 {
   //ゲーム数もスコア数も全部ゼロ(足して0と同値)でなければスタートしている
   return (scoreCount[PLAYSIDE_LEFT] + scoreCount[PLAYSIDE_RIGHT] == 0);
+}
+void GameManagingTask_Start(void* args)
+{
+  TaskCommon_CreateTask(TASK_NAME, (os_pthread)GameManagingTask, osPriorityNormal, TASK_STACK_SIZE, NULL);
 }

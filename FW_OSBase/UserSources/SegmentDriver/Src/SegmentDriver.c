@@ -3,6 +3,7 @@
 #include "cmsis_os.h"
 #include "main.h"
 #include "stm32l4xx_hal_gpio.h"
+#include "TaskCommon.h"
 
 //private definition
 #define SEGMENT_ON GPIO_PIN_SET
@@ -23,6 +24,15 @@
 #define SEGMENT_POS_BOTTOMRIGHT 5
 #define SEGMENT_POS_BOTTOM 6
 #define DYNAMIC_LIGHTING_PERIOD_ms 2
+
+//! スレッドスリープ時間[ms]
+#define TASK_SLEEP_TIME 10
+
+//! タスク名
+#define TASK_NAME "SegmentDriverTask"
+
+//! スタックサイズ[DWORD]
+#define TASK_STACK_SIZE 128
 
 //private typedef
 typedef GPIO_PinState SegmentAnode_state_t;
@@ -213,4 +223,8 @@ void selectIndicator(int indicatorIndex)
       HAL_GPIO_WritePin((GPIO_TypeDef*)indicatorSelGPIOPorts[i], indicatorSelGPIOPins[i], GPIO_PIN_RESET);
     }
   }
+}
+void SegmentDriverTask_Start(void* args)
+{
+  TaskCommon_CreateTask(TASK_NAME, (os_pthread)SegmentDriverTask, osPriorityNormal, TASK_STACK_SIZE, NULL);
 }

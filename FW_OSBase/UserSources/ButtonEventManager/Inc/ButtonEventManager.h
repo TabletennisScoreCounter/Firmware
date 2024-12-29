@@ -18,5 +18,5 @@ typedef enum{
     NO_EVENT
 }ButtonEvent_t;
 
-void ButtonEventManagingTask(const void* args);
 ButtonEvent_t GetLastEvent();
+void ButtonPushDetectTask_Start(void* args);
