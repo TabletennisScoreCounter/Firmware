@@ -37,6 +37,9 @@ MiddlewareResultTypeDef_t LCDControl_RequestPrint(const char* _line1Str, const c
   MiddlewareResultTypeDef_t result = Middleware_OK;
 
   AQM1602ResultTypeDef_t devResult = AQM1602_SendCharData(&interface, (uint8_t*)_line1Str, strlen(_line1Str));
+
+  if(devResult == AQM1602_OK){
+    devResult = AQM1602_SendCharData(AQM1602InteraceTypeDef_t *pInterface, uint8_t *_data, uint8_t _length)
 }
 static AQM1602ResultTypeDef_t i2cWrite(uint8_t _slaveAddress, const uint8_t* _data, uint16_t _length)
 {
