@@ -9,4 +9,8 @@ UserSources/FullColorLEDDriver/Src/FullColorLEDDriver.c \
 UserSources/LCDDisplayDriver/Src/LCDDisplayDriver.c \
 UserSources/Tasks/TaskCommon/Src/TaskCommon.c \
 UserSources/Tasks/MainTask/Src/MainTask.c \
+UserSources/Tasks/LCDTask/Src/LCDTask.c \
+UserSources/Middleware/MiddlewareCommon/Src/MiddlewareCommon.c \
+UserSources/Middleware/LCDControl/Src/LCDControl.c \
+UserSources/DeviceDriver/AQM1602/Src/AQM1602.c \
 
