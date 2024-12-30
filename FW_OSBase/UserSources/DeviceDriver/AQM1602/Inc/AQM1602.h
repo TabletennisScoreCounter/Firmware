@@ -48,6 +48,7 @@ typedef struct AQM1602InteraceTypeDef{
   void (*delay_ms)(uint32_t milisecond);
 }AQM1602InteraceTypeDef_t;
 
+AQM1602ResultTypeDef_t AQM1602_WaitForBoot(AQM1602InteraceTypeDef_t* pInterface);
 AQM1602ResultTypeDef_t AQM1602_ClearDisplay(AQM1602InteraceTypeDef_t* pInterface);
 AQM1602ResultTypeDef_t AQM1602_ReturnHome(AQM1602InteraceTypeDef_t* pInterface);
 AQM1602ResultTypeDef_t AQM1602_EntryModeSet(AQM1602InteraceTypeDef_t* pInterface, AQM1602_CursorDirectionTypeDef_t _cursorDirection, AQM1602FlagTypeDef_t _displayShift);
@@ -56,5 +57,12 @@ AQM1602ResultTypeDef_t AQM1602_FunctionSet(AQM1602InteraceTypeDef_t* pInterface,
 AQM1602ResultTypeDef_t AQM1602_SetDDRAMAaddress(AQM1602InteraceTypeDef_t* pInterface, uint8_t _address);
 AQM1602ResultTypeDef_t AQM1602_SendCharData(AQM1602InteraceTypeDef_t* pInterface, uint8_t* _data, uint8_t _length);
 AQM1602ResultTypeDef_t AQM1602_SetInternalOSCFrequency(AQM1602InteraceTypeDef_t* pInterface, AQM1602_BiasSelectionTypeDef_t _bias, AQM1602_InternalOSCFrequencyTypeDef_t _ifreq);
+/**
+ * @brief データシートに記載のサンプル初期化コード
+ *
+ * @param pInterface インターフェース構造体
+ *
+ * @return 通信成功 : AQM1602_OK, 失敗 : AQM1602_NG
+ */
 AQM1602ResultTypeDef_t AQM1602_SampleInitialize(AQM1602InteraceTypeDef_t* pInterface);
 #endif

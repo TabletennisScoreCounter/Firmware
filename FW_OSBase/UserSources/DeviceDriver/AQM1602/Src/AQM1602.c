@@ -10,6 +10,8 @@
 
 #define MAX_DELAY_AFTER_COMMAND 2
 
+#define DELAY_FOR_BOOT 40
+
 enum CTRL_Byte{
   CTRL_COMMAND = 0x00,
   CTRL_DATA = 0x40
@@ -35,6 +37,12 @@ static AQM1602ResultTypeDef_t sendCommand(AQM1602InteraceTypeDef_t* pInterface, 
 static AQM1602ResultTypeDef_t sendData(AQM1602InteraceTypeDef_t* pInterface, uint8_t* _data, uint16_t _length);
 static uint8_t parameterMask(uint8_t command);
 
+AQM1602ResultTypeDef_t AQM1602_WaitForBoot(AQM1602InteraceTypeDef_t* pInterface)
+{
+  pInterface->delay_ms(DELAY_FOR_BOOT);
+
+  return AQM1602_OK;
+}
 AQM1602ResultTypeDef_t AQM1602_ClearDisplay(AQM1602InteraceTypeDef_t* pInterface)
 {
   AQM1602ResultTypeDef_t result = sendCommand(pInterface, CMD_CLEAR_DISPLAY, 0);
@@ -78,7 +86,7 @@ AQM1602ResultTypeDef_t AQM1602_FunctionSet(AQM1602InteraceTypeDef_t* pInterface,
 }
 static AQM1602ResultTypeDef_t sendCommand(AQM1602InteraceTypeDef_t* pInterface, uint8_t _command, uint8_t _parameter)
 {
-  uint8_t dataToSend[] = {_command | (_parameter & parameterMask(_parameter))};
+  uint8_t dataToSend[] = {CTRL_COMMAND, _command | (_parameter & parameterMask(_parameter))};
 
   AQM1602ResultTypeDef_t result = pInterface->i2cWrite(DEVICE_ADDRESS, dataToSend, sizeof(dataToSend));
 

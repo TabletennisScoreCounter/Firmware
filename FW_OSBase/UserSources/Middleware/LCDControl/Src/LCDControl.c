@@ -24,7 +24,11 @@ MiddlewareResultTypeDef_t LCDControl_Init()
 {
   MiddlewareResultTypeDef_t result = Middleware_OK;
 
-  AQM1602ResultTypeDef_t devResult = AQM1602_SampleInitialize(&interface);
+  AQM1602ResultTypeDef_t devResult = AQM1602_WaitForBoot(&interface);
+
+  if(devResult == AQM1602_OK){
+    devResult = AQM1602_SampleInitialize(&interface);
+  }
 
   if(devResult != AQM1602_OK){
     result = Middleware_NG;
@@ -32,14 +36,33 @@ MiddlewareResultTypeDef_t LCDControl_Init()
 
   return result;
 }
-MiddlewareResultTypeDef_t LCDControl_RequestPrint(const char* _line1Str, const char* _line2Str)
+MiddlewareResultTypeDef_t LCDControl_Print(const char* _line1Str, const char* _line2Str)
 {
   MiddlewareResultTypeDef_t result = Middleware_OK;
 
-  AQM1602ResultTypeDef_t devResult = AQM1602_SendCharData(&interface, (uint8_t*)_line1Str, strlen(_line1Str));
+  AQM1602ResultTypeDef_t devResult = AQM1602_ClearDisplay(&interface);
 
   if(devResult == AQM1602_OK){
-    devResult = AQM1602_SendCharData(AQM1602InteraceTypeDef_t *pInterface, uint8_t *_data, uint8_t _length)
+    //1行目の先頭に移動
+  }
+
+  if(devResult == AQM1602_OK){
+    devResult = AQM1602_SendCharData(&interface, (uint8_t*)_line1Str, strlen(_line1Str));
+  }
+
+  if(devResult == AQM1602_OK){
+    //2行目の先頭に移動
+  }
+
+  if(devResult == AQM1602_OK){
+    devResult = AQM1602_SendCharData(&interface, (uint8_t*)_line2Str, strlen(_line2Str));
+  }
+
+  if(devResult != AQM1602_OK){
+    result = Middleware_NG;
+  }
+
+  return result;
 }
 static AQM1602ResultTypeDef_t i2cWrite(uint8_t _slaveAddress, const uint8_t* _data, uint16_t _length)
 {

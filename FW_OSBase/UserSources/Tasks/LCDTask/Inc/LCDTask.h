@@ -6,4 +6,6 @@
  */
 void LCDTask_Start();
 
+void LCDTask_RequestString(const char* _line1, const char* _line2);
+
 #endif

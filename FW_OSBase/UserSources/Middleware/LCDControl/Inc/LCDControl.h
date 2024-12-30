@@ -18,6 +18,6 @@ MiddlewareResultTypeDef_t LCDControl_Init();
  * @return 正常終了 : Middleware_OK, 異常あり : Middleware_NG
  * @detail 引数にNULLを与えると現状維持
  */
-MiddlewareResultTypeDef_t LCDControl_RequestPrint(const char* _line1Str, const char* _line2Str);
+MiddlewareResultTypeDef_t LCDControl_Print(const char* _line1Str, const char* _line2Str);
 
 #endif
