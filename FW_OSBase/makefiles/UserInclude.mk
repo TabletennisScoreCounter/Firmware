@@ -4,7 +4,6 @@ C_INCLUDES +=  \
 -IUserSources/GameManager/Inc \
 -IUserSources/IndicateManager/Inc \
 -IUserSources/FullColorLEDDriver/Inc \
--IUserSources/LCDDisplayDriver/Inc \
 -IUserSources/Flags/Inc \
 -IUserSources/Tasks/TaskCommon/Inc \
 -IUserSources/Tasks/MainTask/Inc \
