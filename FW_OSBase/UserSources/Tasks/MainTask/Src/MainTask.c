@@ -1,6 +1,7 @@
 #include "MainTask.h"
 #include "GameManager.h"
 #include "IndicateManager.h"
+#include "LCDTask.h"
 #include "SegmentDriver.h"
 #include "TaskCommon.h"
 #include "ButtonEventManager.h"
@@ -27,11 +28,11 @@ void MainTask_Start(void *args)
 }
 static void mainTask(void* args)
 {
+  LCDTask_Start();
   ButtonPushDetectTask_Start(NULL);
   GameManagingTask_Start(NULL);
   IndicateManagingTask_Start(NULL);
   SegmentDriverTask_Start(NULL);
-
   while(1){
     osDelay(TASK_SLEEP_TIME);
   }
