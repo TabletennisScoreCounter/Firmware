@@ -2,9 +2,13 @@
 #include "MiddlewareCommon.h"
 #include "TaskCommon.h"
 #include "LCDControl.h"
+#include <string.h>
 
 //! スレッドスリープ時間[ms]
 #define TASK_SLEEP_TIME 10
+
+//! LCDメッセージ長さ
+#define LCD_MESSAGE_LENGTH 16
 
 //! タスク名
 #define TASK_NAME "LCDTask"
@@ -15,8 +19,8 @@
 #define STRING_QUEUE_DEPTH 5
 
 typedef struct lcdStringsTypeDef{
-  const char* line1;
-  const char* line2;
+  char line1[LCD_MESSAGE_LENGTH];
+  char line2[LCD_MESSAGE_LENGTH];
 }lcdStringTypeDef_t;
 
 static void taskFunc(void* args);
@@ -43,9 +47,11 @@ static void taskFunc(void* args)
 }
 void LCDTask_RequestString(const char* _line1, const char* _line2)
 {
-  lcdStringTypeDef_t buf = {
-    .line1 = _line1,
-    .line2 = _line2
-  };
+  lcdStringTypeDef_t buf;
+
+  memset(&buf, 0, sizeof(buf));
+
+  strncpy(buf.line1, _line1, strlen(_line1));
+  strncpy(buf.line2, _line2, strlen(_line2));
   xQueueSendToBack(stringQueue, &buf, 0);
 }

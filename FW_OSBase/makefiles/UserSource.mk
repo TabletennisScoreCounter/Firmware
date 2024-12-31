@@ -6,7 +6,6 @@ UserSources/ButtonEventManager/Src/ButtonEventManager.c \
 UserSources/GameManager/Src/GameManager.c \
 UserSources/IndicateManager/Src/IndicateManager.c \
 UserSources/FullColorLEDDriver/Src/FullColorLEDDriver.c \
-UserSources/LCDDisplayDriver/Src/LCDDisplayDriver.c \
 UserSources/Tasks/TaskCommon/Src/TaskCommon.c \
 UserSources/Tasks/MainTask/Src/MainTask.c \
 UserSources/Tasks/LCDTask/Src/LCDTask.c \

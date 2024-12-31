@@ -1,9 +1,9 @@
 #include "IndicateManager.h"
+#include "LCDTask.h"
 #include "SegmentDriver.h"
 #include "GameManager.h"
 #include "FullColorLEDDriver.h"
 #include "cmsis_os.h"
-#include "LCDDisplayDriver.h"
 #include <string.h>
 #include <stdio.h>
 #include "TaskCommon.h"
@@ -23,10 +23,6 @@ static void IndicateManagingTask(const void* args);
 
 void IndicateManagingTask(const void* args)
 {
-  Initialize_LCDDisplayDriver();
-
-  ClearChar_LCDDisplayDriver();
-
   uint32_t scoreLeft = 0;
   uint32_t scoreRight = 0;
   uint32_t gameLeft = 0;
@@ -73,10 +69,8 @@ void printLCD(uint32_t scoreLeft, uint32_t scoreRight, uint32_t gameLeft, uint32
   
   sprintf(gameChar, "Game : %d - %d", (int)gameLeft, (int)gameRight);
   sprintf(pointChar, "Point : %d - %d", (int)scoreLeft, (int)scoreRight);
-  
-  ClearChar_LCDDisplayDriver();
-  SetChar_LCDDisplayDriver((uint8_t*)gameChar, strlen(gameChar), 1);
-  SetChar_LCDDisplayDriver((uint8_t*)pointChar, strlen(pointChar), 2);
+
+  LCDTask_RequestString(gameChar, pointChar);
 }
 void IndicateManagingTask_Start(void* args)
 {

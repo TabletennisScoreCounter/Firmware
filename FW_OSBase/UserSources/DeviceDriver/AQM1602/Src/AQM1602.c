@@ -86,7 +86,7 @@ AQM1602ResultTypeDef_t AQM1602_FunctionSet(AQM1602InteraceTypeDef_t* pInterface,
 }
 static AQM1602ResultTypeDef_t sendCommand(AQM1602InteraceTypeDef_t* pInterface, uint8_t _command, uint8_t _parameter)
 {
-  uint8_t dataToSend[] = {CTRL_COMMAND, _command | (_parameter & parameterMask(_parameter))};
+  uint8_t dataToSend[] = {CTRL_COMMAND, _command | (_parameter & parameterMask(_command))};
 
   AQM1602ResultTypeDef_t result = pInterface->i2cWrite(DEVICE_ADDRESS, dataToSend, sizeof(dataToSend));
 
