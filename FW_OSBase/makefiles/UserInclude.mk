@@ -8,7 +8,9 @@ C_INCLUDES +=  \
 -IUserSources/Tasks/TaskCommon/Inc \
 -IUserSources/Tasks/MainTask/Inc \
 -IUserSources/Tasks/LCDTask/Inc \
+-IUserSources/Tasks/LogTask/Inc \
 -IUserSources/Middleware/MiddlewareCommon/Inc \
 -IUserSources/Middleware/LCDControl/Inc \
 -IUserSources/DeviceDriver/AQM1602/Inc \
+-IUserSources/VersionInfo/Inc \
 

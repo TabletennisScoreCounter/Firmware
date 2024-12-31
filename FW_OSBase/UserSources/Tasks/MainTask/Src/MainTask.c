@@ -2,9 +2,11 @@
 #include "GameManager.h"
 #include "IndicateManager.h"
 #include "LCDTask.h"
+#include "LogTask.h"
 #include "SegmentDriver.h"
 #include "TaskCommon.h"
 #include "ButtonEventManager.h"
+#include "VersionInfo.h"
 
 //! スレッドスリープ時間[ms]
 #define TASK_SLEEP_TIME 10
@@ -29,10 +31,15 @@ void MainTask_Start(void *args)
 static void mainTask(void* args)
 {
   LCDTask_Start();
+  LogTask_Start();
   ButtonPushDetectTask_Start(NULL);
   GameManagingTask_Start(NULL);
   IndicateManagingTask_Start(NULL);
   SegmentDriverTask_Start(NULL);
+
+  LogTask_RequenstLogPrint("Installed FW : ");
+  LogTask_RequenstLogPrintLn(FWVERSION);
+
   while(1){
     osDelay(TASK_SLEEP_TIME);
   }
