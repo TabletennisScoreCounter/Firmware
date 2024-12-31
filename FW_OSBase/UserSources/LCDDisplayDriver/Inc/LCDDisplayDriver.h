@@ -5,8 +5,8 @@
  *      Author: Shuji
  */
 
-#ifndef LCDDISPLAYDRIVER_INC_LCDDISPLAYDRIVER_H_
-#define LCDDISPLAYDRIVER_INC_LCDDISPLAYDRIVER_H_
+#ifndef LCDDISPLAYDRIVER_H_
+#define LCDDISPLAYDRIVER_H_
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -28,4 +28,4 @@ LCDDisplayStatus_t ClearChar_LCDDisplayDriver();
 #endif
 
 
-#endif /* LCDDISPLAYDRIVER_INC_LCDDISPLAYDRIVER_H_ */
+#endif /* LCDDISPLAYDRIVER_H_ */
